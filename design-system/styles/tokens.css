@@ -1,0 +1,317 @@
+/**
+ * CyberAbeer / GreenTrust AI / CyberAbeer Labs — Design Tokens
+ * ---------------------------------------------------------------
+ * One token pipeline, three brand surfaces. Every component in this
+ * library reads ONLY these CSS custom properties (never a hardcoded
+ * hex) so switching brand + color-scheme is a single attribute swap:
+ *
+ *   <html data-brand="greentrust" class="dark" dir="rtl" lang="ar">
+ *
+ * data-brand: "cyberabeer" | "greentrust" | "labs"   (defaults to cyberabeer)
+ * class:      "dark" toggles dark mode (light is the default/absence of it)
+ * dir:        "ltr" | "rtl"                          (see rtl.css for logic)
+ *
+ * Layer order matters: :root sets shared primitives + the CyberAbeer
+ * theme as the default brand, [data-brand="..."] overrides semantic
+ * tokens only (never primitives), and .dark overrides again on top of
+ * whichever brand is active. This keeps brand and color-scheme fully
+ * independent — any brand can be viewed in light or dark.
+ */
+
+:root {
+  /* ---------- Neutral scale (shared across all brands) ---------- */
+  --neutral-0: #ffffff;
+  --neutral-50: #f7f8f9;
+  --neutral-100: #eef0f2;
+  --neutral-200: #dde1e6;
+  --neutral-300: #c2c9d1;
+  --neutral-400: #98a2ae;
+  --neutral-500: #71808f;
+  --neutral-600: #566573;
+  --neutral-700: #3f4b57;
+  --neutral-800: #2a323b;
+  --neutral-900: #1a2027;
+  --neutral-950: #0f1317;
+
+  /* ---------- Semantic status colors (shared meaning across brands) ---------- */
+  --status-success-50: #eafaf1;
+  --status-success-500: #1f9d55;
+  --status-success-600: #17803f;
+  --status-warning-50: #fff8e6;
+  --status-warning-500: #d99a1b;
+  --status-warning-600: #b17c0f;
+  --status-danger-50: #fdecec;
+  --status-danger-500: #d63c3c;
+  --status-danger-600: #b32b2b;
+  --status-info-50: #eaf3fb;
+  --status-info-500: #2673c9;
+  --status-info-600: #1c5aa0;
+
+  /* Risk levels (GreenTrust / Quantum: low, medium, high, critical) map
+     onto the same success/warning/danger scale plus one extra step for
+     "critical" so it is visually distinct from ordinary "danger". */
+  --risk-low: var(--status-success-500);
+  --risk-medium: var(--status-warning-500);
+  --risk-high: var(--status-danger-500);
+  --risk-critical: #8f1d3a;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --space-0: 0px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ---------- Typography ---------- */
+  --font-latin-body: "Inter", "Inter Fallback", system-ui, sans-serif;
+  --font-latin-display: "Inter", "Inter Fallback", system-ui, sans-serif;
+  --font-labs-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-arabic-body: "Tajawal", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-arabic-display: "Cairo", "Tajawal", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Type scale — unitless line-heights so they scale with font-size */
+  --text-xs: 0.75rem;    --leading-xs: 1.5;
+  --text-sm: 0.875rem;   --leading-sm: 1.5;
+  --text-base: 1rem;     --leading-base: 1.6;
+  --text-lg: 1.125rem;   --leading-lg: 1.55;
+  --text-xl: 1.25rem;    --leading-xl: 1.5;
+  --text-2xl: 1.5rem;    --leading-2xl: 1.4;
+  --text-3xl: 1.875rem;  --leading-3xl: 1.3;
+  --text-4xl: 2.25rem;   --leading-4xl: 1.2;
+  --text-5xl: 3rem;      --leading-5xl: 1.1;
+
+  /* Arabic script needs a touch more line-height and zero negative
+     tracking (tight/negative letter-spacing breaks letter joining). */
+  --tracking-latin-tight: -0.01em;
+  --tracking-latin-normal: 0em;
+  --tracking-arabic: 0em;
+  --arabic-leading-boost: 1.15; /* multiply Latin line-height by this under [lang="ar"] */
+
+  /* ---------- Elevation ---------- */
+  --shadow-sm: 0 1px 2px 0 rgb(15 19 23 / 0.06);
+  --shadow-md: 0 2px 8px -2px rgb(15 19 23 / 0.10), 0 1px 2px -1px rgb(15 19 23 / 0.06);
+  --shadow-lg: 0 8px 24px -4px rgb(15 19 23 / 0.14), 0 2px 6px -2px rgb(15 19 23 / 0.08);
+  --shadow-xl: 0 20px 48px -8px rgb(15 19 23 / 0.20), 0 4px 12px -4px rgb(15 19 23 / 0.10);
+  /* Labs-only "glow" shadow for XP/achievement moments — used sparingly */
+  --shadow-glow-labs: 0 0 0 1px var(--color-primary), 0 0 24px -4px var(--color-primary);
+
+  /* ---------- Motion ---------- */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1.4);
+
+  /* ---------- Z-index scale ---------- */
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-drawer: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1310;
+  --z-popover: 1400;
+  --z-toast: 1500;
+  --z-tooltip: 1600;
+
+  /* ---------- Focus ring (WCAG 2.2 AA target: visible on every surface) ---------- */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-focus-ring);
+
+  /* ---------- Breakpoints (mirrored in tailwind.config.ts — kept here for
+       reference / JS-free media queries in plain CSS) ---------- */
+  --bp-mobile: 0px;
+  --bp-tablet: 640px;
+  --bp-desktop: 1024px;
+  --bp-wide: 1536px; /* GreenTrust executive dashboards */
+
+  /* =================================================================
+     BRAND: CyberAbeer (default) — authority, research, education.
+     Approachable but professional; the "parent" brand voice.
+     ================================================================= */
+  --color-primary-50: #eaf2f3;
+  --color-primary-100: #cfe3e6;
+  --color-primary-300: #6ea3ab;
+  --color-primary-500: #0f4c5c;
+  --color-primary-600: #0c3d49;
+  --color-primary-700: #0a323c;
+  --color-accent-500: #c9a227;
+  --color-accent-600: #a9860f;
+
+  --color-bg: var(--neutral-50);
+  --color-surface: var(--neutral-0);
+  --color-surface-raised: var(--neutral-0);
+  --color-border: var(--neutral-200);
+  --color-border-strong: var(--neutral-300);
+  --color-text-primary: var(--neutral-900);
+  --color-text-secondary: var(--neutral-700);
+  --color-text-muted: var(--neutral-500);
+  --color-text-on-primary: var(--neutral-0);
+
+  --color-primary: var(--color-primary-500);
+  --color-primary-hover: var(--color-primary-600);
+  --color-primary-active: var(--color-primary-700);
+  --color-accent: var(--color-accent-500);
+  --color-focus-ring: var(--color-primary-500);
+
+  --radius-brand-control: var(--radius-md);   /* buttons/inputs corner radius */
+  --radius-brand-card: var(--radius-lg);
+  --font-brand-display: var(--font-latin-display);
+}
+
+/* =================================================================
+   BRAND: GreenTrust AI — enterprise, trust, governance, executive,
+   premium. Cooler, more restrained, higher-contrast surfaces, less
+   playful motion.
+   ================================================================= */
+[data-brand="greentrust"] {
+  --color-primary-50: #e9f5ee;
+  --color-primary-100: #c8e6d5;
+  --color-primary-300: #6cb28e;
+  --color-primary-500: #1f6e43;
+  --color-primary-600: #175934;
+  --color-primary-700: #124529;
+  --color-accent-500: #16324f;
+  --color-accent-600: #0f2338;
+
+  --color-bg: var(--neutral-50);
+  --color-surface: var(--neutral-0);
+  --color-surface-raised: var(--neutral-0);
+  --color-border: var(--neutral-200);
+  --color-border-strong: var(--neutral-300);
+  --color-text-primary: var(--neutral-900);
+  --color-text-secondary: var(--neutral-700);
+  --color-text-muted: var(--neutral-500);
+  --color-text-on-primary: var(--neutral-0);
+
+  --color-primary: var(--color-primary-500);
+  --color-primary-hover: var(--color-primary-600);
+  --color-primary-active: var(--color-primary-700);
+  --color-accent: var(--color-accent-500);
+  --color-focus-ring: var(--color-primary-500);
+
+  --radius-brand-control: 0.375rem;  /* slightly less rounded: premium/serious */
+  --radius-brand-card: 0.625rem;
+  --font-brand-display: var(--font-latin-display);
+}
+
+/* =================================================================
+   BRAND: CyberAbeer Labs — energetic, gamified, modern cybersecurity.
+   Professional rather than childish: energy comes from the accent
+   (violet) and the XP/achievement components, NOT from cartoonish
+   shapes or saturated primary surfaces.
+   ================================================================= */
+[data-brand="labs"] {
+  --color-primary-50: #e6fbfd;
+  --color-primary-100: #c3f3f8;
+  --color-primary-300: #5cd3e0;
+  --color-primary-500: #0891a8;
+  --color-primary-600: #076f82;
+  --color-primary-700: #075866;
+  --color-accent-500: #7c3aed;
+  --color-accent-600: #6427c8;
+
+  /* Gamification-only semantic tokens (used exclusively by XP/badge/
+     streak components — never for primary UI chrome) */
+  --color-xp: #d99a1b;
+  --color-streak: #ef6820;
+
+  --color-bg: var(--neutral-50);
+  --color-surface: var(--neutral-0);
+  --color-surface-raised: var(--neutral-0);
+  --color-border: var(--neutral-200);
+  --color-border-strong: var(--neutral-300);
+  --color-text-primary: var(--neutral-900);
+  --color-text-secondary: var(--neutral-700);
+  --color-text-muted: var(--neutral-500);
+  --color-text-on-primary: var(--neutral-0);
+
+  --color-primary: var(--color-primary-500);
+  --color-primary-hover: var(--color-primary-600);
+  --color-primary-active: var(--color-primary-700);
+  --color-accent: var(--color-accent-500);
+  --color-focus-ring: var(--color-primary-500);
+
+  --radius-brand-control: 0.625rem;  /* friendlier, still restrained */
+  --radius-brand-card: 1rem;
+  --font-brand-display: var(--font-labs-display);
+}
+
+/* =================================================================
+   DARK MODE — overrides semantic surface/text tokens only. Brand
+   primary/accent hues stay recognizable but are re-tuned one step
+   lighter for AA contrast against dark surfaces. Applies on top of
+   whichever [data-brand] is active.
+   ================================================================= */
+.dark {
+  --color-bg: var(--neutral-950);
+  --color-surface: var(--neutral-900);
+  --color-surface-raised: var(--neutral-800);
+  --color-border: var(--neutral-700);
+  --color-border-strong: var(--neutral-600);
+  --color-text-primary: var(--neutral-50);
+  --color-text-secondary: var(--neutral-300);
+  --color-text-muted: var(--neutral-400);
+
+  --status-success-50: rgb(31 157 85 / 0.14);
+  --status-warning-50: rgb(217 154 27 / 0.14);
+  --status-danger-50: rgb(214 60 60 / 0.14);
+  --status-info-50: rgb(38 115 201 / 0.14);
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 2px 8px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.55);
+  --shadow-xl: 0 20px 48px -8px rgb(0 0 0 / 0.6);
+}
+
+.dark[data-brand="cyberabeer"] {
+  --color-primary: var(--color-primary-300);
+  --color-primary-hover: var(--color-primary-100);
+  --color-text-on-primary: var(--neutral-950);
+  --color-accent: #e0bd4f;
+}
+.dark[data-brand="greentrust"] {
+  --color-primary: var(--color-primary-300);
+  --color-primary-hover: var(--color-primary-100);
+  --color-text-on-primary: var(--neutral-950);
+}
+.dark[data-brand="labs"] {
+  --color-primary: var(--color-primary-300);
+  --color-primary-hover: var(--color-primary-100);
+  --color-text-on-primary: var(--neutral-950);
+  --color-accent: #a879f7;
+}
+
+/* =================================================================
+   ARABIC / RTL adjustments. `dir="rtl"` is set on <html> alongside
+   `lang="ar"`; components use logical Tailwind utilities (ms-/me-/
+   text-start/text-end) so almost nothing needs overriding here. The
+   two things that DO need explicit handling are font family and the
+   extra line-height Arabic scripts need to render comfortably.
+   ================================================================= */
+[lang="ar"] {
+  font-family: var(--font-arabic-body);
+  letter-spacing: var(--tracking-arabic);
+}
+[lang="ar"] .font-display {
+  font-family: var(--font-arabic-display);
+}
+[lang="ar"] {
+  --text-line-height-multiplier: var(--arabic-leading-boost);
+}

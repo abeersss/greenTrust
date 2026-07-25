@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./tokens.css";
+
+/**
+ * Fonts: loaded via next/font in app/layout.tsx for Latin (Inter,
+ * Space Grotesk) so Next.js self-hosts and subset them with zero
+ * layout-shift. Arabic fonts (Tajawal, Cairo) are not on next/font's
+ * built-in Google list in every version, so they're declared here via
+ * @font-face against self-hosted files in /public/fonts/ — see the
+ * README in that folder for the exact files to add. Never load fonts
+ * from a runtime Google Fonts <link> tag: it's a render-blocking
+ * request per Phase 2's Core Web Vitals requirement.
+ */
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/Tajawal-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/Tajawal-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/Tajawal-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/Cairo-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/Cairo-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg text-text-primary font-sans text-base antialiased;
+    transition: background-color var(--duration-base) var(--ease-standard),
+      color var(--duration-base) var(--ease-standard);
+  }
+
+  /* Visible focus ring everywhere, mouse users excluded via :focus-visible
+     — WCAG 2.2 SC 2.4.11/2.4.13 (focus not obscured / focus appearance). */
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Respect reduced-motion preference platform-wide */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Minimum touch target size (WCAG 2.2 SC 2.5.8): every interactive
+     element gets at least a 24x24 hit area by default; control-sized
+     components (Button, Input, etc.) exceed this at 40-44px already. */
+  button, a, input, select, textarea, [role="button"] {
+    min-height: 1.5rem;
+  }
+}
