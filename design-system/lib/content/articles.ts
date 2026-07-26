@@ -21,6 +21,39 @@ export interface ArticleDetail extends ArticleSummary {
 }
 
 /**
+ * Minimal shapes for the raw rows Supabase's dynamic `.select()` string
+ * returns from the two nested queries below. These aren't generated
+ * from the DB schema (no `Database` type is wired up yet), so they're
+ * kept intentionally loose/optional rather than using `any`, which
+ * `@typescript-eslint/no-explicit-any` (enabled in .eslintrc.json)
+ * disallows.
+ */
+interface CategoryTranslationRow {
+  name: string | null;
+  locale: string;
+}
+
+interface ArticleJoinRow {
+  id: string;
+  status: string;
+  published_at: string | null;
+  categories?: { category_translations?: CategoryTranslationRow[] | null } | null;
+  authors?: { display_name: string | null } | null;
+}
+
+interface ArticleTranslationRow {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  body?: string;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  og_image_url?: string | null;
+  reading_time_minutes: number | null;
+  articles: ArticleJoinRow;
+}
+
+/**
  * The Insights and Research pages both read from the same
  * article-publishing pipeline (Phase 3 CONTENT domain:
  * articles + article_translations + categories). This is the "content
@@ -55,7 +88,7 @@ export async function getPublishedArticles(locale: AppLocale): Promise<ArticleSu
 
     if (error) throw error;
 
-    return (data ?? []).map((row: any) => ({
+    return ((data ?? []) as ArticleTranslationRow[]).map((row) => ({
       id: row.articles.id,
       slug: row.slug,
       title: row.title,
@@ -63,7 +96,7 @@ export async function getPublishedArticles(locale: AppLocale): Promise<ArticleSu
       publishedAt: row.articles.published_at,
       readingTimeMinutes: row.reading_time_minutes,
       categoryName:
-        row.articles.categories?.category_translations?.find((t: any) => t.locale === locale)?.name ?? null,
+        row.articles.categories?.category_translations?.find((t) => t.locale === locale)?.name ?? null,
     }));
   } catch (err) {
     console.error("getPublishedArticles failed, returning empty list", err);
@@ -95,20 +128,20 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
     if (error) throw error;
     if (!data) return null;
 
-    const row = data as any;
+    const row = data as ArticleTranslationRow;
     return {
       id: row.articles.id,
       slug: row.slug,
       title: row.title,
       excerpt: row.excerpt,
-      body: row.body,
+      body: row.body ?? "",
       publishedAt: row.articles.published_at,
       readingTimeMinutes: row.reading_time_minutes,
-      metaTitle: row.meta_title,
-      metaDescription: row.meta_description,
-      ogImageUrl: row.og_image_url,
+      metaTitle: row.meta_title ?? null,
+      metaDescription: row.meta_description ?? null,
+      ogImageUrl: row.og_image_url ?? null,
       categoryName:
-        row.articles.categories?.category_translations?.find((t: any) => t.locale === locale)?.name ?? null,
+        row.articles.categories?.category_translations?.find((t) => t.locale === locale)?.name ?? null,
       authorName: row.articles.authors?.display_name ?? null,
     };
   } catch (err) {
