@@ -8,6 +8,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, learningResourceSchema } from "@/lib/seo/schema";
 import { siteUrl } from "@/lib/seo/site";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function generateMetadata({
   params,
@@ -46,6 +47,9 @@ export default async function FirstDefenderChallengePage({
   const t = await getTranslations({ locale, namespace: "seo" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
   const shareUrl = `${siteUrl}/${l}/challenge/first-defender`;
+  const supabase = await createSupabaseServerClient();
+  const authResult = await supabase.auth.getUser();
+  const user = authResult.data.user;
 
   return (
     <div data-brand="labs" className="mx-auto max-w-2xl px-4 py-8 tablet:px-6 tablet:py-12">
@@ -62,7 +66,7 @@ export default async function FirstDefenderChallengePage({
           }),
         ]}
       />
-      <FirstDefenderChallenge locale={l} shareUrl={shareUrl} />
+              <FirstDefenderChallenge locale={l} shareUrl={shareUrl} isAuthenticated={Boolean(user)} />
     </div>
   );
 }
