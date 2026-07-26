@@ -10,6 +10,9 @@ import { headers } from "next/headers";
 export async function getClientIp(): Promise<string> {
   const headerList = await headers();
   const forwardedFor = headerList.get("x-forwarded-for");
-  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  // Non-null: String.prototype.split always returns at least one
+  // element, even for a string with no delimiter, so [0] is safe;
+  // `noUncheckedIndexedAccess` can't see that guarantee.
+  if (forwardedFor) return forwardedFor.split(",")[0]!.trim();
   return "unknown";
 }
