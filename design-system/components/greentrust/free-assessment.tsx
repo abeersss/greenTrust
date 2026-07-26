@@ -121,7 +121,10 @@ export function FreeAssessment({ locale, isLoggedIn }: FreeAssessmentProps) {
   }
 
   if (screen === "question") {
-    const question = questions[step];
+    // Non-null: this branch only runs while step < questions.length
+    // (handleAnswer never advances step past the last index), so step
+    // always indexes a real entry.
+    const question = questions[step]!;
     return (
       <div className="mx-auto max-w-lg space-y-4">
         <AssessmentProgress
