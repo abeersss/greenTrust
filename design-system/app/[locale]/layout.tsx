@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Tajawal, Cairo } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import "@/styles/globals.css";
 import { BrandProvider } from "@/components/shared/brand-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +11,7 @@ import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
 import { JsonLd } from "@/components/site/json-ld";
 import { AnalyticsScript } from "@/components/site/analytics-script";
+import { RoutePageView } from "@/components/analytics/route-page-view";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, localeDir, type AppLocale } from "@/lib/i18n/config";
@@ -18,6 +19,25 @@ import { getTranslations } from "next-intl/server";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-latin-body", display: "swap" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-labs-display", display: "swap" });
+// Arabic brand fonts (Phase 7 fix): tokens.css already names "Tajawal"
+// and "Cairo" as the Arabic body/display stacks, but until now nothing
+// actually loaded those font files, so every Arabic page silently fell
+// back to the browser's default system font. next/font self-hosts and
+// subsets these to only the Arabic glyphs actually needed, and only
+// downloads them on pages that use the font-arabic/font-arabic-display
+// Tailwind classes, so this adds no weight to English pages.
+const tajawal = Tajawal({
+  subsets: ["arabic"],
+  weight: ["400", "500", "700"],
+  variable: "--font-arabic-body",
+  display: "swap",
+});
+const cairo = Cairo({
+  subsets: ["arabic"],
+  weight: ["600", "700", "800"],
+  variable: "--font-arabic-display",
+  display: "swap",
+});
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "ar" }];
@@ -30,6 +50,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
+  // Required for next-intl to resolve the locale statically instead of
+  // reading it from request headers, which is what was forcing every
+  // route under this layout into dynamic (non-prerendered) rendering.
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "seo" });
 
   return buildMetadata({
@@ -59,13 +83,20 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
+  // Same fix as generateMetadata above, and for the same reason: must
+  // run before any other next-intl server API call in this component.
+  setRequestLocale(locale);
 
   const messages = await getMessages();
   const dir = localeDir[locale as AppLocale];
   const t = await getTranslations({ locale, namespace: "common" });
 
   return (
-    <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html
+      lang={locale}
+      dir={dir}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${tajawal.variable} ${cairo.variable}`}
+    >
       <body>
         <NextIntlClientProvider messages={messages}>
           <BrandProvider brand="cyberabeer">
@@ -85,6 +116,7 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
         <JsonLd data={[organizationSchema(), websiteSchema(locale as AppLocale)]} />
         <AnalyticsScript />
+        <RoutePageView />
       </body>
     </html>
   );
