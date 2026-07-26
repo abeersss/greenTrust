@@ -10,6 +10,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { getVerifiedTestimonials } from "@/lib/content/social-proof";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
+import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { Bot, ShieldAlert, Atom, FileCheck2 } from "lucide-react";
 
 const pillarIcons = [Bot, ShieldAlert, Atom, FileCheck2];
@@ -42,6 +43,7 @@ export default async function GreenTrustPage({ params }: { params: Promise<{ loc
 
   return (
     <div data-brand="greentrust">
+      <PageViewTracker event="greentrust_viewed" props={{ locale: l }} />
       <JsonLd data={breadcrumbSchema(l, [{ name: tNav("greentrust"), path: "greentrust" }])} />
 
       <div className="mx-auto max-w-6xl px-4 pt-8 tablet:px-6">
@@ -103,7 +105,7 @@ export default async function GreenTrustPage({ params }: { params: Promise<{ loc
             {testimonials.map((testimonial) => (
               <Card key={testimonial.id}>
                 <CardHeader>
-                  <CardDescription className="text-base italic">"{testimonial.quote}"</CardDescription>
+                  <CardDescription className="text-base italic">&ldquo;{testimonial.quote}&rdquo;</CardDescription>
                   <p className="mt-2 text-sm font-semibold text-text-primary">{testimonial.authorName}</p>
                   {(testimonial.authorTitle || testimonial.authorOrganization) && (
                     <p className="text-xs text-text-muted">
