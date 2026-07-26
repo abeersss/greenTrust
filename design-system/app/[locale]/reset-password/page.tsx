@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ResetPasswordForm } from "@/components/forms/reset-password-form";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 
 export async function generateMetadata({
@@ -19,31 +18,25 @@ export async function generateMetadata({
 }
 
 /**
- * Landing point for the Supabase password-recovery email link. The
- * link carries a one-time `code` query param (PKCE recovery flow);
- * exchanging it here, in a Server Component, establishes a short-lived
- * recovery session via the auth cookie before the password form
- * renders, so `updatePassword` (lib/actions/auth.ts) has an
- * authenticated user to act on. An invalid or already-used code simply
- * fails the exchange silently here; `updatePassword` then reports the
- * clear "link expired" error itself rather than this page guessing.
+ * Landing point after the Supabase password-recovery email link.
+ * The link itself now points to /auth/confirm (see that route),
+ * which exchanges the one-time recovery token for a session - via a
+ * writable Route Handler cookie, not a Server Component render - and
+ * only then redirects the browser here. By the time this page runs,
+ * the recovery session already exists as a cookie, so there is
+ * nothing left for this Server Component to exchange; it just renders
+ * the form. updatePassword (lib/actions/auth.ts) checks for that
+ * session itself and reports a clear "link expired" error if it's
+ * missing, e.g. because the link was already used or has timed out.
  */
 export default async function ResetPasswordPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ code?: string }>;
 }) {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
   const l = locale as AppLocale;
-
-  const { code } = await searchParams;
-  if (code) {
-    const supabase = await createSupabaseServerClient();
-    await supabase.auth.exchangeCodeForSession(code);
-  }
 
   const t = await getTranslations({ locale, namespace: "auth.resetPassword" });
 
