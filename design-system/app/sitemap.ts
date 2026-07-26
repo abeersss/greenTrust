@@ -33,14 +33,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
 
   for (const path of staticPaths) {
-    const languages: Record<string, string> = {};
+    const urlByLocale = new Map<string, string>();
     for (const locale of locales) {
-      languages[locale] = `${siteUrl}/${locale}${path ? `/${path}` : ""}`;
+      urlByLocale.set(locale, `${siteUrl}/${locale}${path ? `/${path}` : ""}`);
     }
+    // `noUncheckedIndexedAccess` means a plain object's index signature
+    // reads back as `string | undefined`; a Map plus Object.fromEntries
+    // avoids that without needing a non-null assertion, since every
+    // locale was just set above.
+    const languages = Object.fromEntries(urlByLocale);
 
     for (const locale of locales) {
       entries.push({
-        url: languages[locale],
+        url: urlByLocale.get(locale) ?? `${siteUrl}/${locale}`,
         lastModified: new Date(),
         changeFrequency: path === "" ? "weekly" : "monthly",
         priority: path === "" ? 1 : path === "challenge/first-defender" ? 0.8 : 0.7,
