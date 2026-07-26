@@ -111,7 +111,9 @@ export function QuickAssessment({
   }
 
   if (!isComplete) {
-    const question = questions[step];
+    // Non-null: this branch only runs while step < questions.length
+    // (the isComplete check above), so step always indexes a real entry.
+    const question = questions[step]!;
     return (
       <div className="space-y-6">
         <AssessmentProgress
