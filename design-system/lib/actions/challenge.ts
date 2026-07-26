@@ -283,3 +283,47 @@ export async function registerAndClaimChallenge(
     );
   }
 }
+
+
+const claimChallengeForCurrentUserSchema = z.object({
+    anonId: z.string().uuid(),
+    challengeKey: z.literal(FIRST_DEFENDER_CHALLENGE_KEY),
+});
+
+/**
+ * QA/production fix (2026-07-26): the challenge completion screen was
+ * built anonymous-first and only ever claims a result during a brand
+ * new registerAndClaimChallenge signup. A visitor who is already
+ * logged in while playing (a real, common case, not just a test
+ * artifact) had no code path that attached their finished run to their
+ * existing account: the account page kept showing 0 XP and no badges
+ * after a completed, scored run. This reuses the same claimForUser
+ * helper registerAndClaimChallenge already relies on, so idempotency
+ * and RLS-safe service-role writes behave identically; it only adds
+ * the missing "I already have an account" branch.
+ */
+export async function claimChallengeForCurrentUser(
+    input: z.infer<typeof claimChallengeForCurrentUserSchema>
+  ): Promise<ActionResult<RegisterAndClaimData>> {
+    const parsed = claimChallengeForCurrentUserSchema.safeParse(input);
+    if (!parsed.success) {
+          return actionError("Invalid input", parsed.error.flatten().fieldErrors as Record<string, string[]>);
+    }
+
+  const supabase = await createSupabaseServerClient();
+    const {
+          data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+          return actionError("You must be logged in to save this result to your account.");
+    }
+
+  try {
+        const admin = createSupabaseServiceRoleClient();
+        const claim = await claimForUser(admin, user.id, parsed.data.anonId, parsed.data.challengeKey);
+        return actionSuccess(claim);
+  } catch (err) {
+        console.error("claimChallengeForCurrentUser failed", err);
+        return actionError("We could not save this result to your account. Please try again.");
+  }
+}
