@@ -24,6 +24,9 @@ export interface ChallengeCompletionScreenProps {
    *  visit (read back from localStorage), so the register form should
    *  not be shown again. */
   alreadyRegistered?: boolean;
+  /** True if the visitor already has a session; suppresses the
+  * "create an account" prompt so a logged-in user never sees it. */
+  isAuthenticated?: boolean;
   /** The XP total recorded at claim time, shown instead of `xpEarned`
    *  once `alreadyRegistered` is true so a reload reflects the badge
    *  bonus that was actually awarded. */
@@ -54,6 +57,7 @@ export function ChallengeCompletionScreen({
   alreadyRegistered,
   claimedXp,
   onClaimed,
+  isAuthenticated,
 }: ChallengeCompletionScreenProps) {
   const t = useTranslations("challenge.firstDefender.completion");
   const tBadge = useTranslations("challenge.firstDefender");
@@ -64,7 +68,7 @@ export function ChallengeCompletionScreen({
   const [showRegisterForm, setShowRegisterForm] = React.useState(true);
   const [shareStatus, setShareStatus] = React.useState<"idle" | "copied">("idle");
 
-  const isSaved = alreadyRegistered || Boolean(registeredState);
+      const isSaved = alreadyRegistered || Boolean(registeredState) || Boolean(isAuthenticated);
   const displayXp = registeredState ? registeredState.xpAwarded : alreadyRegistered ? (claimedXp ?? xpEarned) : xpEarned;
 
   function handleRegistered(result: { xpAwarded: number; badgeAwarded: boolean }) {
