@@ -27,7 +27,7 @@ import {
   clearChallengeProgress,
   type ChallengeLocalProgress,
 } from "@/lib/challenges/anon-session";
-import { saveAnonymousChallengeProgress } from "@/lib/actions/challenge";
+import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser } from "@/lib/actions/challenge";
 import { trackEvent } from "@/lib/analytics/track";
 import { ShieldCheck } from "lucide-react";
 import type { AppLocale } from "@/lib/i18n/config";
@@ -35,6 +35,7 @@ import type { AppLocale } from "@/lib/i18n/config";
 export interface FirstDefenderChallengeProps {
   locale: AppLocale;
   shareUrl: string;
+  isAuthenticated: boolean;
 }
 
 type Screen = "intro" | "step" | "feedback" | "completion";
@@ -50,7 +51,7 @@ type Screen = "intro" | "step" | "feedback" | "completion";
  * survives a cleared browser too; it is a best-effort backup, never a
  * blocking dependency for play.
  */
-export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChallengeProps) {
+export function FirstDefenderChallenge({ locale, shareUrl, isAuthenticated }: FirstDefenderChallengeProps) {
   const t = useTranslations("challenge.firstDefender");
   const [screen, setScreen] = React.useState<Screen>("intro");
   const [anonId, setAnonId] = React.useState<string>("");
@@ -63,6 +64,7 @@ export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChalle
   const [claimedXp, setClaimedXp] = React.useState<number | undefined>(undefined);
   const hasStartedAnalytics = React.useRef(false);
   const hydrated = React.useRef(false);
+  const autoClaimAttempted = React.useRef(false);
 
   React.useEffect(() => {
     if (hydrated.current) return;
@@ -86,6 +88,28 @@ export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChalle
       }
     }
   }, []);
+
+/**
+* Fix (2026-07-26): a visitor who reaches the completion screen while
+* already logged in never goes through registerAndClaimChallenge (that
+* flow is only reachable from InlineRegisterForm), so without this
+* effect their finished run was never attached to their account. This
+* mirrors the same claim call InlineRegisterForm makes after signup,
+* just triggered automatically instead of by a form submit, and guarded
+* so it only ever fires once per completed run.
+*/
+  React.useEffect(function () {
+    if (screen !== "completion") return;
+    if (!isAuthenticated) return;
+    if (claimed) return;
+    if (autoClaimAttempted.current) return;
+    autoClaimAttempted.current = true;
+    claimChallengeForCurrentUser({ anonId: anonId, challengeKey: FIRST_DEFENDER_CHALLENGE_KEY }).then(function (result) {
+      if (result.status === "success" && result.data) {
+        handleClaimed({ xpAwarded: result.data.xpAwarded, badgeAwarded: result.data.badgeAwarded });
+      }
+    });
+  }, [screen, isAuthenticated, claimed, anonId]);
 
   function persist(nextStepsState: FirstDefenderStepsState, nextStepIndex: number, completed: boolean) {
     const progress: ChallengeLocalProgress = {
@@ -285,6 +309,7 @@ export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChalle
         alreadyRegistered={claimed}
         claimedXp={claimedXp}
         onClaimed={handleClaimed}
+        isAuthenticated={isAuthenticated}
       />
     </div>
   );
