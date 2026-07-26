@@ -133,7 +133,10 @@ export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChalle
     trackEvent("hint_used", {
       locale,
       challengeKey: FIRST_DEFENDER_CHALLENGE_KEY,
-      step: firstDefenderSteps[stepIndex].id,
+      // Non-null: stepIndex is only ever set to 0, stepIndex + 1 (guarded
+      // by isLastStep in handleContinue), or clamped via Math.min on
+      // hydration, so it always indexes a real step.
+      step: firstDefenderSteps[stepIndex]!.id,
     });
   }
 
@@ -141,13 +144,13 @@ export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChalle
     trackEvent("challenge_hotspot_inspected", {
       locale,
       challengeKey: FIRST_DEFENDER_CHALLENGE_KEY,
-      step: firstDefenderSteps[stepIndex].id,
+      step: firstDefenderSteps[stepIndex]!.id,
       hotspot,
     });
   }
 
   function handleChooseAction(action: ChallengeAction) {
-    const step = firstDefenderSteps[stepIndex];
+    const step = firstDefenderSteps[stepIndex]!;
     const score = computeStepScore(step, action, hintUsedCurrent);
     const outcome: "correct" | "incorrect" | "phished" =
       score > 0 ? "correct" : isRiskyChoice(action) ? "phished" : "incorrect";
@@ -243,7 +246,7 @@ export function FirstDefenderChallenge({ locale, shareUrl }: FirstDefenderChalle
     );
   }
 
-  const step = firstDefenderSteps[stepIndex];
+  const step = firstDefenderSteps[stepIndex]!;
   const progressLabel = t("progressLabel", { current: stepIndex + 1, total: firstDefenderSteps.length });
 
   if (screen === "step") {
