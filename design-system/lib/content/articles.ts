@@ -88,7 +88,15 @@ export async function getPublishedArticles(locale: AppLocale): Promise<ArticleSu
 
     if (error) throw error;
 
-    return ((data ?? []) as ArticleTranslationRow[]).map((row) => ({
+    // Cast through `unknown`: with no generated `Database` types wired up,
+    // supabase-js's default inference types every embedded relation as an
+    // array (it can't see the FK cardinality), so it infers `articles` as
+    // an array here even though PostgREST returns a single object for this
+    // many-to-one embed at runtime. That mismatch is wide enough that TS
+    // refuses a direct `as ArticleTranslationRow[]` cast ("insufficient
+    // overlap"), even though the shape is correct once the real DB types
+    // are generated.
+    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => ({
       id: row.articles.id,
       slug: row.slug,
       title: row.title,
@@ -128,7 +136,11 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
     if (error) throw error;
     if (!data) return null;
 
-    const row = data as ArticleTranslationRow;
+    // Same `unknown` double-cast as getPublishedArticles above, and for
+    // the same reason: no generated `Database` types, so supabase-js's
+    // inferred shape for the embedded `articles` relation doesn't
+    // structurally overlap with the single-object `ArticleJoinRow` type.
+    const row = data as unknown as ArticleTranslationRow;
     return {
       id: row.articles.id,
       slug: row.slug,
