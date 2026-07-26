@@ -1,0 +1,148 @@
+import { siteUrl, siteName, sameAsLinks } from "./site";
+import type { AppLocale } from "@/lib/i18n/config";
+
+/**
+ * JSON-LD builders. Every field here is either a structural fact
+ * (URLs derived from routes, dates) or drawn directly from verified
+ * project information (Dr. Abeer's real credentials and
+ * memberships). None of these builders accept or fabricate customer
+ * counts, review ratings, or testimonial content; AggregateRating and
+ * Review types are deliberately not implemented here for that reason.
+ */
+
+export function organizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteName,
+    url: siteUrl,
+    sameAs: sameAsLinks,
+    founder: {
+      "@type": "Person",
+      name: "Dr. Abeer Alshammari",
+    },
+  };
+}
+
+export function personSchema(locale: AppLocale) {
+  const url = `${siteUrl}/${locale}/about`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Dr. Abeer Alshammari",
+    url,
+    honorificPrefix: "Dr.",
+    jobTitle: "Cybersecurity Governance, Risk, and Compliance Practitioner",
+    knowsAbout: [
+      "Cybersecurity governance",
+      "Risk management",
+      "Regulatory compliance",
+      "Third-party risk management",
+      "Post-quantum cryptography",
+      "AI governance",
+    ],
+    hasCredential: [
+      "Doctorate in Cybersecurity and Information Assurance",
+      "CISM, Certified Information Security Manager",
+      "CISSP, Certified Information Systems Security Professional",
+      "ISO/IEC 27001:2022 Lead Auditor",
+      "GRCP and GRCA, Governance, Risk and Compliance Professional and Auditor",
+    ].map((name) => ({ "@type": "EducationalOccupationalCredential", name })),
+    memberOf: [
+      { "@type": "Organization", name: "ISACA", url: "https://www.isaca.org" },
+      { "@type": "Organization", name: "ISC2", url: "https://www.isc2.org" },
+      { "@type": "Organization", name: "IEEE", url: "https://www.ieee.org" },
+      { "@type": "Organization", name: "Women in Cybersecurity (WiCyS)", url: "https://www.wicys.org" },
+      {
+        "@type": "Organization",
+        name: "International Leadership Association (ILA)",
+        url: "https://www.ila-net.org",
+      },
+      { "@type": "Organization", name: "Australian Computer Society (ACS)", url: "https://www.acs.org.au" },
+      { "@type": "Organization", name: "Gartner", url: "https://www.gartner.com" },
+      { "@type": "Organization", name: "Info-Tech Research Group", url: "https://www.infotech.com" },
+    ],
+  };
+}
+
+export function websiteSchema(locale: AppLocale) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: `${siteUrl}/${locale}`,
+    inLanguage: locale,
+  };
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  path: string; // path after locale, no leading slash, "" for home
+}
+
+export function breadcrumbSchema(locale: AppLocale, items: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${siteUrl}/${locale}${item.path ? `/${item.path}` : ""}`,
+    })),
+  };
+}
+
+export interface ArticleSchemaInput {
+  locale: AppLocale;
+  slug: string;
+  title: string;
+  description: string | null;
+  datePublished: string | null;
+  authorName: string | null;
+  imageUrl: string | null;
+}
+
+export interface LearningResourceSchemaInput {
+  locale: AppLocale;
+  path: string;
+  name: string;
+  description: string;
+  isFree: boolean;
+}
+
+/**
+ * Used for the First Defender challenge (Milestone 2). LearningResource
+ * is a real schema.org type (not invented for this project) with
+ * `teaches`/`isAccessibleForFree` properties that fit an interactive,
+ * free, educational scenario better than Quiz, which schema.org does
+ * not formally define as a top-level type.
+ */
+export function learningResourceSchema(input: LearningResourceSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: input.name,
+    description: input.description,
+    url: `${siteUrl}/${input.locale}/${input.path}`,
+    inLanguage: input.locale,
+    isAccessibleForFree: input.isFree,
+    learningResourceType: "Interactive scenario",
+    provider: { "@type": "Organization", name: siteName },
+  };
+}
+
+export function articleSchema(input: ArticleSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    description: input.description ?? undefined,
+    datePublished: input.datePublished ?? undefined,
+    inLanguage: input.locale,
+    url: `${siteUrl}/${input.locale}/insights/${input.slug}`,
+    image: input.imageUrl ?? undefined,
+    author: input.authorName ? { "@type": "Person", name: input.authorName } : undefined,
+    publisher: { "@type": "Organization", name: siteName },
+  };
+}
