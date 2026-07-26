@@ -1,10 +1,10 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Button — the single most-reused control in the system. Every color
+ * Button - the single most-reused control in the system. Every color
  * used here is a token (bg-primary, text-danger-600, etc.), so this
  * exact component automatically restyles for GreenTrust vs Labs vs
  * CyberAbeer just from the `data-brand` attribute on <html>; nothing
@@ -70,7 +70,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             aria-hidden="true"
           />
         )}
-        {children}
+        {/* Slottable marks which child Radix's Slot should merge props
+            onto when asChild is used; without it, Slot always sees two
+            children (this array plus the spinner slot above) and throws
+            "expected a single React element child", even when `loading`
+            is false, because the spinner's `false` still occupies a
+            children-array slot. */}
+        <Slottable>{children}</Slottable>
       </Comp>
     );
   }
