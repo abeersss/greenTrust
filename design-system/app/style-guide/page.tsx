@@ -47,7 +47,7 @@ import { ScoreTrendChart } from "@/components/charts/score-trend-chart";
 import type { Brand } from "@/lib/utils";
 
 /**
- * Style Guide — NOT an application page. This is the design system's
+ * Style Guide - NOT an application page. This is the design system's
  * own QA surface: every component in one place so a brand + dark-mode
  * + RTL combination can be visually verified before any real
  * GreenTrust/Labs/CyberAbeer page is built on top of this library.
@@ -101,9 +101,9 @@ export default function StyleGuidePage() {
 
         <main className="flex-1 space-y-16 p-6 tablet:p-10">
           <section>
-            <h1 className="font-display text-4xl font-bold text-text-primary">Design System — Style Guide</h1>
+            <h1 className="font-display text-4xl font-bold text-text-primary">Design System - Style Guide</h1>
             <p className="mt-2 max-w-2xl text-text-secondary">
-              Current brand: <Badge variant="primary" className="capitalize">{brand}</Badge> — switch brands from
+              Current brand: <Badge variant="primary" className="capitalize">{brand}</Badge> - switch brands from
               the sidebar, toggle dark mode from the navbar. Every component below reads the same tokens.
             </p>
           </section>
@@ -264,7 +264,7 @@ export default function StyleGuidePage() {
                   <DrawerHeader>
                     <DrawerTitle>Agent details</DrawerTitle>
                   </DrawerHeader>
-                  <p className="text-sm text-text-secondary">Slides from the trailing edge — the opposite physical side in RTL.</p>
+                  <p className="text-sm text-text-secondary">Slides from the trailing edge - the opposite physical side in RTL.</p>
                 </DrawerContent>
               </Drawer>
 
@@ -359,7 +359,7 @@ export default function StyleGuidePage() {
             </div>
             <ChallengeCard
               title="Spot the Social Engineering Attempt"
-              description="A new scenario every week — no sandbox setup required."
+              description="A new scenario every week - no sandbox setup required."
               xpReward={75}
               endsAt="Ends in 3 days"
               onStart={() => {}}
@@ -387,7 +387,7 @@ export default function StyleGuidePage() {
               onChange={(v) => setSingleAnswer(v as string)}
               options={[
                 { id: "yes", label: "Yes, fully maintained" },
-                { id: "partial", label: "Partially — some agents are untracked" },
+                { id: "partial", label: "Partially - some agents are untracked" },
                 { id: "no", label: "No" },
               ]}
             />
@@ -407,7 +407,7 @@ export default function StyleGuidePage() {
               title="Your GreenTrust Quick Assessment"
               score={68}
               scoreLabel="Governance Score"
-              summary="Your AI agent governance is developing — a few gaps need attention."
+              summary="Your AI agent governance is developing - a few gaps need attention."
               emailCaptured={false}
               onRequestReport={() => {}}
             />
