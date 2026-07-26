@@ -101,7 +101,7 @@ export default async function LabsPage({ params }: { params: Promise<{ locale: s
             {testimonials.map((testimonial) => (
               <Card key={testimonial.id}>
                 <CardHeader>
-                  <CardDescription className="text-base italic">"{testimonial.quote}"</CardDescription>
+                  <CardDescription className="text-base italic">&ldquo;{testimonial.quote}&rdquo;</CardDescription>
                   <p className="mt-2 text-sm font-semibold text-text-primary">{testimonial.authorName}</p>
                 </CardHeader>
               </Card>
