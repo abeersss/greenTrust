@@ -3,6 +3,14 @@ import { locales } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site";
 import { getPublishedArticles } from "@/lib/content/articles";
 
+// getPublishedArticles goes through the cookie-aware Supabase server
+// client, which makes this route use a dynamic API (`cookies`) and
+// therefore ineligible for build-time static generation. Rendering it
+// per-request instead (rather than reworking the shared articles
+// query to a cookie-free client) is the simplest fix for a low-traffic
+// route like this.
+export const dynamic = "force-dynamic";
+
 /**
  * Every indexable static route, in both locales, each with a
  * `languages` alternates map so the sitemap itself reinforces the
