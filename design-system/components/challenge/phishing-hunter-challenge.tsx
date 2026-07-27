@@ -230,7 +230,16 @@ export function PhishingHunterChallenge({ locale, shareUrl, isAuthenticated }: P
     const id = getOrCreateAnonId();
     setAnonId(id);
     const saved = loadChallengeProgress<PhishingHunterStepsState>(PHISHING_HUNTER_CHALLENGE_KEY);
-    if (saved) {
+    // Defensive shape check: this challenge key was previously used by
+    // the old First Defender quiz, whose stepsState was a completely
+    // different shape (an object keyed by step id, no
+    // investigatedEvidenceIds array). A returning visitor's browser may
+    // still hold that old localStorage entry; blindly trusting it here
+    // crashed the page in production ("Cannot read properties of
+    // undefined (reading 'length')") the first time this shipped.
+    // Anything that doesn't look like real Phishing Hunter state is
+    // treated as absent, and play just starts fresh from the briefing.
+    if (saved && Array.isArray(saved.stepsState?.investigatedEvidenceIds)) {
       setState(saved.stepsState);
       setStartedAt(saved.startedAt);
       setClaimed(Boolean(saved.claimed));
