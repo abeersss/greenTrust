@@ -7,12 +7,12 @@ import { Card, CardHeader, CardDescription } from "@/components/ui/card";
 import { SiteBreadcrumb } from "@/components/site/site-breadcrumb";
 import { JsonLd } from "@/components/site/json-ld";
 import { LabsTrackCard } from "@/components/labs/labs-track-card";
+import { DecisionLabsFeaturedCard } from "@/components/labs/decision-labs-featured-card";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { getVerifiedTestimonials } from "@/lib/content/social-proof";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { Link } from "@/lib/i18n/navigation";
-import { trackEvent } from "@/lib/analytics/track";
 import { FlaskConical, Flag, ListChecks, Flame } from "lucide-react";
 
 /**
@@ -37,8 +37,8 @@ const featuredCopy = {
   kicker: { en: "Flagship experience", ar: "التجربة الرئيسية" },
   title: { en: "CyberAbeer Decision Labs", ar: "معامل قرار CyberAbeer" },
   body: {
-    en: "Learn by investigating, deciding, and seeing the consequence. Full cybersecurity decision simulations, not quizzes.",
-    ar: "تعلّم من خلال التحقيق واتخاذ القرار ومشاهدة النتيجة. محاكاة قرارات أمن سيبراني كاملة، وليست اختبارات.",
+    en: "Learn cybersecurity by doing.",
+    ar: "تعلّم الأمن السيبراني بالممارسة.",
   },
   cta: { en: "Explore Decision Labs", ar: "استكشف معامل القرار" },
 } as const;
@@ -124,32 +124,15 @@ export default async function LabsPage({ params }: { params: Promise<{ locale: s
           modes, shown smaller and below a "Other ways to practice"
           subheading (hierarchy directive, 2026-07-27). */}
       <section className="mx-auto max-w-6xl px-4 py-12 tablet:px-6">
-        <Link
+        <DecisionLabsFeaturedCard
+          locale={l}
           href="/labs/decision-labs"
-          onClick={() => trackEvent("labs_category_clicked", { locale: l, category: "scenario" })}
-          className="group block overflow-hidden rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-surface p-8 shadow-sm transition-all duration-fast hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 tablet:p-12"
-        >
-          <Badge variant="primary" className="mb-4">
-            {featuredCopy.kicker[l]}
-          </Badge>
-          <div className="flex flex-col items-start gap-6 tablet:flex-row tablet:items-center tablet:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700">
-                <FlaskConical className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <div>
-                <h2 className="font-display text-2xl font-bold text-text-primary tablet:text-3xl">
-                  {featuredCopy.title[l]}
-                </h2>
-                <p className="mt-2 max-w-xl text-text-secondary">{featuredCopy.body[l]}</p>
-              </div>
-            </div>
-            <span className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-white transition-transform duration-fast group-hover:gap-3">
-              {featuredCopy.cta[l]}
-              <span aria-hidden="true">{l === "ar" ? "←" : "→"}</span>
-            </span>
-          </div>
-        </Link>
+          icon={<FlaskConical className="h-7 w-7" aria-hidden="true" />}
+          kicker={featuredCopy.kicker[l]}
+          title={featuredCopy.title[l]}
+          body={featuredCopy.body[l]}
+          ctaLabel={featuredCopy.cta[l]}
+        />
 
         <h3 className="mt-10 text-center text-sm font-semibold uppercase tracking-wide text-text-muted">
           {secondaryHeading[l]}
