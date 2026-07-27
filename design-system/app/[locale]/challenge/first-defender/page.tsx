@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { FirstDefenderChallenge } from "@/components/challenge/first-defender-challenge";
+import { PhishingHunterChallenge } from "@/components/challenge/phishing-hunter-challenge";
 import { JsonLd } from "@/components/site/json-ld";
 import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -27,13 +27,17 @@ export async function generateMetadata({
 }
 
 /**
- * The Milestone 2 landing page: a free, bilingual, no-signup-required
- * interactive challenge, built as its own minimal-chrome route rather
- * than nested deep in Free Tools or Labs, because its primary traffic
- * source is a direct Instagram bio/story link, not on-site navigation.
- * Layout stays a single narrow column at every breakpoint (no sidebar,
- * no wide hero) since the whole page is designed to be legible and
- * fast on a phone opened from Instagram's in-app browser.
+ * CONTINUE BATCH A (2026-07-27): this route now renders the rebuilt
+ * CyberAbeer Decision Labs™ Phishing Hunter™ investigation workstation
+ * (components/challenge/phishing-hunter-challenge.tsx) instead of the
+ * old First Defender quiz component. The URL slug and the underlying
+ * challenge key ("first_defender_spot_the_phish") are both unchanged,
+ * so every existing bio/story link, the seeded `challenges` row, and
+ * the badge mapping in lib/challenges/keys.ts keep working without a
+ * migration; only the gameplay behind this route is new. The old quiz
+ * component (components/challenge/first-defender-challenge.tsx) is
+ * kept in the repo, still compiling, but is no longer reachable from
+ * any route.
  */
 export default async function FirstDefenderChallengePage({
   params,
@@ -52,7 +56,7 @@ export default async function FirstDefenderChallengePage({
   const user = authResult.data.user;
 
   return (
-    <div data-brand="labs" className="mx-auto max-w-2xl px-4 py-8 tablet:px-6 tablet:py-12">
+    <div data-brand="labs" className="mx-auto max-w-6xl px-4 py-8 tablet:px-6 tablet:py-12">
       <PageViewTracker event="challenge_viewed" props={{ locale: l }} />
       <JsonLd
         data={[
@@ -66,7 +70,7 @@ export default async function FirstDefenderChallengePage({
           }),
         ]}
       />
-              <FirstDefenderChallenge locale={l} shareUrl={shareUrl} isAuthenticated={Boolean(user)} />
+      <PhishingHunterChallenge locale={l} shareUrl={shareUrl} isAuthenticated={Boolean(user)} />
     </div>
   );
 }
