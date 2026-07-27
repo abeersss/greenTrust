@@ -7,27 +7,35 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { registerAndClaimChallenge } from "@/lib/actions/challenge";
 import { trackEvent } from "@/lib/analytics/track";
-import { FIRST_DEFENDER_CHALLENGE_KEY } from "@/lib/challenges/first-defender";
+import type { ChallengeKey } from "@/lib/challenges/keys";
 import type { AppLocale } from "@/lib/i18n/config";
 
 export interface InlineRegisterFormProps {
   locale: AppLocale;
   anonId: string;
+  challengeKey: ChallengeKey;
+  registerCta: string;
   onRegistered: (result: { xpAwarded: number; badgeAwarded: boolean }) => void;
 }
 
 /**
- * A compact registration form embedded directly in the challenge
+ * A compact registration form embedded directly in a challenge
  * completion screen, never a redirect to /register: navigating away
  * would risk losing the completion screen's state, and the whole point
  * of this milestone is that registering must never destroy progress.
  * On success it calls `registerAndClaimChallenge` (not the general
  * `registerUser` action), which both creates the account and claims
  * the already-completed anonymous result in one trip.
+ *
+ * Genericized (2026-07-27) so Phishing Hunter's Mission Complete screen
+ * can reuse this exact form instead of forking it: `challengeKey` and
+ * `registerCta` are now caller-supplied props instead of hardcoded to
+ * First Defender's constant and translation key, since new lab copy is
+ * authored as inline bilingual objects rather than routed through the
+ * shared messages/en.json and messages/ar.json catalogs.
  */
-export function InlineRegisterForm({ locale, anonId, onRegistered }: InlineRegisterFormProps) {
+export function InlineRegisterForm({ locale, anonId, challengeKey, registerCta, onRegistered }: InlineRegisterFormProps) {
   const t = useTranslations("auth.register");
-  const tChallenge = useTranslations("challenge.firstDefender.completion");
   const [status, setStatus] = React.useState<"idle" | "loading" | "error">("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const startedRef = React.useRef(false);
@@ -35,7 +43,7 @@ export function InlineRegisterForm({ locale, anonId, onRegistered }: InlineRegis
   function handleFocus() {
     if (startedRef.current) return;
     startedRef.current = true;
-    trackEvent("registration_started", { locale, challengeKey: FIRST_DEFENDER_CHALLENGE_KEY });
+    trackEvent("registration_started", { locale, challengeKey });
   }
 
   async function handleSubmit(formData: FormData) {
@@ -59,13 +67,13 @@ export function InlineRegisterForm({ locale, anonId, onRegistered }: InlineRegis
       locale,
       website: String(formData.get("website") ?? ""),
       anonId,
-      challengeKey: FIRST_DEFENDER_CHALLENGE_KEY,
+      challengeKey,
     });
 
     if (result.status === "success" && result.data) {
-      trackEvent("registration_completed", { locale, challengeKey: FIRST_DEFENDER_CHALLENGE_KEY });
+      trackEvent("registration_completed", { locale, challengeKey });
       if (result.data.badgeAwarded) {
-        trackEvent("badge_earned", { locale, challengeKey: FIRST_DEFENDER_CHALLENGE_KEY });
+        trackEvent("badge_earned", { locale, challengeKey });
       }
       onRegistered(result.data);
     } else {
@@ -97,7 +105,7 @@ export function InlineRegisterForm({ locale, anonId, onRegistered }: InlineRegis
         <Input type="password" name="confirmPassword" required minLength={8} autoComplete="new-password" />
       </FormField>
       <Button type="submit" loading={status === "loading"} className="w-full">
-        {tChallenge("registerCta")}
+        {registerCta}
       </Button>
       {status === "error" && <p className="text-sm text-danger-600">{errorMessage}</p>}
     </form>

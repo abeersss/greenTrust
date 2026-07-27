@@ -50,6 +50,11 @@ type Screen = "intro" | "step" | "feedback" | "completion";
  * Supabase on every step so a completed-but-unregistered result
  * survives a cleared browser too; it is a best-effort backup, never a
  * blocking dependency for play.
+ *
+ * Compensating edit (2026-07-27): anon-session.ts's persistence types
+ * are now generic (to support Phishing Hunter's very different state
+ * shape), so the one load call here that used to infer its type now
+ * states it explicitly.
  */
 export function FirstDefenderChallenge({ locale, shareUrl, isAuthenticated }: FirstDefenderChallengeProps) {
   const t = useTranslations("challenge.firstDefender");
@@ -72,7 +77,7 @@ export function FirstDefenderChallenge({ locale, shareUrl, isAuthenticated }: Fi
 
     const id = getOrCreateAnonId();
     setAnonId(id);
-    const saved = loadChallengeProgress(FIRST_DEFENDER_CHALLENGE_KEY);
+    const saved = loadChallengeProgress<FirstDefenderStepsState>(FIRST_DEFENDER_CHALLENGE_KEY);
     if (saved) {
       setStepsState(saved.stepsState);
       setStartedAt(saved.startedAt);
@@ -89,15 +94,15 @@ export function FirstDefenderChallenge({ locale, shareUrl, isAuthenticated }: Fi
     }
   }, []);
 
-/**
-* Fix (2026-07-26): a visitor who reaches the completion screen while
-* already logged in never goes through registerAndClaimChallenge (that
-* flow is only reachable from InlineRegisterForm), so without this
-* effect their finished run was never attached to their account. This
-* mirrors the same claim call InlineRegisterForm makes after signup,
-* just triggered automatically instead of by a form submit, and guarded
-* so it only ever fires once per completed run.
-*/
+  /**
+   * Fix (2026-07-26): a visitor who reaches the completion screen while
+   * already logged in never goes through registerAndClaimChallenge (that
+   * flow is only reachable from InlineRegisterForm), so without this
+   * effect their finished run was never attached to their account. This
+   * mirrors the same claim call InlineRegisterForm makes after signup,
+   * just triggered automatically instead of by a form submit, and guarded
+   * so it only ever fires once per completed run.
+   */
   React.useEffect(function () {
     if (screen !== "completion") return;
     if (!isAuthenticated) return;
@@ -112,7 +117,7 @@ export function FirstDefenderChallenge({ locale, shareUrl, isAuthenticated }: Fi
   }, [screen, isAuthenticated, claimed, anonId]);
 
   function persist(nextStepsState: FirstDefenderStepsState, nextStepIndex: number, completed: boolean) {
-    const progress: ChallengeLocalProgress = {
+    const progress: ChallengeLocalProgress<FirstDefenderStepsState> = {
       currentStepIndex: nextStepIndex,
       stepsState: nextStepsState,
       startedAt: startedAt || new Date().toISOString(),

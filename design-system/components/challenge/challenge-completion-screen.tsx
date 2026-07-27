@@ -21,19 +21,19 @@ export interface ChallengeCompletionScreenProps {
   shareUrl: string;
   onRestart: () => void;
   /** True if this result was already claimed by an account in a previous
-   *  visit (read back from localStorage), so the register form should
-   *  not be shown again. */
+   * visit (read back from localStorage), so the register form should
+   * not be shown again. */
   alreadyRegistered?: boolean;
   /** True if the visitor already has a session; suppresses the
-  * "create an account" prompt so a logged-in user never sees it. */
+   * "create an account" prompt so a logged-in user never sees it. */
   isAuthenticated?: boolean;
   /** The XP total recorded at claim time, shown instead of `xpEarned`
-   *  once `alreadyRegistered` is true so a reload reflects the badge
-   *  bonus that was actually awarded. */
+   * once `alreadyRegistered` is true so a reload reflects the badge
+   * bonus that was actually awarded. */
   claimedXp?: number;
   /** Bubbles the claim result up so the orchestrator can persist
-   *  `claimed`/`claimedXp` into localStorage; never destroys progress,
-   *  only adds to it. */
+   * `claimed`/`claimedXp` into localStorage; never destroys progress,
+   * only adds to it. */
   onClaimed: (result: { xpAwarded: number; badgeAwarded: boolean }) => void;
 }
 
@@ -46,6 +46,13 @@ export interface ChallengeCompletionScreenProps {
  * waitlist-only per Milestone 1's scope). Registering here never
  * navigates away from this screen, so a visitor keeps seeing their
  * result the whole time.
+ *
+ * Compensating edit (2026-07-27): InlineRegisterForm now takes
+ * `challengeKey`/`registerCta` as props instead of hardcoding First
+ * Defender's constant and translation key internally, so it can be
+ * reused by the new Phishing Hunter completion screen. This file keeps
+ * behaving exactly as before by passing that same constant and the
+ * same translation string it already had in scope.
  */
 export function ChallengeCompletionScreen({
   locale,
@@ -68,7 +75,7 @@ export function ChallengeCompletionScreen({
   const [showRegisterForm, setShowRegisterForm] = React.useState(true);
   const [shareStatus, setShareStatus] = React.useState<"idle" | "copied">("idle");
 
-      const isSaved = alreadyRegistered || Boolean(registeredState) || Boolean(isAuthenticated);
+  const isSaved = alreadyRegistered || Boolean(registeredState) || Boolean(isAuthenticated);
   const displayXp = registeredState ? registeredState.xpAwarded : alreadyRegistered ? (claimedXp ?? xpEarned) : xpEarned;
 
   function handleRegistered(result: { xpAwarded: number; badgeAwarded: boolean }) {
@@ -145,7 +152,13 @@ export function ChallengeCompletionScreen({
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-text-secondary">{t("registerBody")}</p>
-            <InlineRegisterForm locale={locale} anonId={anonId} onRegistered={handleRegistered} />
+            <InlineRegisterForm
+              locale={locale}
+              anonId={anonId}
+              challengeKey={FIRST_DEFENDER_CHALLENGE_KEY}
+              registerCta={t("registerCta")}
+              onRegistered={handleRegistered}
+            />
             <Button
               type="button"
               variant="ghost"
