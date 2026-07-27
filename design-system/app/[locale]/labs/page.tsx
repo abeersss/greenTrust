@@ -2,17 +2,77 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardDescription } from "@/components/ui/card";
 import { SiteBreadcrumb } from "@/components/site/site-breadcrumb";
-import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { JsonLd } from "@/components/site/json-ld";
+import { LabsTrackCard } from "@/components/labs/labs-track-card";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { getVerifiedTestimonials } from "@/lib/content/social-proof";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
+import { Link } from "@/lib/i18n/navigation";
+import { trackEvent } from "@/lib/analytics/track";
 import { FlaskConical, Flag, ListChecks, Flame } from "lucide-react";
 
-const trackIcons = [FlaskConical, Flag, ListChecks];
+/**
+ * Production UX fix (2026-07-27): inline bilingual copy for the tracks
+ * section and the closing CTA section, rather than routed through
+ * messages/en.json and messages/ar.json. The previous version of this
+ * page pulled the three cards from t.raw("tracks"), which is why they
+ * had no href, no onClick, and no way to carry a category for
+ * analytics: raw translated JSON has no room for that. Everything
+ * else on this page (hero, "what it is", gamification, testimonials)
+ * is unchanged and still uses the shared "labs" message namespace.
+ *
+ * Visual hierarchy revision (2026-07-27, same day): CyberAbeer Decision
+ * Labs is the flagship product and must read as the dominant featured
+ * experience, not one of three equally-weighted cards. This section
+ * now renders Decision Labs as a large featured banner with its own
+ * prominent CTA button, followed by a "Other ways to practice"
+ * subheading and two visually secondary cards for CTF and Quick
+ * Checks (smaller, lighter, using the existing LabsTrackCard).
+ */
+const featuredCopy = {
+  kicker: { en: "Flagship experience", ar: "التجربة الرئيسية" },
+  title: { en: "CyberAbeer Decision Labs", ar: "معامل قرار CyberAbeer" },
+  body: {
+    en: "Learn by investigating, deciding, and seeing the consequence. Full cybersecurity decision simulations, not quizzes.",
+    ar: "تعلّم من خلال التحقيق واتخاذ القرار ومشاهدة النتيجة. محاكاة قرارات أمن سيبراني كاملة، وليست اختبارات.",
+  },
+  cta: { en: "Explore Decision Labs", ar: "استكشف معامل القرار" },
+} as const;
+
+const secondaryHeading = { en: "Other ways to practice", ar: "طرق أخرى للتدرب" } as const;
+
+const trackCopy = {
+  ctf: {
+    title: { en: "Capture-the-Flag Challenges", ar: "تحديات Capture the Flag" },
+    body: {
+      en: "Standalone technical challenges: find the flag, prove the exploit.",
+      ar: "تحديات تقنية مستقلة: ابحث عن العلَم وأثبت الاستغلال.",
+    },
+    cta: { en: "Explore CTF Challenges", ar: "استكشف تحديات CTF" },
+  },
+  quickCheck: {
+    title: { en: "Quick Knowledge Checks", ar: "اختبارات سريعة للمعرفة" },
+    body: {
+      en: "3-5 minute exercises: one clue, one decision, immediate feedback.",
+      ar: "تمارين مدتها 3-5 دقائق: علامة واحدة، قرار واحد، وتغذية راجعة فورية.",
+    },
+    cta: { en: "Try a Quick Challenge", ar: "جرّب اختبارًا سريعًا" },
+  },
+} as const;
+
+const journeyCopy = {
+  heading: { en: "Start Your Cyber Defender Journey", ar: "ابدأ رحلتك كمدافع سيبراني" },
+  body: {
+    en: "Practice cybersecurity through interactive simulations, visual investigations, and decision-based missions.",
+    ar: "مارس الأمن السيبراني من خلال محاكاة تفاعلية وتحقيقات مرئية ومهام قائمة على اتخاذ القرار.",
+  },
+  primaryCta: { en: "Explore CyberAbeer Labs", ar: "استكشف CyberAbeer Labs" },
+  secondaryCta: { en: "Try a Free Mission", ar: "جرّب مهمة مجانية" },
+} as const;
 
 export async function generateMetadata({
   params,
@@ -32,7 +92,6 @@ export default async function LabsPage({ params }: { params: Promise<{ locale: s
 
   const t = await getTranslations({ locale, namespace: "labs" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
-  const tracks = t.raw("tracks") as { title: string; body: string }[];
   const testimonials = await getVerifiedTestimonials("labs");
 
   return (
@@ -60,26 +119,62 @@ export default async function LabsPage({ params }: { params: Promise<{ locale: s
         <p className="mt-3 text-text-secondary">{t("whatBody")}</p>
       </section>
 
-      {/* Tracks */}
+      {/* Tracks: Decision Labs is the flagship and must dominate this
+          section visually. CTF and Quick Checks are secondary practice
+          modes, shown smaller and below a "Other ways to practice"
+          subheading (hierarchy directive, 2026-07-27). */}
       <section className="mx-auto max-w-6xl px-4 py-12 tablet:px-6">
-        <h2 className="text-center font-display text-xl font-semibold text-text-primary">
-          {t("tracksHeading")}
-        </h2>
-        <div className="mt-8 grid gap-6 tablet:grid-cols-3">
-          {tracks.map((track, index) => {
-            const Icon = trackIcons[index] ?? FlaskConical;
-            return (
-              <Card key={track.title}>
-                <CardHeader>
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-accent/10 text-accent">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <CardTitle>{track.title}</CardTitle>
-                  <CardDescription>{track.body}</CardDescription>
-                </CardHeader>
-              </Card>
-            );
-          })}
+        <Link
+          href="/labs/decision-labs"
+          onClick={() => trackEvent("labs_category_clicked", { locale: l, category: "scenario" })}
+          className="group block overflow-hidden rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-surface p-8 shadow-sm transition-all duration-fast hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 tablet:p-12"
+        >
+          <Badge variant="primary" className="mb-4">
+            {featuredCopy.kicker[l]}
+          </Badge>
+          <div className="flex flex-col items-start gap-6 tablet:flex-row tablet:items-center tablet:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700">
+                <FlaskConical className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 className="font-display text-2xl font-bold text-text-primary tablet:text-3xl">
+                  {featuredCopy.title[l]}
+                </h2>
+                <p className="mt-2 max-w-xl text-text-secondary">{featuredCopy.body[l]}</p>
+              </div>
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-white transition-transform duration-fast group-hover:gap-3">
+              {featuredCopy.cta[l]}
+              <span aria-hidden="true">{l === "ar" ? "←" : "→"}</span>
+            </span>
+          </div>
+        </Link>
+
+        <h3 className="mt-10 text-center text-sm font-semibold uppercase tracking-wide text-text-muted">
+          {secondaryHeading[l]}
+        </h3>
+        <div className="mt-4 grid gap-6 tablet:grid-cols-2">
+          <LabsTrackCard
+            locale={l}
+            category="ctf"
+            href="/labs/ctf"
+            icon={<Flag className="h-5 w-5" aria-hidden="true" />}
+            title={trackCopy.ctf.title[l]}
+            body={trackCopy.ctf.body[l]}
+            ctaLabel={trackCopy.ctf.cta[l]}
+            accent="accent"
+          />
+          <LabsTrackCard
+            locale={l}
+            category="quick_check"
+            href="/labs/quick-checks"
+            icon={<ListChecks className="h-5 w-5" aria-hidden="true" />}
+            title={trackCopy.quickCheck.title[l]}
+            body={trackCopy.quickCheck.body[l]}
+            ctaLabel={trackCopy.quickCheck.cta[l]}
+            accent="success"
+          />
         </div>
       </section>
 
@@ -110,16 +205,20 @@ export default async function LabsPage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
-      {/* Waitlist */}
-      <section className="mx-auto max-w-xl px-4 py-16 tablet:px-6">
-        <h2 className="text-center font-display text-2xl font-semibold text-text-primary">
-          {t("formHeading")}
-        </h2>
-        <p className="mt-2 text-center text-text-secondary">{t("formBody")}</p>
-        <div className="mt-8 flex justify-center">
-          <NewsletterForm locale={l} segment="students" submitLabel={t("cta")} />
+      {/* Start Your Cyber Defender Journey: replaces the outdated
+          "join the waitlist" section now that Decision Labs has live
+          content (production UX fix, 2026-07-27). */}
+      <section className="mx-auto max-w-xl px-4 py-16 text-center tablet:px-6">
+        <h2 className="font-display text-2xl font-semibold text-text-primary">{journeyCopy.heading[l]}</h2>
+        <p className="mt-3 text-text-secondary">{journeyCopy.body[l]}</p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 tablet:flex-row">
+          <Button asChild size="lg" className="w-full tablet:w-auto">
+            <Link href="/labs/decision-labs">{journeyCopy.primaryCta[l]}</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="w-full tablet:w-auto">
+            <Link href="/challenge/first-defender">{journeyCopy.secondaryCta[l]}</Link>
+          </Button>
         </div>
-        <p className="mt-6 text-center text-xs text-text-muted">{t("waitlistNote")}</p>
       </section>
     </div>
   );
