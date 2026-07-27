@@ -45,7 +45,7 @@ export const NETWORK_GUARDIAN_NODES: NetworkNode[] = [
       ar: "أجهزة كمبيوتر محمولة عادية للموظفين. لا ينبغي أن تحتاج أبدًا إلى اتصال مباشر بقاعدة بيانات العملاء.",
     },
   },
-  ];
+];
 
 export type ControlId = "firewall" | "waf" | "dmz" | "vlan_segmentation";
 
@@ -110,7 +110,7 @@ export const NETWORK_GUARDIAN_CONTROLS: ControlDefinition[] = [
       ar: "يجب أن توضع أجهزة المستخدمين العادية ومستودعات البيانات الحساسة في قطاعات شبكة مختلفة، بغض النظر عما يحظره جدار الحماية المحيطي أصلًا.",
     },
   },
-  ];
+];
 
 interface TopologyEdge {
   id: string;
@@ -125,7 +125,7 @@ const TOPOLOGY_EDGES: TopologyEdge[] = [
   { id: "internet_to_web", from: "internet", to: "web_server", blockedBy: "waf" },
   { id: "web_to_database", from: "web_server", to: "database_server", blockedBy: "dmz" },
   { id: "workstations_to_database", from: "workstations", to: "database_server", blockedBy: "vlan_segmentation" },
-  ];
+];
 
 export interface AttackSimulationResult {
   compromisedNodes: NodeId[];
@@ -138,12 +138,12 @@ export interface AttackSimulationResult {
 export function simulateAttack(placedControls: ControlId[]): AttackSimulationResult {
   const activeEdges = TOPOLOGY_EDGES.filter((edge) => !placedControls.includes(edge.blockedBy));
 
-const adjacency = new Map<NodeId, NodeId[]>();
+  const adjacency = new Map<NodeId, NodeId[]>();
   for (const edge of activeEdges) {
     adjacency.set(edge.from, [...(adjacency.get(edge.from) ?? []), edge.to]);
   }
 
-const visited = new Set<NodeId>(["internet"]);
+  const visited = new Set<NodeId>(["internet"]);
   const parent = new Map<NodeId, NodeId>();
   const queue: NodeId[] = ["internet"];
   while (queue.length > 0) {
@@ -156,7 +156,7 @@ const visited = new Set<NodeId>(["internet"]);
     }
   }
 
-const databaseProtected = !visited.has("database_server");
+  const databaseProtected = !visited.has("database_server");
   let attackPath: NodeId[] | null = null;
   if (!databaseProtected) {
     const path: NodeId[] = ["database_server"];
@@ -168,17 +168,17 @@ const databaseProtected = !visited.has("database_server");
     attackPath = path;
   }
 
-const allNodes = NETWORK_GUARDIAN_NODES.map((n) => n.id);
+  const allNodes = NETWORK_GUARDIAN_NODES.map((n) => n.id);
   const compromisedNodes = allNodes.filter((id) => visited.has(id));
   const protectedNodes = allNodes.filter((id) => !visited.has(id) && id !== "internet");
 
-return {
-  compromisedNodes,
-  protectedNodes,
-  attackPath,
-  databaseProtected,
-  activeEdges: activeEdges.map((e) => e.id),
-};
+  return {
+    compromisedNodes,
+    protectedNodes,
+    attackPath,
+    databaseProtected,
+    activeEdges: activeEdges.map((e) => e.id),
+  };
 }
 
 export interface NetworkGuardianSubmission {
@@ -198,24 +198,24 @@ const HINT_PENALTY = 5;
 export function computeNetworkGuardianScore(submission: NetworkGuardianSubmission): NetworkGuardianResult {
   const simulation = simulateAttack(submission.placedControls);
 
-const controlScore = NETWORK_GUARDIAN_CONTROLS.reduce(
-  (sum, control) => sum + (submission.placedControls.includes(control.id) ? control.weight : 0),
-  0
+  const controlScore = NETWORK_GUARDIAN_CONTROLS.reduce(
+    (sum, control) => sum + (submission.placedControls.includes(control.id) ? control.weight : 0),
+    0
   );
   const targetBonus = simulation.databaseProtected ? 10 : 0;
   const hintPenalty = submission.hintsUsed * HINT_PENALTY;
 
-const score = Math.min(NETWORK_GUARDIAN_MAX_SCORE, Math.max(0, Math.round(controlScore + targetBonus - hintPenalty)));
+  const score = Math.min(NETWORK_GUARDIAN_MAX_SCORE, Math.max(0, Math.round(controlScore + targetBonus - hintPenalty)));
   const xp = Math.round(score * 1.5);
 
-const baseline = simulateAttack([]);
+  const baseline = simulateAttack([]);
   const outcome: "secured" | "partial" | "breached" = simulation.databaseProtected
-  ? "secured"
+    ? "secured"
     : simulation.compromisedNodes.length < baseline.compromisedNodes.length
-    ? "partial"
-    : "breached";
+      ? "partial"
+      : "breached";
 
-return { score, xp, simulation, outcome };
+  return { score, xp, simulation, outcome };
 }
 
 export interface NetworkConsequenceCopy {
@@ -230,27 +230,27 @@ export function getNetworkConsequenceCopy(result: NetworkGuardianResult, submiss
   const hasFirewall = submission.placedControls.includes("firewall");
   const hasWafOrDmz = submission.placedControls.includes("waf") || submission.placedControls.includes("dmz");
 
-if (result.outcome === "secured") {
-  return {
-    outcomeLabel: { en: "Database secured", ar: "تم تأمين قاعدة البيانات" },
-    headline: {
-      en: "The simulated attack never reached the customer database.",
-      ar: "لم تصل الهجمة المحاكاة إلى قاعدة بيانات العملاء إطلاقًا.",
-    },
-    whatHappened: {
-      en: "The firewall closed off every direct path from the internet, and the remaining route through the web server was cut before it could reach the database.",
-      ar: "أغلق جدار الحماية كل مسار مباشر من الإنترنت، وتم قطع المسار المتبقي عبر خادم الويب قبل أن يصل إلى قاعدة البيانات.",
-    },
-    whyItMattered: {
-      en: "A public-facing server will always be a target; the goal is never letting a compromise there become a compromise everywhere.",
-      ar: "سيكون الخادم المواجه للإنترنت هدفًا دائمًا؛ الهدف هو ألا يتحول اختراقه إلى اختراق شامل.",
-    },
-    keyDecision: {
-      en: "Placing the firewall to remove direct internet access, then either the WAF or DMZ to cut the remaining pivot through the web server, is what closed every path.",
-      ar: "وضع جدار الحماية لإزالة الوصول المباشر من الإنترنت، ثم إما WAF أو DMZ لقطع المسار المتبقي عبر خادم الويب، هو ما أغلق كل المسارات.",
-    },
-  };
-}
+  if (result.outcome === "secured") {
+    return {
+      outcomeLabel: { en: "Database secured", ar: "تم تأمين قاعدة البيانات" },
+      headline: {
+        en: "The simulated attack never reached the customer database.",
+        ar: "لم تصل الهجمة المحاكاة إلى قاعدة بيانات العملاء إطلاقًا.",
+      },
+      whatHappened: {
+        en: "The firewall closed off every direct path from the internet, and the remaining route through the web server was cut before it could reach the database.",
+        ar: "أغلق جدار الحماية كل مسار مباشر من الإنترنت، وتم قطع المسار المتبقي عبر خادم الويب قبل أن يصل إلى قاعدة البيانات.",
+      },
+      whyItMattered: {
+        en: "A public-facing server will always be a target; the goal is never letting a compromise there become a compromise everywhere.",
+        ar: "سيكون الخادم المواجه للإنترنت هدفًا دائمًا؛ الهدف هو ألا يتحول اختراقه إلى اختراق شامل.",
+      },
+      keyDecision: {
+        en: "Placing the firewall to remove direct internet access, then either the WAF or DMZ to cut the remaining pivot through the web server, is what closed every path.",
+        ar: "وضع جدار الحماية لإزالة الوصول المباشر من الإنترنت، ثم إما WAF أو DMZ لقطع المسار المتبقي عبر خادم الويب، هو ما أغلق كل المسارات.",
+      },
+    };
+  }
   if (result.outcome === "partial") {
     return {
       outcomeLabel: { en: "Attack partially contained", ar: "تم احتواء الهجمة جزئيًا" },
@@ -259,26 +259,27 @@ if (result.outcome === "secured") {
         ar: "تمت حماية بعض الأنظمة، لكن المهاجم وصل مع ذلك إلى قاعدة بيانات العملاء.",
       },
       whatHappened: hasFirewall
-      ? {
-        en: "The firewall blocked direct internet access, but nothing stopped the web server from being used to pivot straight through to the database.",
-        ar: "منع جدار الحماية الوصول المباشر من الإنترنت، لكن لا شيء أوقف استخدام خادم الويب للتنقل مباشرة إلى قاعدة البيانات.",
-      }
+        ? {
+            en: "The firewall blocked direct internet access, but nothing stopped the web server from being used to pivot straight through to the database.",
+            ar: "منع جدار الحماية الوصول المباشر من الإنترنت، لكن لا شيء أوقف استخدام خادم الويب للتنقل مباشرة إلى قاعدة البيانات.",
+          }
         : {
-          en: "Without a perimeter firewall, at least one direct path from the internet stayed open the whole time.",
-          ar: "بدون جدار حماية محيطي، بقي مسار مباشر واحد على الأقل من الإنترنت مفتوحًا طوال الوقت.",
-        },
+            en: "Without a perimeter firewall, at least one direct path from the internet stayed open the whole time.",
+            ar: "بدون جدار حماية محيطي، بقي مسار مباشر واحد على الأقل من الإنترنت مفتوحًا طوال الوقت.",
+          },
       whyItMattered: {
         en: "Partial defenses still reduce blast radius, but the crown-jewel asset is either protected or it is not; there is no partial credit in a real incident.",
         ar: "الدفاعات الجزئية تقلل نطاق الضرر، لكن الأصل الأهم إما محمي أو غير محمي؛ لا توجد درجة جزئية في حادثة حقيقية.",
       },
       keyDecision: hasFirewall
-      ? {
-        en: "Adding a WAF or DMZ segmentation between the web server and the database was the missing decision.",
-        ar: "إضافة WAF أو تقسيم DMZ بين خادم الويب وقاعدة البيانات كان القرار الناقص.",
-      }
+        ? {
+            en: "Adding a WAF or DMZ segmentation between the web server and the database was the missing decision.",
+            ar: "إضافة WAF أو تقسيم DMZ بين خادم الويب وقاعدة البيانات كان القرار الناقص.",
+          }
         : {
-          en: "Placing the perimeter firewall first is what every other control here depends on.",
-Add Network Guardian topology, control placement, and attack simulation logic        },
+            en: "Placing the perimeter firewall first is what every other control here depends on.",
+            ar: "وضع جدار الحماية المحيطي أولًا هو ما يعتمد عليه كل ضابط آخر هنا.",
+          },
     };
   }
   return {
@@ -293,10 +294,10 @@ Add Network Guardian topology, control placement, and attack simulation logic   
     },
     whyItMattered: {
       en: hasWafOrDmz
-      ? "Web-layer defenses only matter once the perimeter itself is closed; they cannot compensate for an open front door."
+        ? "Web-layer defenses only matter once the perimeter itself is closed; they cannot compensate for an open front door."
         : "An unsegmented, unfiltered network turns the compromise of any single system into the compromise of everything.",
       ar: hasWafOrDmz
-      ? "دفاعات طبقة الويب لا تفيد إلا بعد إغلاق المحيط نفسه؛ فهي لا تعوّض عن باب أمامي مفتوح."
+        ? "دفاعات طبقة الويب لا تفيد إلا بعد إغلاق المحيط نفسه؛ فهي لا تعوّض عن باب أمامي مفتوح."
         : "الشبكة غير المقسّمة وغير المصفّاة تحوّل اختراق أي نظام واحد إلى اختراق كل شيء.",
     },
     keyDecision: {
