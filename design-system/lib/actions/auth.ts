@@ -18,22 +18,22 @@ import { getClientIp } from "@/lib/request-ip";
 import { siteUrl } from "@/lib/seo/site";
 import { sendEmail } from "@/lib/email/send";
 import { welcomeEmail } from "@/lib/email/templates";
+import { safeAuthErrorMessage, buildEmailRedirectTo } from "./auth-helpers";
 
 /**
- * Registration creates the Supabase Auth user, a matching profiles
+ * Registration creates the Supabase Auth user, a matching `profiles`
  * row (Phase 3: profiles is a 1:1 extension of auth.users, never
  * duplicating anything Supabase Auth already stores), and, if an
- * organization name was given, an organizations row with the new
- * user as org_owner. Individual learners who leave the organization
+ * organization name was given, an `organizations` row with the new
+ * user as `org_owner`. Individual learners who leave the organization
  * field blank get a profile only, matching the Phase 3 "organizations
  * are business accounts, individuals are not forced into one" intent.
  *
- * emailRedirectTo is set explicitly (rather than left to default to
- * bare Site URL) for two reasons: it keeps the visitor's locale after
- * they confirm instead of always bouncing Arabic signups to the
- * English site, and it points at /auth/confirm (see that route)
- * rather than relying on Supabase's fragment-based ConfirmationURL
- * redirect, which a server-rendered page can never read.
+ * There is no dashboard to send a newly registered user to yet
+ * (GreenTrust AI and CyberAbeer Labs applications are later
+ * milestones), so both register and login redirect back to the
+ * locale home page on success; the caller decides what to do with
+ * that.
  */
 export async function registerUser(input: RegisterInput): Promise<ActionResult> {
   const parsed = registerSchema.safeParse(input);
@@ -54,13 +54,25 @@ export async function registerUser(input: RegisterInput): Promise<ActionResult> 
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.name },
-      emailRedirectTo: `${siteUrl}/${parsed.data.locale}/login`,
+      emailRedirectTo: buildEmailRedirectTo(parsed.data.locale),
     },
   });
 
   if (signUpError || !signUpData.user) {
+    // Never trust the raw Supabase error message as user-facing text
+    // (see auth-helpers.ts): a failed signUp - most commonly because
+    // the confirmation email itself could not be sent - can surface
+    // as a malformed, non-human-readable message like the literal
+    // string "{}" instead of a real error description. Production bug
+    // found and fixed 2026-07-29 during the authentication recovery
+    // pass: this exact page previously rendered a bare "{}" here.
     console.error("registerUser signUp failed", signUpError);
-    return actionError(signUpError?.message ?? "We could not create your account.");
+    return actionError(
+      safeAuthErrorMessage(
+        signUpError?.message,
+        "We could not create your account right now. Please try again in a few minutes."
+      )
+    );
   }
 
   try {
@@ -169,13 +181,11 @@ export async function logoutUser(): Promise<ActionResult> {
  * to the caller regardless of whether the email is registered: this
  * is a deliberate account-enumeration defense (Phase 7 security
  * hardening) so a visitor can never use this form to test which
- * emails have a CyberAbeer account. redirectTo becomes the next
- * param on the /auth/confirm link the (now token_hash-based) email
- * template builds; that route exchanges the recovery token for a
- * session before ever redirecting the browser here, so by the time
- * /[locale]/reset-password renders, the recovery session already
- * exists as a cookie - no code/token handling needed on this page
- * itself anymore.
+ * emails have a CyberAbeer account. The redirect target,
+ * `/[locale]/reset-password`, exchanges the recovery token for a
+ * session via `supabase.auth.exchangeCodeForSession` on load (see
+ * that page), then `updatePassword` below sets the new password on
+ * that recovered session.
  */
 export async function requestPasswordReset(input: ForgotPasswordInput): Promise<ActionResult> {
   const parsed = forgotPasswordSchema.safeParse(input);
@@ -202,11 +212,10 @@ export async function requestPasswordReset(input: ForgotPasswordInput): Promise<
 
 /**
  * Sets a new password for the session established by the recovery
- * link (/auth/confirm verifies the link's token and establishes
- * that session before ever redirecting to /reset-password - see
- * that route). Requires an active recovery session, so a stale or
- * reused link fails here with a clear error rather than silently
- * doing nothing.
+ * link (`/reset-password` exchanges the URL's code for a session
+ * before this is ever called). Requires an active recovery session,
+ * so a stale or reused link fails here with a clear error rather than
+ * silently doing nothing.
  */
 export async function updatePassword(input: ResetPasswordInput): Promise<ActionResult> {
   const parsed = resetPasswordSchema.safeParse(input);

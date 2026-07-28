@@ -10,6 +10,7 @@ import { getClientIp } from "@/lib/request-ip";
 import { CHALLENGE_KEYS, CHALLENGE_BADGE_KEYS, type ChallengeKey } from "@/lib/challenges/keys";
 import { sendEmail } from "@/lib/email/send";
 import { welcomeEmail } from "@/lib/email/templates";
+import { safeAuthErrorMessage, buildEmailRedirectTo } from "./auth-helpers";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const saveProgressSchema = z.object({
@@ -186,27 +187,6 @@ export interface RegisterAndClaimData {
 }
 
 /**
- * A raw Supabase Auth error message is not always safe to show a
- * visitor as-is. In production this was observed to sometimes come
- * back as the literal 2-character string "{}" (the SDK falling back
- * to a stringified, unparseable error body — seen in practice when
- * the project's outbound-email rate limit for the built-in auth email
- * sender is exhausted, which surfaces as a malformed AuthApiError
- * rather than a normal "email rate limit exceeded" message). Rather
- * than trusting `error.message` unconditionally, anything empty,
- * whitespace-only, or that looks like raw JSON is replaced with a
- * generic, human-readable fallback so the completion screen never
- * renders a bare "{}" to the visitor (production bug found and fixed
- * 2026-07-28 during Phishing Hunter QA).
- */
-function safeAuthErrorMessage(message: string | undefined, fallback: string): string {
-  const trimmed = message?.trim();
-  if (!trimmed) return fallback;
-  if (trimmed.startsWith("{") || trimmed.startsWith("[")) return fallback;
-  return trimmed;
-}
-
-/**
  * The inline registration path used only from the challenge completion
  * screen (components/challenge/inline-register-form.tsx), never from
  * the general /register page. It is deliberately a full copy of
@@ -245,10 +225,19 @@ export async function registerAndClaimChallenge(
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.name },
+      emailRedirectTo: buildEmailRedirectTo(parsed.data.locale),
     },
   });
 
   if (signUpError || !signUpData.user) {
+    // Never trust the raw Supabase error message as user-facing text
+    // (see auth-helpers.ts): a failed signUp - most commonly because
+    // the confirmation email itself could not be sent - can surface
+    // as a malformed, non-human-readable message like the literal
+    // string "{}" instead of a real error description. Production bug
+    // found and fixed 2026-07-28/29 during Phishing Hunter QA and the
+    // authentication recovery pass: this exact screen previously
+    // rendered a bare "{}" here.
     console.error("registerAndClaimChallenge signUp failed", signUpError);
     return actionError(
       safeAuthErrorMessage(
