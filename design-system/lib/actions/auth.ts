@@ -19,6 +19,7 @@ import { siteUrl } from "@/lib/seo/site";
 import { sendEmail } from "@/lib/email/send";
 import { welcomeEmail } from "@/lib/email/templates";
 import { safeAuthErrorMessage, buildEmailRedirectTo } from "./auth-helpers";
+import { getTranslations } from "next-intl/server";
 
 /**
  * Registration creates the Supabase Auth user, a matching `profiles`
@@ -66,13 +67,16 @@ export async function registerUser(input: RegisterInput): Promise<ActionResult> 
     // string "{}" instead of a real error description. Production bug
     // found and fixed 2026-07-29 during the authentication recovery
     // pass: this exact page previously rendered a bare "{}" here.
+    //
+    // The fallback text itself must also be locale-aware: an earlier
+    // version of this fix hardcoded an English-only fallback, which
+    // meant a visitor on /ar/register still saw an English sentence.
+    // `parsed.data.locale` is always present (registerSchema requires
+    // it), so this can safely resolve the same auth.register.error
+    // copy the login/register forms already use in both languages.
     console.error("registerUser signUp failed", signUpError);
-    return actionError(
-      safeAuthErrorMessage(
-        signUpError?.message,
-        "We could not create your account right now. Please try again in a few minutes."
-      )
-    );
+    const t = await getTranslations({ locale: parsed.data.locale, namespace: "auth.register" });
+    return actionError(safeAuthErrorMessage(signUpError?.message, t("error")));
   }
 
   try {

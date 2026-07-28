@@ -11,6 +11,7 @@ import { CHALLENGE_KEYS, CHALLENGE_BADGE_KEYS, type ChallengeKey } from "@/lib/c
 import { sendEmail } from "@/lib/email/send";
 import { welcomeEmail } from "@/lib/email/templates";
 import { safeAuthErrorMessage, buildEmailRedirectTo } from "./auth-helpers";
+import { getTranslations } from "next-intl/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const saveProgressSchema = z.object({
@@ -238,13 +239,14 @@ export async function registerAndClaimChallenge(
     // found and fixed 2026-07-28/29 during Phishing Hunter QA and the
     // authentication recovery pass: this exact screen previously
     // rendered a bare "{}" here.
+    //
+    // The fallback text itself must also be locale-aware (auth
+    // recovery pass fix): an earlier version hardcoded an English-only
+    // fallback, so a visitor completing the challenge in Arabic still
+    // saw an English sentence on this inline registration form.
     console.error("registerAndClaimChallenge signUp failed", signUpError);
-    return actionError(
-      safeAuthErrorMessage(
-        signUpError?.message,
-        "We could not create your account right now. Please try again in a few minutes."
-      )
-    );
+    const t = await getTranslations({ locale: parsed.data.locale, namespace: "auth.register" });
+    return actionError(safeAuthErrorMessage(signUpError?.message, t("error")));
   }
 
   try {
