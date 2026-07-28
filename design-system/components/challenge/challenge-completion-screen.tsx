@@ -5,7 +5,11 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScoreGauge } from "@/components/greentrust/score-gauge";
-import { AchievementBadge } from "@/components/labs/achievement-badge";
+import { AchievementMedal } from "@/components/achievements/achievement-medal";
+import { getAchievementSymbol } from "@/components/achievements/achievement-symbols";
+import { getAchievementByChallengeKey } from "@/lib/achievements/catalog";
+import { CyberAbeerAchievementUnlock } from "@/components/achievements/achievement-unlock";
+import { AchievementShareCard } from "@/components/achievements/achievement-share-card";
 import { InlineRegisterForm } from "./inline-register-form";
 import { Link } from "@/lib/i18n/navigation";
 import { trackEvent } from "@/lib/analytics/track";
@@ -78,6 +82,24 @@ export function ChallengeCompletionScreen({
   const isSaved = alreadyRegistered || Boolean(registeredState) || Boolean(isAuthenticated);
   const displayXp = registeredState ? registeredState.xpAwarded : alreadyRegistered ? (claimedXp ?? xpEarned) : xpEarned;
 
+  const achievement = getAchievementByChallengeKey(FIRST_DEFENDER_CHALLENGE_KEY);
+  const tUnlock = useTranslations("achievements.unlock");
+
+  // The CyberAbeer winning sequence plays exactly once per completed
+  // result, not on every reload/revisit of this screen -- sessionStorage
+  // (not localStorage) so it naturally resets in a new tab/session
+  // without needing to touch the anon-session/claim persistence layer
+  // this component otherwise never writes to directly.
+  const unlockStorageKey = `cyberabeer:achievement-unlock-shown:${FIRST_DEFENDER_CHALLENGE_KEY}:${anonId}`;
+  const [showUnlockAnimation, setShowUnlockAnimation] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.sessionStorage.getItem(unlockStorageKey)) return;
+    window.sessionStorage.setItem(unlockStorageKey, "1");
+    setShowUnlockAnimation(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function handleRegistered(result: { xpAwarded: number; badgeAwarded: boolean }) {
     setRegisteredState(result);
     onClaimed(result);
@@ -103,6 +125,20 @@ export function ChallengeCompletionScreen({
 
   return (
     <div className="space-y-6">
+      {showUnlockAnimation && achievement && (
+        <CyberAbeerAchievementUnlock
+          number={achievement.number}
+          symbol={getAchievementSymbol(achievement.key)}
+          name={tBadge("badgeName")}
+          xp={displayXp}
+          unlockedLabel={tUnlock("unlockedLabel")}
+          xpSuffix={tUnlock("xpSuffix")}
+          skipLabel={tUnlock("skip")}
+          soundOnLabel={tUnlock("soundOn")}
+          soundOffLabel={tUnlock("soundOff")}
+          onComplete={() => setShowUnlockAnimation(false)}
+        />
+      )}
       <Card>
         <CardHeader className="items-center text-center">
           <CardTitle className="font-display text-2xl">{t("title")}</CardTitle>
@@ -116,12 +152,9 @@ export function ChallengeCompletionScreen({
               <p className="text-sm text-text-muted">{t("xpLabel")}</p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <AchievementBadge
-                name={tBadge("badgeName")}
-                description={tBadge("badgeDescription")}
-                unlocked
-                size="lg"
-              />
+              {achievement ? (
+                <AchievementMedal number={achievement.number} symbol={getAchievementSymbol(achievement.key)} locked={false} size="lg" />
+              ) : null}
               <p className="text-sm text-text-muted">{t("badgeUnlockedLabel")}</p>
             </div>
           </div>
@@ -144,6 +177,32 @@ export function ChallengeCompletionScreen({
           </Button>
         </CardContent>
       </Card>
+
+      {achievement && (
+        <Card data-brand="labs">
+          <CardHeader>
+            <CardTitle className="text-lg">{t("shareCardHeading")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AchievementShareCard
+              number={achievement.number}
+              symbol={getAchievementSymbol(achievement.key)}
+              name={tBadge("badgeName")}
+              xp={displayXp}
+              locale={locale}
+              shareUrl={shareUrl}
+              challengeKey={FIRST_DEFENDER_CHALLENGE_KEY}
+              labels={{
+                cardTitle: t("shareCardTitle"),
+                xpSuffix: t("xpLabel"),
+                shareCta: t("shareCta"),
+                downloadCta: t("shareCardDownload"),
+                shareText: t("shareText"),
+              }}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {!isSaved && showRegisterForm && (
         <Card data-brand="labs">
