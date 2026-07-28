@@ -200,23 +200,43 @@
       "questions": [
         {
           "prompt": "Does your organization maintain a complete inventory of AI agents in production?",
-          "options": ["Yes, fully maintained", "Partially, some agents are untracked", "No"]
+          "options": [
+            "Yes, fully maintained",
+            "Partially, some agents are untracked",
+            "No"
+          ]
         },
         {
           "prompt": "Are AI agents formally risk-assessed before they go into production?",
-          "options": ["Yes, every time", "Sometimes", "No"]
+          "options": [
+            "Yes, every time",
+            "Sometimes",
+            "No"
+          ]
         },
         {
           "prompt": "Is there a named owner accountable for each AI agent?",
-          "options": ["Yes, for all agents", "For some agents", "No"]
+          "options": [
+            "Yes, for all agents",
+            "For some agents",
+            "No"
+          ]
         },
         {
           "prompt": "Do you review third-party AI tools for data access and risk before adoption?",
-          "options": ["Yes, always", "Sometimes", "No"]
+          "options": [
+            "Yes, always",
+            "Sometimes",
+            "No"
+          ]
         },
         {
           "prompt": "Can you produce an audit trail of AI-related risk decisions if asked today?",
-          "options": ["Yes, readily", "With significant effort", "No"]
+          "options": [
+            "Yes, readily",
+            "With significant effort",
+            "No"
+          ]
         }
       ],
       "resultHeading": "Your result",
@@ -231,23 +251,43 @@
       "questions": [
         {
           "prompt": "Do you maintain an inventory of cryptographic algorithms in use across your systems?",
-          "options": ["Yes, fully maintained", "Partially", "No"]
+          "options": [
+            "Yes, fully maintained",
+            "Partially",
+            "No"
+          ]
         },
         {
           "prompt": "Have you identified which systems rely on algorithms considered vulnerable to future quantum attacks?",
-          "options": ["Yes", "In progress", "No"]
+          "options": [
+            "Yes",
+            "In progress",
+            "No"
+          ]
         },
         {
           "prompt": "Do you have a migration plan toward post-quantum cryptographic algorithms?",
-          "options": ["Yes, documented", "Informally discussed", "No"]
+          "options": [
+            "Yes, documented",
+            "Informally discussed",
+            "No"
+          ]
         },
         {
           "prompt": "Do you know which of your long-lived sensitive data could be at risk from harvest-now, decrypt-later attacks?",
-          "options": ["Yes", "Somewhat", "No"]
+          "options": [
+            "Yes",
+            "Somewhat",
+            "No"
+          ]
         },
         {
           "prompt": "Is a specific person or team accountable for quantum readiness?",
-          "options": ["Yes", "Informally", "No"]
+          "options": [
+            "Yes",
+            "Informally",
+            "No"
+          ]
         }
       ],
       "resultHeading": "Your result",
@@ -299,22 +339,134 @@
       }
     },
     "questions": [
-      { "prompt": "Does your organization maintain an inventory of every AI agent, bot, or autonomous tool in use?", "options": ["Yes, a maintained and regularly updated inventory", "We have a partial or outdated list", "No inventory exists"] },
-      { "prompt": "When a team adopts a new AI tool or agent, how does your organization find out?", "options": ["A required registration or approval step before use", "We usually hear about it eventually, informally", "We typically don't find out until something goes wrong"] },
-      { "prompt": "Does each AI agent have a named, accountable human owner?", "options": ["Yes, every agent has a named owner", "Some agents do, many don't", "No owners are assigned"] },
-      { "prompt": "If an AI agent takes a harmful or incorrect action, is it clear who is accountable for the outcome?", "options": ["Yes, accountability is clearly defined in advance", "It would take investigation to figure out", "No, responsibility is unclear"] },
-      { "prompt": "Do AI agents use their own distinct credentials, separate from any human user's login?", "options": ["Yes, every agent has its own scoped identity", "Some agents share credentials with humans or each other", "Agents mostly reuse existing human or service accounts"] },
-      { "prompt": "Are agent credentials rotated, expired, or revoked on a defined schedule?", "options": ["Yes, on a defined lifecycle", "Only when we remember or something breaks", "Credentials are effectively permanent"] },
-      { "prompt": "Do AI agents operate under least-privilege access, scoped only to what each task requires?", "options": ["Yes, permissions are scoped per task and agent", "Permissions are broader than necessary in places", "Agents generally have broad, standing access"] },
-      { "prompt": "Can you produce, today, a list of every system and dataset a given AI agent can access?", "options": ["Yes, quickly and confidently", "With some effort and uncertainty", "No, not reliably"] },
-      { "prompt": "For high-impact actions (financial, customer-facing, irreversible), is a human required to approve before the agent proceeds?", "options": ["Yes, for all high-impact actions", "For some, not consistently", "No, agents act autonomously"] },
-      { "prompt": "If an agent behaves unexpectedly, is there a fast, well-understood way for a human to pause or override it?", "options": ["Yes, a tested override or kill-switch process", "An informal, untested way", "No reliable way"] },
-      { "prompt": "Are AI agent actions logged in a way that supports after-the-fact review?", "options": ["Yes, comprehensive and centralized logging", "Partial logging, scattered across tools", "Little to no logging"] },
-      { "prompt": "Does anyone regularly review agent activity logs for anomalies or policy violations?", "options": ["Yes, on a regular defined cadence", "Occasionally, reactively", "No one reviews them"] },
-      { "prompt": "Is there a defined process for retiring or updating an AI agent, including revoking its access?", "options": ["Yes, a documented decommissioning process", "An informal, inconsistent process", "No process; agents are abandoned in place"] },
-      { "prompt": "Are AI agents periodically reassessed as their role, data access, or capability changes?", "options": ["Yes, on a scheduled review cycle", "Only when a problem forces a review", "Agents are set up once and never revisited"] },
-      { "prompt": "Do employees or teams sometimes adopt AI tools or agents without an IT or security review?", "options": ["Rarely; there's a clear, easy approved path", "Sometimes, and we know it happens", "Frequently, and we don't have visibility into it"] },
-      { "prompt": "If shadow AI use is discovered, is there a defined process to bring it under governance rather than simply banning or ignoring it?", "options": ["Yes, a clear onboarding and remediation path", "We handle it case by case", "No defined process"] }
+      {
+        "prompt": "Does your organization maintain an inventory of every AI agent, bot, or autonomous tool in use?",
+        "options": [
+          "Yes, a maintained and regularly updated inventory",
+          "We have a partial or outdated list",
+          "No inventory exists"
+        ]
+      },
+      {
+        "prompt": "When a team adopts a new AI tool or agent, how does your organization find out?",
+        "options": [
+          "A required registration or approval step before use",
+          "We usually hear about it eventually, informally",
+          "We typically don't find out until something goes wrong"
+        ]
+      },
+      {
+        "prompt": "Does each AI agent have a named, accountable human owner?",
+        "options": [
+          "Yes, every agent has a named owner",
+          "Some agents do, many don't",
+          "No owners are assigned"
+        ]
+      },
+      {
+        "prompt": "If an AI agent takes a harmful or incorrect action, is it clear who is accountable for the outcome?",
+        "options": [
+          "Yes, accountability is clearly defined in advance",
+          "It would take investigation to figure out",
+          "No, responsibility is unclear"
+        ]
+      },
+      {
+        "prompt": "Do AI agents use their own distinct credentials, separate from any human user's login?",
+        "options": [
+          "Yes, every agent has its own scoped identity",
+          "Some agents share credentials with humans or each other",
+          "Agents mostly reuse existing human or service accounts"
+        ]
+      },
+      {
+        "prompt": "Are agent credentials rotated, expired, or revoked on a defined schedule?",
+        "options": [
+          "Yes, on a defined lifecycle",
+          "Only when we remember or something breaks",
+          "Credentials are effectively permanent"
+        ]
+      },
+      {
+        "prompt": "Do AI agents operate under least-privilege access, scoped only to what each task requires?",
+        "options": [
+          "Yes, permissions are scoped per task and agent",
+          "Permissions are broader than necessary in places",
+          "Agents generally have broad, standing access"
+        ]
+      },
+      {
+        "prompt": "Can you produce, today, a list of every system and dataset a given AI agent can access?",
+        "options": [
+          "Yes, quickly and confidently",
+          "With some effort and uncertainty",
+          "No, not reliably"
+        ]
+      },
+      {
+        "prompt": "For high-impact actions (financial, customer-facing, irreversible), is a human required to approve before the agent proceeds?",
+        "options": [
+          "Yes, for all high-impact actions",
+          "For some, not consistently",
+          "No, agents act autonomously"
+        ]
+      },
+      {
+        "prompt": "If an agent behaves unexpectedly, is there a fast, well-understood way for a human to pause or override it?",
+        "options": [
+          "Yes, a tested override or kill-switch process",
+          "An informal, untested way",
+          "No reliable way"
+        ]
+      },
+      {
+        "prompt": "Are AI agent actions logged in a way that supports after-the-fact review?",
+        "options": [
+          "Yes, comprehensive and centralized logging",
+          "Partial logging, scattered across tools",
+          "Little to no logging"
+        ]
+      },
+      {
+        "prompt": "Does anyone regularly review agent activity logs for anomalies or policy violations?",
+        "options": [
+          "Yes, on a regular defined cadence",
+          "Occasionally, reactively",
+          "No one reviews them"
+        ]
+      },
+      {
+        "prompt": "Is there a defined process for retiring or updating an AI agent, including revoking its access?",
+        "options": [
+          "Yes, a documented decommissioning process",
+          "An informal, inconsistent process",
+          "No process; agents are abandoned in place"
+        ]
+      },
+      {
+        "prompt": "Are AI agents periodically reassessed as their role, data access, or capability changes?",
+        "options": [
+          "Yes, on a scheduled review cycle",
+          "Only when a problem forces a review",
+          "Agents are set up once and never revisited"
+        ]
+      },
+      {
+        "prompt": "Do employees or teams sometimes adopt AI tools or agents without an IT or security review?",
+        "options": [
+          "Rarely; there's a clear, easy approved path",
+          "Sometimes, and we know it happens",
+          "Frequently, and we don't have visibility into it"
+        ]
+      },
+      {
+        "prompt": "If shadow AI use is discovered, is there a defined process to bring it under governance rather than simply banning or ignoring it?",
+        "options": [
+          "Yes, a clear onboarding and remediation path",
+          "We handle it case by case",
+          "No defined process"
+        ]
+      }
     ],
     "results": {
       "heading": "Your GreenTrust Agent Governance Score",
@@ -611,8 +763,82 @@
         "registerCta": "Create free account",
         "registerLater": "Maybe later",
         "registeredConfirmation": "Saved to your CyberAbeer profile.",
-        "anonymousNote": "You're playing as a guest. This result is only saved on this device until you register."
+        "anonymousNote": "You're playing as a guest. This result is only saved on this device until you register.",
+        "shareCardHeading": "Share your achievement",
+        "shareCardTitle": "ACHIEVEMENT UNLOCKED",
+        "shareCardDownload": "Download image"
       }
+    }
+  },
+  "achievements": {
+    "pageTitle": "My Achievements",
+    "pageDescription": "Earn badges. Grow your skills. Defend the digital world.",
+    "earned": "Earned",
+    "locked": "Locked",
+    "stats": {
+      "earned": "Achievements earned",
+      "totalXp": "Total XP",
+      "next": "Next achievement",
+      "allDone": "All achievements earned!",
+      "soundOn": "Sound on",
+      "soundOff": "Sound off"
+    },
+    "catalog": {
+      "phishingHunter": {
+        "name": "Phishing Hunter",
+        "description": "Detected and reported simulated phishing attempts across email and messaging."
+      },
+      "networkGuardian": {
+        "name": "Network Guardian",
+        "description": "Secured network traffic and spotted suspicious activity."
+      },
+      "socNightShift": {
+        "name": "SOC Night Shift",
+        "description": "Responded to live security incidents under time pressure."
+      },
+      "webDefender": {
+        "name": "Web Defender",
+        "description": "Found and fixed common web application vulnerabilities."
+      },
+      "identityGuardian": {
+        "name": "Identity Guardian",
+        "description": "Protected digital identities and access controls."
+      },
+      "incidentCommander": {
+        "name": "Incident Commander",
+        "description": "Led the response effort during a security incident."
+      },
+      "dataGuardian": {
+        "name": "Data Guardian",
+        "description": "Classified and protected sensitive data."
+      },
+      "cloudDefender": {
+        "name": "Cloud Defender",
+        "description": "Secured misconfigured cloud infrastructure."
+      },
+      "agentZero": {
+        "name": "Agent Zero",
+        "description": "Investigated a complex simulated breach end to end."
+      },
+      "grcStrategist": {
+        "name": "GRC Strategist",
+        "description": "Built a governance, risk, and compliance program."
+      },
+      "digitalInvestigator": {
+        "name": "Digital Investigator",
+        "description": "Analyzed digital evidence after an incident."
+      },
+      "quantumCountdown": {
+        "name": "Quantum Countdown",
+        "description": "Explored post-quantum cryptography risk and readiness."
+      }
+    },
+    "unlock": {
+      "unlockedLabel": "Achievement Unlocked",
+      "xpSuffix": "XP",
+      "skip": "Skip",
+      "soundOn": "Sound on",
+      "soundOff": "Sound off"
     }
   }
 }
