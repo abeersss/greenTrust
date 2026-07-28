@@ -11,7 +11,9 @@
     "login": "تسجيل الدخول",
     "register": "إنشاء حساب",
     "challenge": "تحدي مجاني",
-    "account": "حسابي"
+    "account": "حسابي",
+    "myLabs": "مختبراتي",
+    "logout": "تسجيل الخروج"
   },
   "common": {
     "learnMore": "اعرف المزيد",

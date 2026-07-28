@@ -11,7 +11,9 @@
     "login": "Log in",
     "register": "Register",
     "challenge": "Free Challenge",
-    "account": "My account"
+    "account": "My account",
+    "myLabs": "My Labs",
+    "logout": "Log out"
   },
   "common": {
     "learnMore": "Learn more",
