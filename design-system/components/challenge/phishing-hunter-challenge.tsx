@@ -265,11 +265,26 @@ export function PhishingHunterChallenge({ locale, shareUrl, isAuthenticated }: P
     if (claimed) return;
     if (autoClaimAttempted.current) return;
     autoClaimAttempted.current = true;
+    // Guard against a stale response clobbering fresher local state: since
+    // Next.js client-side navigation doesn't tear down the JS runtime, an
+    // in-flight claim request from a page instance the visitor has since
+    // navigated away from (e.g. a prior playthrough, or Investigate Again
+    // starting a new attempt before this resolved) can still resolve later.
+    // Without this flag its .then callback would call handleClaimed with a
+    // closure over that old render's `state`, silently overwriting a more
+    // recent attempt's evidence/verdict in localStorage. The cleanup
+    // function flips `cancelled` whenever this effect's dependencies
+    // change or the component unmounts, so a late response is discarded.
+    let cancelled = false;
     claimChallengeForCurrentUser({ anonId, challengeKey: PHISHING_HUNTER_CHALLENGE_KEY }).then((result) => {
+      if (cancelled) return;
       if (result.status === "success" && result.data) {
         handleClaimed(result.data);
       }
     });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, isAuthenticated, claimed, anonId]);
 
