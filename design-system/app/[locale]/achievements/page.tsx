@@ -50,19 +50,34 @@ export default async function AchievementsPage({ params }: { params: Promise<{ l
   } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale}/login`);
 
-  const { data: userBadges } = await supabase
-    .from("user_badges")
-    .select("badge_key, awarded_at")
-    .eq("user_id", user.id);
+  // Same tables/columns account/page.tsx already reads successfully:
+  // XP lives on `user_xp_totals.total_xp` (not `profiles.xp_total`, which
+  // doesn't hold a live total), and the badge's real key lives on the
+  // joined `badges.key` (not a flat `badge_key` column on `user_badges`
+  // itself). Querying the wrong shape doesn't error loudly here since
+  // Supabase just returns null/empty on a bad relation, which is exactly
+  // why this page previously showed 0 XP and every achievement locked
+  // even for a user who had genuinely earned one.
+  const [{ data: userBadges }, { data: xpTotal }] = await Promise.all([
+    supabase
+      .from("user_badges")
+      .select("awarded_at, badges(key)")
+      .eq("user_id", user.id),
+    supabase.from("user_xp_totals").select("total_xp").eq("user_id", user.id).maybeSingle(),
+  ]);
 
-  const { data: profile } = await supabase.from("profiles").select("xp_total").eq("id", user.id).single();
+  const badgeRows = (userBadges ?? []) as unknown as { awarded_at: string; badges: { key: string } | null }[];
 
   const earnedKeys = new Set(
-    (userBadges ?? [])
-      .map((b) => BADGE_KEY_TO_ACHIEVEMENT_KEY[b.badge_key] ?? b.badge_key)
+    badgeRows
+      .map((b) => b.badges?.key)
+      .filter((key): key is string => Boolean(key))
+      .map((key) => BADGE_KEY_TO_ACHIEVEMENT_KEY[key] ?? key)
   );
   const awardedAtByKey = new Map(
-    (userBadges ?? []).map((b) => [BADGE_KEY_TO_ACHIEVEMENT_KEY[b.badge_key] ?? b.badge_key, b.awarded_at as string])
+    badgeRows
+      .filter((b) => b.badges?.key)
+      .map((b) => [BADGE_KEY_TO_ACHIEVEMENT_KEY[b.badges!.key] ?? b.badges!.key, b.awarded_at])
   );
 
   return (
@@ -71,7 +86,7 @@ export default async function AchievementsPage({ params }: { params: Promise<{ l
       catalog={ACHIEVEMENT_CATALOG}
       earnedKeys={Array.from(earnedKeys)}
       awardedAtByKey={Object.fromEntries(awardedAtByKey)}
-      totalXp={profile?.xp_total ?? 0}
+      totalXp={xpTotal?.total_xp ?? 0}
     />
   );
 }
