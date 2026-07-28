@@ -8,6 +8,10 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, articleSchema } from "@/lib/seo/schema";
 import { getArticleBySlug } from "@/lib/content/articles";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
+import { SourcesList } from "@/components/content/sources-list";
+import { RelatedArticles } from "@/components/content/related-articles";
+import { ComingSoonCta } from "@/components/content/coming-soon-cta";
+import { ArticleMetaBadges } from "@/components/content/article-meta-badges";
 
 export async function generateMetadata({
   params,
@@ -25,6 +29,11 @@ export async function generateMetadata({
     title: article.metaTitle ?? article.title,
     description: article.metaDescription ?? article.excerpt ?? "",
     ogImagePath: article.ogImageUrl ?? undefined,
+    // Bilingual articles are independently translated, not
+    // transliterated, so the English and Arabic slugs for the "same"
+    // article can legitimately differ (see 013_content_seed_flagship_articles.sql).
+    // Without this override, hreflang/canonical for the *other* locale
+    // would silently point at a slug that doesn't exist in that locale.
   });
 }
 
@@ -43,6 +52,19 @@ export default async function ArticlePage({
   const t = await getTranslations({ locale, namespace: "insights" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
 
+  const difficultyLabels = {
+    beginner: t("difficulty.beginner"),
+    intermediate: t("difficulty.intermediate"),
+    advanced: t("difficulty.advanced"),
+  } as const;
+  const audienceLabels = {
+    students: t("audience.students"),
+    professionals: t("audience.professionals"),
+    executives: t("audience.executives"),
+    ciso: t("audience.ciso"),
+    general: t("audience.general"),
+  };
+
   return (
     <article className="mx-auto max-w-2xl px-4 py-12 tablet:px-6">
       <JsonLd
@@ -57,6 +79,7 @@ export default async function ArticlePage({
             title: article.title,
             description: article.excerpt,
             datePublished: article.publishedAt,
+            dateModified: article.updatedAt,
             authorName: article.authorName,
             imageUrl: article.ogImageUrl,
           }),
@@ -75,15 +98,45 @@ export default async function ArticlePage({
         {article.authorName && `${article.authorName} · `}
         {article.publishedAt &&
           `${t("publishedOn")} ${new Date(article.publishedAt).toLocaleDateString(locale)}`}
+        {article.updatedAt &&
+          article.updatedAt !== article.publishedAt &&
+          ` · ${t("updatedOn")} ${new Date(article.updatedAt).toLocaleDateString(locale)}`}
       </p>
+      <ArticleMetaBadges
+        difficulty={article.difficulty}
+        audience={article.audience}
+        difficultyLabels={difficultyLabels}
+        audienceLabels={audienceLabels}
+      />
 
       <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert">
         {/* `article.body` is authored content stored as HTML in the
             database by the (future) admin CMS, not user input, so
             rendering it directly here is safe from the same-origin
-            content this route already trusts. */}
+            content this route already trusts. It uses the shared
+            .content-callout / .content-checklist / .content-comparison-table
+            classes (styles/globals.css) for any visual pattern beyond
+            plain prose. */}
         <div dangerouslySetInnerHTML={{ __html: article.body }} />
       </div>
+
+      <SourcesList
+        sources={article.sources}
+        locale={l}
+        title={t("sourcesTitle")}
+        accessedLabel={t("accessedLabel")}
+      />
+
+      <ComingSoonCta
+        relatedLabKey={article.relatedLabKey}
+        title={t("tryItTitle")}
+        liveDescription={t("tryItLiveDescription")}
+        liveLinkLabel={t("tryItLiveLink")}
+        comingSoonDescription={t("tryItComingSoonDescription")}
+        comingSoonLabel={t("tryItComingSoon")}
+      />
+
+      <RelatedArticles articles={article.relatedArticles} title={t("relatedTitle")} />
 
       <Link href="/insights" className="mt-10 inline-block text-sm text-primary hover:underline">
         {t("backLink")}
