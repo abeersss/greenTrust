@@ -99,6 +99,8 @@ export interface ArticleSchemaInput {
   title: string;
   description: string | null;
   datePublished: string | null;
+  /** articles.updated_at -- omitted when equal to/unset relative to datePublished so we never claim a revision that didn't happen. */
+  dateModified?: string | null;
   authorName: string | null;
   imageUrl: string | null;
 }
@@ -139,6 +141,8 @@ export function articleSchema(input: ArticleSchemaInput) {
     headline: input.title,
     description: input.description ?? undefined,
     datePublished: input.datePublished ?? undefined,
+    dateModified:
+      input.dateModified && input.dateModified !== input.datePublished ? input.dateModified : undefined,
     inLanguage: input.locale,
     url: `${siteUrl}/${input.locale}/insights/${input.slug}`,
     image: input.imageUrl ?? undefined,

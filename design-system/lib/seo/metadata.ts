@@ -11,6 +11,16 @@ export interface BuildMetadataParams {
   /** Absolute or root-relative path to a 1200x630 image. Defaults to the site-wide OG image route. */
   ogImagePath?: string;
   noIndex?: boolean;
+  /**
+   * Overrides `path` per locale for content whose slug legitimately
+   * differs by language (e.g. bilingual articles, which are translated
+   * rather than transliterated -- see 013_content_seed_flagship_articles.sql).
+   * Without this, hreflang/canonical would silently point every locale at
+   * the *current* locale's slug, which is wrong for any locale whose path
+   * actually differs. Only the locales present here are overridden; any
+   * locale not listed falls back to `path`.
+   */
+  alternatePaths?: Partial<Record<AppLocale, string>>;
 }
 
 /**
@@ -27,9 +37,11 @@ export function buildMetadata({
   description,
   ogImagePath,
   noIndex,
+  alternatePaths,
 }: BuildMetadataParams): Metadata {
   const cleanPath = path.replace(/^\/+|\/+$/g, "");
-  const urlFor = (l: AppLocale) => `${siteUrl}/${l}${cleanPath ? `/${cleanPath}` : ""}`;
+  const pathFor = (l: AppLocale) => (alternatePaths?.[l] ?? cleanPath).replace(/^\/+|\/+$/g, "");
+  const urlFor = (l: AppLocale) => `${siteUrl}/${l}${pathFor(l) ? `/${pathFor(l)}` : ""}`;
   const canonical = urlFor(locale);
   const ogImage = ogImagePath ?? `${siteUrl}/opengraph-image`;
 
