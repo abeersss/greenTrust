@@ -13,8 +13,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: "achievements" });
   // Private, account-specific content: never indexable (Section 11 rule
   // that private/account pages must not be indexable).
-  return buildMetadata({ locale, path: "achievements", title: t("pageTitle"), description: t("pageDescription"), noindex: true });
+  return buildMetadata({ locale, path: "achievements", title: t("pageTitle"), description: t("pageDescription"), noIndex: true });
 }
+
+// Same DB-key ambiguity as account/page.tsx: migration 010 shipped
+// `badges.key = 'first_defender'`, and a later, never-pushed migration
+// may have renamed it to `phishing_hunter` directly against the live
+// database. Map both onto the catalog's camelCase key so a real earned
+// badge always renders gold here regardless of which name is live.
+const BADGE_KEY_TO_ACHIEVEMENT_KEY: Record<string, string> = {
+  first_defender: "phishingHunter",
+  phishing_hunter: "phishingHunter",
+};
 
 /**
  * "My Achievements" -- the collection page from the founder's
@@ -47,8 +57,13 @@ export default async function AchievementsPage({ params }: { params: Promise<{ l
 
   const { data: profile } = await supabase.from("profiles").select("xp_total").eq("id", user.id).single();
 
-  const earnedKeys = new Set((userBadges ?? []).map((b) => b.badge_key));
-  const awardedAtByKey = new Map((userBadges ?? []).map((b) => [b.badge_key, b.awarded_at as string]));
+  const earnedKeys = new Set(
+    (userBadges ?? [])
+      .map((b) => BADGE_KEY_TO_ACHIEVEMENT_KEY[b.badge_key] ?? b.badge_key)
+  );
+  const awardedAtByKey = new Map(
+    (userBadges ?? []).map((b) => [BADGE_KEY_TO_ACHIEVEMENT_KEY[b.badge_key] ?? b.badge_key, b.awarded_at as string])
+  );
 
   return (
     <AchievementsGrid
