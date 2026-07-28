@@ -16,6 +16,7 @@ import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, localeDir, type AppLocale } from "@/lib/i18n/config";
 import { getTranslations } from "next-intl/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-latin-body", display: "swap" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-labs-display", display: "swap" });
@@ -91,6 +92,22 @@ export default async function LocaleLayout({
   const dir = localeDir[locale as AppLocale];
   const t = await getTranslations({ locale, namespace: "common" });
 
+  // Production auth-recovery fix (2026-07-29): the header previously
+  // never reflected auth state at all (SiteNavbar always rendered
+  // "Log in"/"Register", even for a signed-in user, because nothing
+  // ever told it who was signed in). Resolving the session here, in
+  // the one layout every route under it shares, and passing a plain
+  // boolean down is the only way to guarantee the header is correct
+  // on first paint for every route, including a hard refresh and
+  // direct navigation, not just on client-side navigations. This does
+  // mean every route under this layout now reads cookies and can no
+  // longer be fully static-prerendered (the same tradeoff the account
+  // page already accepts) -- a correct header is worth that cost.
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html
       lang={locale}
@@ -107,7 +124,7 @@ export default async function LocaleLayout({
               >
                 {t("skipToContent")}
               </a>
-              <SiteNavbar locale={locale as AppLocale} />
+              <SiteNavbar locale={locale as AppLocale} isAuthenticated={Boolean(user)} />
               <main id="main-content">{children}</main>
               <SiteFooter locale={locale as AppLocale} />
               <Toaster />
