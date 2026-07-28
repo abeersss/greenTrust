@@ -10,6 +10,27 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import type { GreenTrustDomainKey } from "@/lib/assessments/greentrust-free";
+import { AchievementMedal } from "@/components/achievements/achievement-medal";
+import { getAchievementSymbol } from "@/components/achievements/achievement-symbols";
+import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
+
+// The `badges.key` value that shipped in migration 010 was
+// "first_defender" (Milestone 2's original name for this challenge,
+// before it was rebuilt as "Phishing Hunter"). Accepting both keys
+// here means the account page shows the real gold medal regardless of
+// which name actually made it into the live database, without
+// depending on a database rename that may or may not have happened.
+const BADGE_KEY_TO_ACHIEVEMENT: Record<string, string> = {
+  first_defender: "phishingHunter",
+  phishing_hunter: "phishingHunter",
+};
+
+function achievementForBadgeKey(badgeKey: string | undefined) {
+  if (!badgeKey) return undefined;
+  const achievementKey = BADGE_KEY_TO_ACHIEVEMENT[badgeKey];
+  if (!achievementKey) return undefined;
+  return ACHIEVEMENT_CATALOG.find((entry) => entry.key === achievementKey && entry.hasMedalArt);
+}
 
 export async function generateMetadata({
   params,
@@ -108,8 +129,9 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
     <div className="mx-auto max-w-2xl px-4 py-12 tablet:px-6">
       <div className="flex items-start justify-between gap-4">
         <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">{t("title")}</p>
           <h1 className="font-display text-2xl font-bold text-text-primary tablet:text-3xl">
-            {profile?.full_name ? `${t("title")} — ${profile.full_name}` : t("title")}
+            {profile?.full_name || t("title")}
           </h1>
           {memberSince && <p className="mt-1 text-sm text-text-muted">{t("memberSince", { date: memberSince })}</p>}
         </div>
@@ -128,9 +150,27 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
         {badges.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">{t("noBadges")}</p>
         ) : (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-4">
             {badges.map((b) => {
               const translation = b.badges?.badge_translations.find((tr) => tr.locale === locale);
+              const achievement = achievementForBadgeKey(b.badges?.key);
+              if (achievement) {
+                return (
+                  <div key={b.badges?.key} className="flex flex-col items-center gap-1 text-center">
+                    <AchievementMedal
+                      number={achievement.number}
+                      symbol={getAchievementSymbol(achievement.key)}
+                      locked={false}
+                      size="sm"
+                    />
+                    <span className="max-w-[5.5rem] text-xs font-medium text-text-primary">
+                      {translation?.name ?? b.badges?.key}
+                    </span>
+                  </div>
+                );
+              }
+              // No medal art yet for this badge -- fall back to the
+              // plain text pill rather than hiding it.
               return (
                 <Badge key={b.badges?.key} variant="success">
                   {translation?.name ?? b.badges?.key}
