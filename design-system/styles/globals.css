@@ -91,3 +91,54 @@
     min-height: 1.5rem;
   }
 }
+
+/**
+ * Content Intelligence Engine — reusable visual-content classes.
+ *
+ * `article.body` is stored and rendered as trusted, author-authored
+ * HTML (see app/[locale]/insights/[slug]/page.tsx), not markdown or
+ * MDX — there is no component pipeline inside the article body itself.
+ * So the "reusable visual content system" the content spec calls for
+ * (comparison tables, checklists, decision tables, callouts) is
+ * implemented as a fixed set of CSS classes every article's HTML uses
+ * consistently, rather than as React components. Structured data that
+ * lives outside the body (sources, related articles, difficulty,
+ * "coming soon" CTAs) *does* use real React components instead —
+ * see components/content/*.
+ */
+@layer components {
+  .content-callout {
+    @apply my-6 rounded-card border-s-4 border-primary bg-primary-50 p-4 text-sm text-text-secondary dark:bg-primary-950/30;
+  }
+  .content-callout-title {
+    @apply mb-1 font-display text-sm font-semibold text-text-primary;
+  }
+
+  .content-checklist {
+    @apply my-6 flex list-none flex-col gap-2 rounded-card border border-border bg-surface-raised p-4 ps-4;
+  }
+  .content-checklist li {
+    @apply flex items-start gap-2 text-sm text-text-secondary;
+  }
+  .content-checklist li::before {
+    content: "\2713";
+    @apply mt-0.5 flex h-4 w-4 flex-none items-center justify-center rounded-full bg-success-50 text-[10px] font-bold text-success-600;
+  }
+
+  .content-comparison-table,
+  .content-decision-table {
+    @apply my-6 w-full border-collapse overflow-hidden rounded-card border border-border text-sm;
+  }
+  .content-comparison-table th,
+  .content-decision-table th {
+    @apply border-b border-border bg-surface-raised px-3 py-2 text-start font-display font-semibold text-text-primary;
+  }
+  .content-comparison-table td,
+  .content-decision-table td {
+    @apply border-b border-border px-3 py-2 align-top text-text-secondary;
+  }
+  .content-comparison-table tr:last-child td,
+  .content-decision-table tr:last-child td {
+    @apply border-b-0;
+  }
+}
