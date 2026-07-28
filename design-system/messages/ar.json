@@ -538,7 +538,36 @@
     "emptyTitle": "لا توجد مقالات منشورة بعد",
     "emptyBody": "المقالات الأولى قيد الإعداد. اشترك في النشرة البريدية لتصلك رسالة عند نشرها.",
     "backLink": "العودة إلى الرؤى والمقالات",
-    "publishedOn": "تاريخ النشر"
+    "publishedOn": "تاريخ النشر",
+    "updatedOn": "آخر تحديث",
+    "sourcesTitle": "المصادر",
+    "accessedLabel": "تاريخ الاطلاع",
+    "relatedTitle": "قراءات ذات صلة",
+    "difficulty": {
+      "beginner": "مبتدئ",
+      "intermediate": "متوسط",
+      "advanced": "متقدم"
+    },
+    "audience": {
+      "students": "الطلاب",
+      "professionals": "المتخصصون",
+      "executives": "التنفيذيون",
+      "ciso": "مسؤولو أمن المعلومات",
+      "general": "جمهور عام"
+    },
+    "tryItTitle": "جرّب بنفسك",
+    "tryItLiveDescription": "طبّق ما تعلمته من خلال تحدٍ تفاعلي ومجاني من CyberAbeer.",
+    "tryItLiveLink": "ابدأ التحدي",
+    "tryItComingSoonDescription": "تجربة تفاعلية من CyberAbeer لهذا الموضوع قيد التطوير حالياً.",
+    "tryItComingSoon": "قريباً"
+  },
+  "topics": {
+    "kicker": "محور موضوعي",
+    "backLink": "العودة إلى الرؤى والمقالات",
+    "hubsTitle": "استكشف هذا المحور",
+    "articlesTitle": "المقالات",
+    "emptyTitle": "لا توجد مقالات منشورة في هذا الموضوع بعد",
+    "emptyBody": "مقالات جديدة في هذا المجال قيد الإعداد. اشترك في النشرة البريدية لتصلك رسالة عند نشرها."
   },
   "contact": {
     "kicker": "تواصل معنا",
@@ -624,6 +653,7 @@
     "researchDescription": "بحث دكتوراه وعمل مستمر حول حوكمة الأمن السيبراني التكيفية والتشفير المقاوم للحوسبة الكمّية.",
     "insightsTitle": "رؤى حول الحوكمة ومخاطر الذكاء الاصطناعي والأمن",
     "insightsDescription": "ملاحظات بحثية ومقالات عملية حول الحوكمة ومخاطر الذكاء الاصطناعي والأمن.",
+    "topicsTitleSuffix": "رؤى CyberAbeer",
     "contactTitle": "تواصل مع سايبر عبير",
     "contactDescription": "تواصل مع سايبر عبير للأسئلة العامة أو الاستفسارات المؤسسية حول جرين تراست AI.",
     "loginTitle": "تسجيل الدخول إلى سايبر عبير",
