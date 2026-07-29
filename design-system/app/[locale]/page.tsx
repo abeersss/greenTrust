@@ -74,6 +74,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {t("heroTitle")}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-text-secondary">{t("heroSubtitle")}</p>
+          <p className="mt-4 text-sm font-medium text-text-muted">{t("brandPromise")}</p>
         </div>
       </section>
 
