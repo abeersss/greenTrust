@@ -10,7 +10,8 @@ import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
 import { Building2, GraduationCap, ArrowRight } from "lucide-react";
 import { ArticleCard } from "@/components/content/article-card";
-import { getPublishedArticles } from "@/lib/content/articles";
+import { IntelligenceCard } from "@/components/content/intelligence-card";
+import { getPublishedArticles, getLatestIntelligenceArticles, type IntelSeverity, type IntelStoryStatus } from "@/lib/content/articles";
 import { formatArticleDate } from "@/lib/content/format";
 
 export async function generateMetadata({
@@ -32,8 +33,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: "home" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const tInsights = await getTranslations({ locale, namespace: "insights" });
+  const tIntel = await getTranslations({ locale, namespace: "intelligence" });
 
   const latestArticles = (await getPublishedArticles(l)).slice(0, 3);
+  // Section 21 of the Cyber Intelligence directive: a restrained
+  // homepage section, capped at 3-5 items, that must not let news
+  // dominate CyberAbeer's learning identity -- so this stays a single
+  // row (4 items) below the fold, not a second hero.
+  const latestIntel = await getLatestIntelligenceArticles(l, 4);
+  const intelSeverityLabels = {
+    critical: tIntel("severity.critical"),
+    high: tIntel("severity.high"),
+    important: tIntel("severity.important"),
+    informational: tIntel("severity.informational"),
+  } as Record<IntelSeverity, string>;
+  const intelStoryStatusLabels = {
+    developing: tIntel("storyStatus.developing"),
+    confirmed: tIntel("storyStatus.confirmed"),
+    updated: tIntel("storyStatus.updated"),
+    resolved: tIntel("storyStatus.resolved"),
+  } as Record<IntelStoryStatus, string>;
 
   return (
     <div className="flex flex-col">
@@ -179,6 +198,43 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                       ? tInsights("readingTimeMinutes", { minutes: article.readingTimeMinutes })
                       : null
                   }
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Latest Cyber Intelligence -- deliberately restrained (max 4
+          items, one row, below Insights) so it doesn't overtake the
+          homepage's learning identity, per the founder's directive. */}
+      {latestIntel.length > 0 && (
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-6xl px-4 py-16 tablet:px-6">
+            <div className="flex flex-col items-start justify-between gap-4 tablet:flex-row tablet:items-end">
+              <div>
+                <h2 className="font-display text-2xl font-semibold text-text-primary">
+                  {tIntel("homeSectionTitle")}
+                </h2>
+                <p className="mt-2 max-w-2xl text-text-secondary">{tIntel("homeSectionIntro")}</p>
+              </div>
+              <Button asChild variant="outline" className="shrink-0">
+                <Link href="/intelligence">
+                  {tIntel("homeSectionCta")}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
+            <div className="mt-8 grid gap-6 tablet:grid-cols-2 desktop:grid-cols-4">
+              {latestIntel.map((article) => (
+                <IntelligenceCard
+                  key={article.id}
+                  article={article}
+                  publishedLabel={formatArticleDate(l, article.publishedAt)}
+                  updatedLabel={null}
+                  severityLabels={intelSeverityLabels}
+                  storyStatusLabels={intelStoryStatusLabels}
+                  menaRelevanceLabel={tIntel("menaRelevanceLabel")}
                 />
               ))}
             </div>
