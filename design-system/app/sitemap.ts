@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site";
-import { getPublishedArticles } from "@/lib/content/articles";
+import { getPublishedArticles, getTopLevelPillars, getCategoryBySlug } from "@/lib/content/articles";
 
 // getPublishedArticles goes through the cookie-aware Supabase server
 // client, which makes this route use a dynamic API (`cookies`) and
@@ -71,6 +71,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "monthly",
         priority: 0.6,
       });
+    }
+
+    // Pillar and hub topic pages (/topics/[pillar]) are indexable
+    // taxonomy pages that organize the published articles above; they
+    // exist independent of any single article's publish state, so they
+    // list unconditionally per locale rather than being derived from
+    // the article set.
+    const pillars = await getTopLevelPillars(locale);
+    for (const pillar of pillars) {
+      entries.push({
+        url: `${siteUrl}/${locale}/topics/${pillar.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.65,
+      });
+      const category = await getCategoryBySlug(locale, pillar.slug);
+      for (const hub of category?.hubs ?? []) {
+        entries.push({
+          url: `${siteUrl}/${locale}/topics/${hub.slug}`,
+          lastModified: new Date(),
+          changeFrequency: "weekly",
+          priority: 0.6,
+        });
+      }
     }
   }
 
