@@ -6,7 +6,7 @@ import { Link } from "@/lib/i18n/navigation";
 import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, articleSchema } from "@/lib/seo/schema";
-import { getArticleBySlug } from "@/lib/content/articles";
+import { getArticleBySlug, getArticleLocaleSlugs } from "@/lib/content/articles";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { SourcesList } from "@/components/content/sources-list";
 import { RelatedArticles } from "@/components/content/related-articles";
@@ -23,17 +23,22 @@ export async function generateMetadata({
   const article = await getArticleBySlug(locale, slug);
   if (!article) return {};
 
+  // Bilingual articles are independently translated, not
+  // transliterated, so the English and Arabic slugs for the "same"
+  // article can legitimately differ (see 013_content_seed_flagship_articles.sql).
+  // Without this override, hreflang/canonical for the *other* locale
+  // would silently point at a slug that doesn't exist in that locale.
+  const localeSlugs = await getArticleLocaleSlugs(article.id);
+
   return buildMetadata({
     locale,
     path: `insights/${slug}`,
     title: article.metaTitle ?? article.title,
     description: article.metaDescription ?? article.excerpt ?? "",
     ogImagePath: article.ogImageUrl ?? undefined,
-    // Bilingual articles are independently translated, not
-    // transliterated, so the English and Arabic slugs for the "same"
-    // article can legitimately differ (see 013_content_seed_flagship_articles.sql).
-    // Without this override, hreflang/canonical for the *other* locale
-    // would silently point at a slug that doesn't exist in that locale.
+    alternatePaths: Object.fromEntries(
+      Object.entries(localeSlugs).map(([l, s]) => [l, `insights/${s}`])
+    ),
   });
 }
 
