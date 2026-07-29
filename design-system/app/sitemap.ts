@@ -27,6 +27,7 @@ const staticPaths = [
   "",
   "about",
   "greentrust",
+  "for-organizations",
   "labs",
   "free-tools",
   "free-tools/ai-governance-quick-check",
