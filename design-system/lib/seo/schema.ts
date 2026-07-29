@@ -103,6 +103,10 @@ export interface ArticleSchemaInput {
   dateModified?: string | null;
   authorName: string | null;
   imageUrl: string | null;
+  /** "insights" (default) or "intelligence" -- must match the actual route the article lives at, since this URL is what search engines index. */
+  basePath?: "insights" | "intelligence";
+  /** Cyber Intelligence items use NewsArticle (Section 27); regular evergreen content stays Article. */
+  schemaType?: "Article" | "NewsArticle";
 }
 
 export interface LearningResourceSchemaInput {
@@ -135,16 +139,17 @@ export function learningResourceSchema(input: LearningResourceSchemaInput) {
 }
 
 export function articleSchema(input: ArticleSchemaInput) {
+  const basePath = input.basePath ?? "insights";
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": input.schemaType ?? "Article",
     headline: input.title,
     description: input.description ?? undefined,
     datePublished: input.datePublished ?? undefined,
     dateModified:
       input.dateModified && input.dateModified !== input.datePublished ? input.dateModified : undefined,
     inLanguage: input.locale,
-    url: `${siteUrl}/${input.locale}/insights/${input.slug}`,
+    url: `${siteUrl}/${input.locale}/${basePath}/${input.slug}`,
     image: input.imageUrl ?? undefined,
     author: input.authorName ? { "@type": "Person", name: input.authorName } : undefined,
     publisher: { "@type": "Organization", name: siteName },
