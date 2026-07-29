@@ -9,7 +9,7 @@ import { Link } from "@/lib/i18n/navigation";
 import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
-import { getArticlesByCategoryIds, getCategoryBySlug } from "@/lib/content/articles";
+import { getArticlesByCategoryIds, getCategoryBySlug, getCategoryLocaleSlugs } from "@/lib/content/articles";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 
 /**
@@ -32,11 +32,19 @@ export async function generateMetadata({
   if (!category) return {};
   const t = await getTranslations({ locale, namespace: "seo" });
 
+  // Category slugs are independently translated per locale (see
+  // getCategoryLocaleSlugs), so hreflang must use each locale's own
+  // slug rather than reusing the current locale's `pillar` param.
+  const localeSlugs = await getCategoryLocaleSlugs(category.id);
+
   return buildMetadata({
     locale,
     path: `topics/${pillar}`,
     title: category.metaTitle ?? `${category.name} | ${t("topicsTitleSuffix")}`,
     description: category.metaDescription ?? category.description ?? "",
+    alternatePaths: Object.fromEntries(
+      Object.entries(localeSlugs).map(([l, s]) => [l, `topics/${s}`])
+    ),
   });
 }
 
