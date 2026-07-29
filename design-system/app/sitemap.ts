@@ -33,6 +33,7 @@ const staticPaths = [
   "free-tools/quantum-readiness-quick-check",
   "research",
   "insights",
+  "learn",
   "contact",
   "challenge/first-defender",
 ];
