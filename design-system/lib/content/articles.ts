@@ -10,7 +10,37 @@ export interface ArticleSource {
   accessedDate: string;
 }
 
-export interface ArticleSummary {
+export type IntelSeverity = "critical" | "high" | "important" | "informational";
+export type IntelStoryStatus = "developing" | "confirmed" | "updated" | "resolved";
+export type ExploitStatus = "actively_exploited" | "poc_available" | "no_known_exploit" | "unknown";
+export type CyberAbeerPriority = "immediate" | "urgent" | "planned" | "monitor";
+
+/**
+ * Cyber Intelligence metadata (migration 022) is stored as nullable
+ * columns directly on `articles` / `article_translations`, not a
+ * parallel table -- every regular evergreen article simply has all of
+ * these as null. Grouped into its own interface so ArticleSummary's
+ * non-intelligence callers (Insights, Learn, topics pages) aren't
+ * forced to reason about fields that never apply to them, while
+ * `getArticlesByCategoryIds` and friends can still return them for
+ * free since the underlying select/mapper is shared.
+ */
+export interface IntelligenceMeta {
+  intelSeverity: IntelSeverity | null;
+  intelStoryStatus: IntelStoryStatus | null;
+  cveIds: string[];
+  cvssScore: number | null;
+  affectedProduct: string | null;
+  exploitStatus: ExploitStatus | null;
+  kevListed: boolean;
+  vendorAdvisoryUrl: string | null;
+  patchStatus: string | null;
+  cyberabeerPriority: CyberAbeerPriority | null;
+  menaRelevance: boolean;
+  sourcesCheckedAt: string | null;
+}
+
+export interface ArticleSummary extends IntelligenceMeta {
   id: string;
   slug: string;
   title: string;
@@ -36,6 +66,8 @@ export interface ArticleDetail extends ArticleSummary {
   authorName: string | null;
   reviewedAt: string | null;
   relatedLabKey: string | null;
+  /** Executive View summary (Section 15 of the Cyber Intelligence spec) -- null for non-intelligence articles and for intelligence items where a separate executive framing wasn't warranted. */
+  executiveSummary: string | null;
   sources: ArticleSource[];
   relatedArticles: ArticleSummary[];
 }
@@ -141,6 +173,18 @@ interface ArticleJoinRow {
   audience: string[] | null;
   reviewed_at: string | null;
   related_lab_key: string | null;
+  intel_severity: IntelSeverity | null;
+  intel_story_status: IntelStoryStatus | null;
+  cve_ids: string[] | null;
+  cvss_score: number | null;
+  affected_product: string | null;
+  exploit_status: ExploitStatus | null;
+  kev_listed: boolean | null;
+  vendor_advisory_url: string | null;
+  patch_status: string | null;
+  cyberabeer_priority: CyberAbeerPriority | null;
+  mena_relevance: boolean | null;
+  sources_checked_at: string | null;
   categories?: CategoryJoinRow | null;
   authors?: { display_name: string | null } | null;
 }
@@ -153,6 +197,7 @@ interface ArticleTranslationRow {
   meta_title?: string | null;
   meta_description?: string | null;
   og_image_url?: string | null;
+  executive_summary?: string | null;
   reading_time_minutes: number | null;
   articles: ArticleJoinRow;
 }
@@ -180,6 +225,23 @@ function resolvePillar(
   };
 }
 
+function mapIntelligenceMeta(row: ArticleJoinRow): IntelligenceMeta {
+  return {
+    intelSeverity: row.intel_severity ?? null,
+    intelStoryStatus: row.intel_story_status ?? null,
+    cveIds: row.cve_ids ?? [],
+    cvssScore: row.cvss_score ?? null,
+    affectedProduct: row.affected_product ?? null,
+    exploitStatus: row.exploit_status ?? null,
+    kevListed: row.kev_listed ?? false,
+    vendorAdvisoryUrl: row.vendor_advisory_url ?? null,
+    patchStatus: row.patch_status ?? null,
+    cyberabeerPriority: row.cyberabeer_priority ?? null,
+    menaRelevance: row.mena_relevance ?? false,
+    sourcesCheckedAt: row.sources_checked_at ?? null,
+  };
+}
+
 function mapArticleRow(row: ArticleTranslationRow, locale: AppLocale): ArticleSummary {
   const { categoryName, categorySlug, pillarName, pillarSlug, pillarKey } = resolvePillar(row.articles.categories, locale);
   return {
@@ -197,6 +259,7 @@ function mapArticleRow(row: ArticleTranslationRow, locale: AppLocale): ArticleSu
     pillarKey,
     difficulty: row.articles.difficulty ?? null,
     audience: row.articles.audience ?? [],
+    ...mapIntelligenceMeta(row.articles),
   };
 }
 
@@ -204,6 +267,8 @@ const ARTICLE_JOIN_SELECT = `
   slug, title, excerpt, reading_time_minutes,
   articles!inner (
     id, status, published_at, updated_at, difficulty, audience, reviewed_at, related_lab_key,
+    intel_severity, intel_story_status, cve_ids, cvss_score, affected_product, exploit_status,
+    kev_listed, vendor_advisory_url, patch_status, cyberabeer_priority, mena_relevance, sources_checked_at,
     categories ( id, parent_id, key, category_translations ( name, slug, locale ), categories ( key, category_translations ( name, slug, locale ) ) )
   )
 `;
@@ -274,6 +339,36 @@ export async function getArticlesByCategoryIds(locale: AppLocale, categoryIds: s
     return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
   } catch (err) {
     console.error("getArticlesByCategoryIds failed, returning empty list", err);
+    return [];
+  }
+}
+
+/**
+ * The most recent Cyber Intelligence items across every intelligence
+ * hub, identified by `intel_severity is not null` rather than a
+ * category-id list -- an article is "intelligence" content because it
+ * carries intelligence metadata, regardless of which of the 7 hubs it
+ * lives in. Used by the homepage's restrained "Latest Cyber
+ * Intelligence" section (Section 21 of the spec, capped at 3-5 items)
+ * and by the /intelligence hub's "Today's Cyber Brief" strip.
+ */
+export async function getLatestIntelligenceArticles(locale: AppLocale, limit = 5): Promise<ArticleSummary[]> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("article_translations")
+      .select(ARTICLE_JOIN_SELECT)
+      .eq("locale", locale)
+      .eq("articles.status", "published")
+      .not("articles.intel_severity", "is", null)
+      .lte("articles.published_at", new Date().toISOString())
+      .order("published_at", { referencedTable: "articles", ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
+  } catch (err) {
+    console.error("getLatestIntelligenceArticles failed, returning empty list", err);
     return [];
   }
 }
@@ -464,9 +559,11 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
       .from("article_translations")
       .select(
         `
-        slug, title, excerpt, body, meta_title, meta_description, og_image_url, reading_time_minutes,
+        slug, title, excerpt, body, meta_title, meta_description, og_image_url, executive_summary, reading_time_minutes,
         articles!inner (
           id, status, published_at, updated_at, difficulty, audience, reviewed_at, related_lab_key,
+          intel_severity, intel_story_status, cve_ids, cvss_score, affected_product, exploit_status,
+          kev_listed, vendor_advisory_url, patch_status, cyberabeer_priority, mena_relevance, sources_checked_at,
           categories ( id, parent_id, key, category_translations ( name, slug, locale ), categories ( key, category_translations ( name, slug, locale ) ) ),
           authors ( display_name )
         )
@@ -533,6 +630,7 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
       authorName: row.articles.authors?.display_name ?? null,
       reviewedAt: row.articles.reviewed_at ?? null,
       relatedLabKey: row.articles.related_lab_key ?? null,
+      executiveSummary: row.executive_summary ?? null,
       sources,
       relatedArticles,
     };
