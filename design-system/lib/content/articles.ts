@@ -1,6 +1,6 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { AppLocale } from "@/lib/i18n/config";
+import { locales, type AppLocale } from "@/lib/i18n/config";
 
 export interface ArticleSource {
   title: string;
@@ -22,6 +22,8 @@ export interface ArticleSummary {
   categorySlug: string | null;
   pillarName: string | null;
   pillarSlug: string | null;
+  /** Stable pillar `categories.key` (e.g. `pillar_ai_security_governance`), locale-independent -- used to pick a consistent icon, unlike the translated slug/name. */
+  pillarKey: string | null;
   difficulty: "beginner" | "intermediate" | "advanced" | null;
   audience: string[];
 }
@@ -51,6 +53,63 @@ export interface CategoryDetail {
   hubs: { id: string; key: string; slug: string; name: string; description: string | null }[];
 }
 
+export interface PillarSummary {
+  id: string;
+  key: string;
+  slug: string;
+  name: string;
+  description: string | null;
+}
+
+/**
+ * The 6 top-level content pillars (AI Security & Governance, GRC &
+ * Cyber Governance, Cyber Defense, Data Trust, Future Security, Learn
+ * Cybersecurity), seeded once in 012_content_engine_expansion.sql and
+ * never expected to change often. Used by the Insights page's "Popular
+ * Topics" rail. Categories have no `sort_order` column, so display
+ * order is resolved client-side against `PILLAR_KEY_ORDER` below rather
+ * than trusting whatever order Postgres happens to return.
+ */
+const PILLAR_KEY_ORDER = [
+  "pillar_ai_security_governance",
+  "pillar_grc_governance",
+  "pillar_cyber_defense",
+  "pillar_data_trust",
+  "pillar_future_security",
+  "pillar_learn_cybersecurity",
+];
+
+export async function getTopLevelPillars(locale: AppLocale): Promise<PillarSummary[]> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id, key, category_translations ( name, slug, description, locale )")
+      .eq("is_pillar", true)
+      .is("parent_id", null)
+      .is("deleted_at", null);
+
+    if (error) throw error;
+
+    interface Row {
+      id: string;
+      key: string;
+      category_translations: { name: string; slug: string; description: string | null; locale: string }[];
+    }
+    const pillars = ((data ?? []) as unknown as Row[])
+      .map((row) => {
+        const t = row.category_translations.find((ct) => ct.locale === locale);
+        return t ? { id: row.id, key: row.key, slug: t.slug, name: t.name, description: t.description } : null;
+      })
+      .filter((p): p is PillarSummary => p !== null);
+
+    return pillars.sort((a, b) => PILLAR_KEY_ORDER.indexOf(a.key) - PILLAR_KEY_ORDER.indexOf(b.key));
+  } catch (err) {
+    console.error("getTopLevelPillars failed, returning empty list", err);
+    return [];
+  }
+}
+
 /**
  * Minimal shapes for the raw rows Supabase's dynamic `.select()` string
  * returns from the nested queries below. These aren't generated from
@@ -68,8 +127,9 @@ interface CategoryTranslationRow {
 interface CategoryJoinRow {
   id: string;
   parent_id: string | null;
+  key?: string;
   category_translations?: CategoryTranslationRow[] | null;
-  categories?: { category_translations?: CategoryTranslationRow[] | null } | null; // parent, when embedded
+  categories?: { key?: string; category_translations?: CategoryTranslationRow[] | null } | null; // parent, when embedded
 }
 
 interface ArticleJoinRow {
@@ -100,7 +160,13 @@ interface ArticleTranslationRow {
 function resolvePillar(
   category: CategoryJoinRow | null | undefined,
   locale: AppLocale
-): { categoryName: string | null; categorySlug: string | null; pillarName: string | null; pillarSlug: string | null } {
+): {
+  categoryName: string | null;
+  categorySlug: string | null;
+  pillarName: string | null;
+  pillarSlug: string | null;
+  pillarKey: string | null;
+} {
   const categoryT = category?.category_translations?.find((t) => t.locale === locale);
   // A hub category's parent (if any) is its pillar; a pillar category with
   // no parent is its own pillar for display purposes.
@@ -110,11 +176,12 @@ function resolvePillar(
     categorySlug: categoryT?.slug ?? null,
     pillarName: parentT?.name ?? categoryT?.name ?? null,
     pillarSlug: parentT?.slug ?? categoryT?.slug ?? null,
+    pillarKey: category?.categories?.key ?? category?.key ?? null,
   };
 }
 
 function mapArticleRow(row: ArticleTranslationRow, locale: AppLocale): ArticleSummary {
-  const { categoryName, categorySlug, pillarName, pillarSlug } = resolvePillar(row.articles.categories, locale);
+  const { categoryName, categorySlug, pillarName, pillarSlug, pillarKey } = resolvePillar(row.articles.categories, locale);
   return {
     id: row.articles.id,
     slug: row.slug,
@@ -127,6 +194,7 @@ function mapArticleRow(row: ArticleTranslationRow, locale: AppLocale): ArticleSu
     categorySlug,
     pillarName,
     pillarSlug,
+    pillarKey,
     difficulty: row.articles.difficulty ?? null,
     audience: row.articles.audience ?? [],
   };
@@ -136,7 +204,7 @@ const ARTICLE_JOIN_SELECT = `
   slug, title, excerpt, reading_time_minutes,
   articles!inner (
     id, status, published_at, updated_at, difficulty, audience, reviewed_at, related_lab_key,
-    categories ( id, parent_id, category_translations ( name, slug, locale ), categories ( category_translations ( name, slug, locale ) ) )
+    categories ( id, parent_id, key, category_translations ( name, slug, locale ), categories ( key, category_translations ( name, slug, locale ) ) )
   )
 `;
 
@@ -206,6 +274,48 @@ export async function getArticlesByCategoryIds(locale: AppLocale, categoryIds: s
     return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
   } catch (err) {
     console.error("getArticlesByCategoryIds failed, returning empty list", err);
+    return [];
+  }
+}
+
+/**
+ * Articles carrying a specific cross-cutting tag (e.g. the founder's own
+ * "dr-abeer-insights" voice pieces, which cut across pillars rather than
+ * belonging to one). Used by the Insights page's "Dr. Abeer Insights"
+ * rail so it stays correct as more tagged pieces are published, instead
+ * of hardcoding a slug list in the page component.
+ */
+export async function getArticlesByTag(locale: AppLocale, tagKey: string): Promise<ArticleSummary[]> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data: tagRow, error: tagError } = await supabase
+      .from("tags")
+      .select("id")
+      .eq("key", tagKey)
+      .maybeSingle();
+    if (tagError) throw tagError;
+    if (!tagRow) return [];
+
+    const { data: linkRows, error: linkError } = await supabase
+      .from("article_tags")
+      .select("article_id")
+      .eq("tag_id", (tagRow as { id: string }).id);
+    if (linkError) throw linkError;
+
+    const articleIds = (linkRows ?? []).map((r) => (r as { article_id: string }).article_id);
+    if (articleIds.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from("article_translations")
+      .select(ARTICLE_JOIN_SELECT)
+      .eq("locale", locale)
+      .in("articles.id", articleIds)
+      .eq("articles.status", "published")
+      .order("published_at", { referencedTable: "articles", ascending: false });
+    if (error) throw error;
+    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
+  } catch (err) {
+    console.error("getArticlesByTag failed, returning empty list", err);
     return [];
   }
 }
@@ -283,6 +393,70 @@ export async function getCategoryBySlug(locale: AppLocale, slug: string): Promis
   }
 }
 
+/**
+ * Bilingual articles are independently translated, not transliterated
+ * (see 013_content_seed_flagship_articles.sql), so the same article's
+ * English and Arabic slugs can legitimately differ. hreflang/canonical
+ * tags must point each locale at *that locale's own* slug for the
+ * article, not silently reuse the current locale's slug -- otherwise
+ * the alternate-language link 404s. This resolves every locale's slug
+ * for a given article id in one query, for `buildMetadata`'s
+ * `alternatePaths` param.
+ */
+export async function getArticleLocaleSlugs(articleId: string): Promise<Partial<Record<AppLocale, string>>> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("article_translations")
+      .select("locale, slug")
+      .eq("article_id", articleId)
+      .in("locale", locales as unknown as string[]);
+    if (error) throw error;
+
+    const result: Partial<Record<AppLocale, string>> = {};
+    for (const row of (data ?? []) as { locale: string; slug: string }[]) {
+      if ((locales as readonly string[]).includes(row.locale)) {
+        result[row.locale as AppLocale] = row.slug;
+      }
+    }
+    return result;
+  } catch (err) {
+    console.error("getArticleLocaleSlugs failed, returning empty map", err);
+    return {};
+  }
+}
+
+/**
+ * Same cross-locale slug problem as `getArticleLocaleSlugs`, for
+ * pillar/hub category pages: `category_translations.slug` is
+ * independently translated per locale (see
+ * 012_content_engine_expansion.sql), so `/topics/[pillar]` needs each
+ * locale's own slug for correct hreflang/canonical, not a reused
+ * current-locale slug.
+ */
+export async function getCategoryLocaleSlugs(categoryId: string): Promise<Partial<Record<AppLocale, string>>> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("category_translations")
+      .select("locale, slug")
+      .eq("category_id", categoryId)
+      .in("locale", locales as unknown as string[]);
+    if (error) throw error;
+
+    const result: Partial<Record<AppLocale, string>> = {};
+    for (const row of (data ?? []) as { locale: string; slug: string }[]) {
+      if ((locales as readonly string[]).includes(row.locale)) {
+        result[row.locale as AppLocale] = row.slug;
+      }
+    }
+    return result;
+  } catch (err) {
+    console.error("getCategoryLocaleSlugs failed, returning empty map", err);
+    return {};
+  }
+}
+
 export async function getArticleBySlug(locale: AppLocale, slug: string): Promise<ArticleDetail | null> {
   try {
     const supabase = await createSupabaseServerClient();
@@ -293,7 +467,7 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
         slug, title, excerpt, body, meta_title, meta_description, og_image_url, reading_time_minutes,
         articles!inner (
           id, status, published_at, updated_at, difficulty, audience, reviewed_at, related_lab_key,
-          categories ( id, parent_id, category_translations ( name, slug, locale ), categories ( category_translations ( name, slug, locale ) ) ),
+          categories ( id, parent_id, key, category_translations ( name, slug, locale ), categories ( key, category_translations ( name, slug, locale ) ) ),
           authors ( display_name )
         )
       `
