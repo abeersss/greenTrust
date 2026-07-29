@@ -47,6 +47,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
     { label: t("freeTools"), href: "/free-tools" },
     { label: t("research"), href: "/research" },
     { label: t("insights"), href: "/insights" },
+    { label: t("learn"), href: "/learn" },
     { label: t("contact"), href: "/contact" },
   ].map((item) => ({ ...item, active: pathname === item.href }));
 
