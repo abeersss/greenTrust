@@ -9,6 +9,9 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
 import { Building2, GraduationCap, ArrowRight } from "lucide-react";
+import { ArticleCard } from "@/components/content/article-card";
+import { getPublishedArticles } from "@/lib/content/articles";
+import { formatArticleDate } from "@/lib/content/format";
 
 export async function generateMetadata({
   params,
@@ -28,6 +31,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   const t = await getTranslations({ locale, namespace: "home" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
+  const tInsights = await getTranslations({ locale, namespace: "insights" });
+
+  const latestArticles = (await getPublishedArticles(l)).slice(0, 3);
 
   return (
     <div className="flex flex-col">
@@ -143,6 +149,42 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </CardFooter>
         </Card>
       </section>
+
+      {/* Latest CyberAbeer Insights */}
+      {latestArticles.length > 0 && (
+        <section className="border-t border-border bg-surface-raised">
+          <div className="mx-auto max-w-6xl px-4 py-16 tablet:px-6">
+            <div className="flex flex-col items-start justify-between gap-4 tablet:flex-row tablet:items-end">
+              <div>
+                <h2 className="font-display text-2xl font-semibold text-text-primary">
+                  {t("latestInsightsHeading")}
+                </h2>
+                <p className="mt-2 max-w-2xl text-text-secondary">{t("latestInsightsIntro")}</p>
+              </div>
+              <Button asChild variant="outline" className="shrink-0">
+                <Link href="/insights">
+                  {t("exploreAllInsightsCta")}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
+            <div className="mt-8 grid gap-6 tablet:grid-cols-3">
+              {latestArticles.map((article) => (
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  dateLabel={formatArticleDate(l, article.publishedAt)}
+                  readingTimeLabel={
+                    article.readingTimeMinutes
+                      ? tInsights("readingTimeMinutes", { minutes: article.readingTimeMinutes })
+                      : null
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
