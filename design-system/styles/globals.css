@@ -108,14 +108,26 @@
  */
 @layer components {
   .content-callout {
-    /* NOTE (build fix): the original rule used dark:bg-primary-950/30,
-       but the brand primary color scale (tailwind.config.ts) only
-       defines 50/100/300/500/600/700 — there is no 950 shade in any
-       brand's token set (styles/tokens.css), so Tailwind's @apply
-       failed at build time ("bg-primary-950 does not exist"). 700 is
-       the darkest defined shade and gives the same subtle tinted-
-       background effect in dark mode without inventing a new token. */
-    @apply my-6 rounded-card border-s-4 border-primary bg-primary-50 p-4 text-sm text-text-secondary dark:bg-primary-700/30;
+    /* NOTE (build fix, corrected): the original rule used
+       dark:bg-primary-950/30, which failed because there is no 950
+       shade in any brand's primary scale (tailwind.config.ts only
+       defines 50/100/300/500/600/700). The first fix attempt swapped
+       in dark:bg-primary-700/30, but that ALSO fails to build --not
+       because of the shade number, but because Tailwind's "/opacity"
+       modifier only works when a color is wired up as space-separated
+       RGB channels (e.g. "18 76 92") so it can generate
+       rgb(var(--x) / <alpha-value>). This design system's
+       tailwind.config.ts instead points every color straight at a
+       CSS custom property that resolves to a hex string
+       (`primary: { 700: "var(--color-primary-700)" }`, and
+       styles/tokens.css defines `--color-primary-700: #0a323c`), so
+       NO brand color here can ever take an opacity modifier -- it's
+       not a one-shade bug, it's a structural mismatch with how the
+       token pipeline is wired. The fix is to stop using an opacity
+       modifier at all and reuse the existing dark-mode panel token
+       (surface-raised) for the background, keeping the border-s-4
+       border-primary stripe as the brand accent. */
+    @apply my-6 rounded-card border-s-4 border-primary bg-primary-50 p-4 text-sm text-text-secondary dark:bg-surface-raised;
   }
   .content-callout-title {
     @apply mb-1 font-display text-sm font-semibold text-text-primary;
