@@ -43,6 +43,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
     { label: t("home"), href: "/" },
     { label: t("about"), href: "/about" },
     { label: t("greentrust"), href: "/greentrust" },
+    { label: t("forOrganizations"), href: "/for-organizations" },
     { label: t("labs"), href: "/labs" },
     { label: t("freeTools"), href: "/free-tools" },
     { label: t("research"), href: "/research" },
