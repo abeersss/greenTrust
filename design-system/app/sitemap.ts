@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site";
-import { getPublishedArticles, getTopLevelPillars, getCategoryBySlug } from "@/lib/content/articles";
+import { getPublishedArticles, getLatestIntelligenceArticles, getTopLevelPillars, getCategoryBySlug } from "@/lib/content/articles";
 
 // getPublishedArticles goes through the cookie-aware Supabase server
 // client, which makes this route use a dynamic API (`cookies`) and
@@ -34,6 +34,7 @@ const staticPaths = [
   "research",
   "insights",
   "learn",
+  "intelligence",
   "contact",
   "challenge/first-defender",
 ];
@@ -71,6 +72,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: article.publishedAt ? new Date(article.publishedAt) : new Date(),
         changeFrequency: "monthly",
         priority: 0.6,
+      });
+    }
+
+    // Cyber Intelligence items get their own /intelligence/[slug] URLs
+    // (not /insights) and a slightly higher changeFrequency since
+    // developing stories can update -- "monthly" would undersell how
+    // often a DEVELOPING/UPDATED item's lastmod actually moves.
+    const intelligenceArticles = await getLatestIntelligenceArticles(locale, 500);
+    for (const article of intelligenceArticles) {
+      entries.push({
+        url: `${siteUrl}/${locale}/intelligence/${article.slug}`,
+        lastModified: article.updatedAt
+          ? new Date(article.updatedAt)
+          : article.publishedAt
+            ? new Date(article.publishedAt)
+            : new Date(),
+        changeFrequency: "weekly",
+        priority: 0.65,
       });
     }
 
