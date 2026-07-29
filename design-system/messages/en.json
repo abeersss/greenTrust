@@ -71,7 +71,10 @@
     "insightsCta": "Read insights",
     "researchHeading": "Research",
     "researchBody": "Dr. Abeer's doctoral research and ongoing work on adaptive cybersecurity governance.",
-    "researchCta": "See research"
+    "researchCta": "See research",
+    "latestInsightsHeading": "Latest CyberAbeer Insights",
+    "latestInsightsIntro": "Fresh research notes and practical guides on AI security, governance, and data trust.",
+    "exploreAllInsightsCta": "Explore All Insights"
   },
   "about": {
     "kicker": "About",
@@ -559,7 +562,13 @@
     "tryItLiveDescription": "Put this into practice with a free, interactive CyberAbeer challenge.",
     "tryItLiveLink": "Start the challenge",
     "tryItComingSoonDescription": "An interactive CyberAbeer experience for this topic is in development.",
-    "tryItComingSoon": "Coming soon"
+    "tryItComingSoon": "Coming soon",
+    "featuredLabel": "Featured Insight",
+    "latestTitle": "Latest Insights",
+    "popularTopicsTitle": "Popular Topics",
+    "drAbeerTitle": "Dr. Abeer Insights",
+    "viewAllLabel": "View all",
+    "readingTimeMinutes": "{minutes} min read"
   },
   "topics": {
     "kicker": "Topic hub",

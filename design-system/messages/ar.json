@@ -71,7 +71,10 @@
     "insightsCta": "اقرأ الرؤى والمقالات",
     "researchHeading": "الأبحاث",
     "researchBody": "بحث الدكتوراه والعمل المستمر لد. عبير حول حوكمة الأمن السيبراني التكيفية.",
-    "researchCta": "اطّلع على الأبحاث"
+    "researchCta": "اطّلع على الأبحاث",
+    "latestInsightsHeading": "أحدث رؤى CyberAbeer",
+    "latestInsightsIntro": "أحدث الملاحظات البحثية والأدلة العملية حول أمن الذكاء الاصطناعي والحوكمة والثقة في البيانات.",
+    "exploreAllInsightsCta": "استكشف كل الرؤى"
   },
   "about": {
     "kicker": "نبذة",
@@ -559,7 +562,13 @@
     "tryItLiveDescription": "طبّق ما تعلمته من خلال تحدٍ تفاعلي ومجاني من CyberAbeer.",
     "tryItLiveLink": "ابدأ التحدي",
     "tryItComingSoonDescription": "تجربة تفاعلية من CyberAbeer لهذا الموضوع قيد التطوير حالياً.",
-    "tryItComingSoon": "قريباً"
+    "tryItComingSoon": "قريباً",
+    "featuredLabel": "أبرز مقال",
+    "latestTitle": "أحدث المقالات",
+    "popularTopicsTitle": "أشهر المواضيع",
+    "drAbeerTitle": "رؤى د. عبير",
+    "viewAllLabel": "عرض الكل",
+    "readingTimeMinutes": "{minutes} دقائق قراءة"
   },
   "topics": {
     "kicker": "محور موضوعي",
