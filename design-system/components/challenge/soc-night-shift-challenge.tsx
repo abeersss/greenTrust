@@ -119,7 +119,7 @@ export function SocNightShiftChallenge({
   const [anonId, setAnonId] = React.useState("");
   const [decisions, setDecisions] = React.useState<Partial<Record<AlertId, Decision>>>({});
   const [investigatedClueIds, setInvestigatedClueIds] = React.useState<string[]>([]);
-  const [startedAt, setStartedAt] = React.useState<string | null>(null);
+  const [startedAt, setStartedAt] = React.useState("");
   const [completedAt, setCompletedAt] = React.useState<string | null>(null);
   const [claimed, setClaimed] = React.useState(false);
   const [claimedXp, setClaimedXp] = React.useState<number | undefined>(undefined);
