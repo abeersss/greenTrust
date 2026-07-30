@@ -62,7 +62,7 @@ const LABS: LabEntry[] = [
       en: "Triage a queue of real-looking alerts under time pressure and decide what actually needs escalation.",
       ar: "قم بفرز قائمة تنبيهات واقعية تحت ضغط الوقت وقرر ما الذي يحتاج فعلًا إلى التصعيد.",
     },
-    href: null,
+    href: "/challenge/soc-night-shift",
     accent: "bg-warning-50 text-warning-600",
   },
   {
