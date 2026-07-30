@@ -112,6 +112,25 @@ async function claimForUser(
     return { xpAwarded: 0, badgeAwarded: false };
   }
 
+  // Atomically claim the session before awarding anything. This UPDATE
+  // only succeeds if claimed_by is still NULL, so two near-simultaneous
+  // calls for the same session (a slow first claim still in flight when
+  // the visitor switches locale, retries, or opens a second tab) can
+  // never both proceed: the loser's .select() below comes back empty
+  // and bails out before any attempt/XP/badge row is written. This
+  // closes the check-then-act race that previously let a session be
+  // claimed twice and XP double-awarded.
+  const { data: lockedRows, error: lockError } = await admin
+    .from("anonymous_challenge_sessions")
+    .update({ claimed_by: userId, claimed_at: new Date().toISOString() })
+    .eq("id", session.id)
+    .is("claimed_by", null)
+    .select("id");
+  if (lockError) throw lockError;
+  if (!lockedRows || lockedRows.length === 0) {
+    return { xpAwarded: 0, badgeAwarded: false };
+  }
+
   const { data: challenge, error: challengeError } = await admin
     .from("challenges")
     .select("id")
@@ -161,12 +180,6 @@ async function claimForUser(
     });
     if (bonusError) throw bonusError;
   }
-
-  const { error: claimError } = await admin
-    .from("anonymous_challenge_sessions")
-    .update({ claimed_by: userId, claimed_at: new Date().toISOString() })
-    .eq("id", session.id);
-  if (claimError) throw claimError;
 
   return {
     xpAwarded: session.xp_earned + (badgeNewlyAwarded ? badge.xp_bonus : 0),
