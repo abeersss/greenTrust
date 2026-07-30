@@ -29,7 +29,7 @@ export interface AchievementCatalogEntry {
 export const ACHIEVEMENT_CATALOG: AchievementCatalogEntry[] = [
   { number: "01", key: "phishingHunter", challengeKey: "phishing-hunter", hasMedalArt: true },
   { number: "02", key: "networkGuardian", challengeKey: "network-guardian", hasMedalArt: false },
-  { number: "03", key: "socNightShift", challengeKey: null, hasMedalArt: false },
+  { number: "03", key: "socNightShift", challengeKey: "soc-night-shift", hasMedalArt: false },
   { number: "04", key: "webDefender", challengeKey: null, hasMedalArt: false },
   { number: "05", key: "identityGuardian", challengeKey: null, hasMedalArt: false },
   { number: "06", key: "incidentCommander", challengeKey: null, hasMedalArt: false },
