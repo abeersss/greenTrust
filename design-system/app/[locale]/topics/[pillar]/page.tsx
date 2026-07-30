@@ -58,7 +58,13 @@ export default async function TopicPage({
   const l = locale as AppLocale;
 
   const category = await getCategoryBySlug(l, pillar);
-  if (!category) notFound();
+  if (!category) {
+    return (
+      <pre style={{ whiteSpace: "pre-wrap", padding: 20, direction: "ltr", textAlign: "left" }}>
+        {JSON.stringify({ debugCategoryNull: true, locale, pillar }, null, 2)}
+      </pre>
+    );
+  }
 
   const t = await getTranslations({ locale, namespace: "topics" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
