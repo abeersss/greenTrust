@@ -55,6 +55,8 @@ export default async function TopicPage({
 }) {
   try {
     const { locale, pillar } = await params;
+  throw new Error('DEBUG pillar codes=' + JSON.stringify([...pillar].map(c=>c.codePointAt(0))) + ' locale=' + locale + ' pillarLen=' + pillar.length);
+
     if (!isAppLocale(locale)) notFound();
     const l = locale as AppLocale;
   
