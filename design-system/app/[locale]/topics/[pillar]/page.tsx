@@ -26,7 +26,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; pillar: string }>;
 }): Promise<Metadata> {
-  const { locale, pillar } = await params;
+  const { locale, pillar: rawPillar } = await params;
+  const pillar = decodeURIComponent(rawPillar);
   if (!isAppLocale(locale)) notFound();
   const category = await getCategoryBySlug(locale, pillar);
   if (!category) return {};
@@ -53,17 +54,14 @@ export default async function TopicPage({
 }: {
   params: Promise<{ locale: string; pillar: string }>;
 }) {
-  const { locale, pillar } = await params;
+  const { locale, pillar: rawPillar } = await params;
+  const pillar = decodeURIComponent(rawPillar);
   if (!isAppLocale(locale)) notFound();
   const l = locale as AppLocale;
 
   const category = await getCategoryBySlug(l, pillar);
   if (!category) {
-    return (
-      <pre style={{ whiteSpace: "pre-wrap", padding: 20, direction: "ltr", textAlign: "left" }}>
-        {JSON.stringify({ debugCategoryNull: true, locale, pillar }, null, 2)}
-      </pre>
-    );
+    notFound();
   }
 
   const t = await getTranslations({ locale, namespace: "topics" });
