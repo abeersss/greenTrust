@@ -51,7 +51,7 @@ const LABS: LabEntry[] = [
       en: "Place firewalls, a WAF, DMZ, and VLAN segmentation on a live network, then watch a simulated attack test your design.",
       ar: "ضع جدران الحماية وWAF وDMZ وتقسيم VLAN على شبكة فعلية، ثم شاهد هجومًا محاكى يختبر تصميمك.",
     },
-    href: null,
+    href: "/challenge/network-guardian",
     accent: "bg-accent/10 text-accent",
   },
   {
