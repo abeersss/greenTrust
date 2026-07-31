@@ -1011,6 +1011,30 @@
       "skip": "Skip",
       "soundOn": "Sound on",
       "soundOff": "Sound off"
+    },
+    "academyHeading": "Academy Progress",
+    "academyProgressLabel": "{earned} of {total} complete",
+    "academies": {
+      "cyberDefense": {
+        "name": "Cyber Defense",
+        "description": "Detect, respond to, and contain live threats before they cause damage."
+      },
+      "governance": {
+        "name": "Governance, Risk & Compliance",
+        "description": "Build the frameworks and controls that keep an organization accountable."
+      },
+      "aiTrust": {
+        "name": "AI Trust",
+        "description": "Secure the AI agents and systems reshaping how organizations operate."
+      },
+      "dataTrust": {
+        "name": "Data Trust",
+        "description": "Classify, protect, and govern the data an organization can't afford to lose."
+      },
+      "futureTrust": {
+        "name": "Future Trust",
+        "description": "Get ahead of the threats and technologies still taking shape."
+      }
     }
   }
 }
