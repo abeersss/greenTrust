@@ -132,3 +132,20 @@ export const greentrustAssessmentSchema = z.object({
   website: honeypot,
 });
 export type GreenTrustAssessmentInput = z.infer<typeof greentrustAssessmentSchema>;
+
+/**
+ * Organizational tool assessments (For Organizations section, migrated
+ * from the paid AbeerGRC toolkits). Only raw answers are accepted — the
+ * server action always recomputes the score itself, the same pattern as
+ * the GreenTrust free assessment above, so a tampered client request
+ * can't change anything but its own persisted copy.
+ */
+export const orgToolSubmissionSchema = z.object({
+  toolKey: z.enum(["cyber_posture_assessment", "iso27001_gap_assessment"]),
+  answers: z
+    .record(z.string(), z.string())
+    .refine((a) => Object.keys(a).length > 0, { message: "answersRequired" }),
+  email: email.optional().or(z.literal("")),
+  locale: z.enum(["en", "ar"]),
+});
+export type OrgToolSubmissionInput = z.infer<typeof orgToolSubmissionSchema>;
