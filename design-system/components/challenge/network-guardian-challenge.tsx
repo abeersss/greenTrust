@@ -614,7 +614,7 @@ function TopologyDiagram({
       {EDGES.map((edge) => {
         const from = center(edge.from);
         const to = center(edge.to);
-        const isBlocked = blockedEdgeIds.includes(edge.id);
+        const isBlocked = mode === "result" && blockedEdgeIds.includes(edge.id);
         const isAttackPath = mode === "result" && attackPathEdgeIds.has(edge.id) && !isBlocked;
         const path = `M${from.x},${from.y} L${to.x},${to.y}`;
         return (
