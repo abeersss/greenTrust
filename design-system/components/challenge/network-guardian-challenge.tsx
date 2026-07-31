@@ -127,6 +127,13 @@ const CONTROL_SLOT_FILL: Record<ControlId, string> = {
   vlan_segmentation: "fill-info-50",
 };
 
+const CONTROL_SHORT_LABEL: Record<ControlId, { en: string; ar: string }> = {
+  firewall: { en: "FIREWALL", ar: "جدار الحماية" },
+  waf: { en: "WAF", ar: "WAF" },
+  dmz: { en: "DMZ", ar: "DMZ" },
+  vlan_segmentation: { en: "VLAN", ar: "VLAN" },
+};
+
 function TopologyLegend({ locale }: { locale: AppLocale }) {
   const items: { color: string; label: { en: string; ar: string } }[] = [
     { color: "bg-neutral-700", label: { en: "Internet", ar: "الإنترنت" } },
@@ -679,11 +686,11 @@ function TopologyDiagram({
                 x={slot.x + slot.w / 2}
                 y={slot.y + slot.h / 2 + 4}
                 textAnchor="middle"
-                className={`pointer-events-none text-[9px] font-semibold ${
+                className={`pointer-events-none text-[10px] font-bold ${
                   filled ? accent.chipText : "fill-text-muted"
                 }`}
               >
-                {pick(control.name, locale).slice(0, 14).toUpperCase()}
+                {locale === "ar" ? CONTROL_SHORT_LABEL[control.id].ar : CONTROL_SHORT_LABEL[control.id].en}
               </text>
             </g>
           );
