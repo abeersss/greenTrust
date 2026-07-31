@@ -5,6 +5,8 @@ export interface NavItem {
   label: string;
   href: string;
   active?: boolean;
+  /** Optional dropdown sub-items (e.g. "For Organizations" -> GreenTrust AI, Free Tools). */
+  children?: NavItem[];
 }
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
