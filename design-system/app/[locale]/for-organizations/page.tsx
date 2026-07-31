@@ -123,6 +123,26 @@ export default async function ForOrganizationsPage({ params }: { params: Promise
         </div>
       </section>
 
+      {/* Free organizational tool */}
+      <section className="mx-auto max-w-4xl px-4 py-12 text-center tablet:px-6">
+        <h2 className="font-display text-xl font-semibold text-text-primary">
+          {l === "ar" ? "أداة تقييم مجانية" : "A free assessment tool"}
+        </h2>
+        <p className="mt-3 text-text-secondary">
+          {l === "ar"
+            ? "قبل حجز مراجعة مؤسسية، جرّب تقييم النضج الأمني السيبراني المجاني القائم على إطار NIST CSF 2.0."
+            : "Before booking an enterprise review, try the free Cybersecurity Posture Assessment built on the NIST CSF 2.0 framework."}
+        </p>
+        <div className="mt-6">
+          <Button asChild size="lg" variant="outline">
+            <Link href="/for-organizations/cybersecurity-posture-assessment">
+              {l === "ar" ? "ابدأ تقييم النضج الأمني السيبراني" : "Start the Cybersecurity Posture Assessment"}
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
       {/* What organizations pay for */}
       <section className="border-y border-border bg-surface-raised">
         <div className="mx-auto max-w-3xl px-4 py-12 text-center tablet:px-6">
