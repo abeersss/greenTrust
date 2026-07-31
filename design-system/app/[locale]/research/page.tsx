@@ -10,6 +10,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { BookOpen } from "lucide-react";
+import { PUBLICATIONS } from "@/lib/research/publications";
 
 export async function generateMetadata({
   params,
@@ -63,6 +64,35 @@ export default async function ResearchPage({ params }: { params: Promise<{ local
         <h2 className="font-display text-lg font-semibold text-text-primary">{t("dissertationHeading")}</h2>
         <p className="mt-2 italic text-text-secondary">{t("dissertationTitle")}</p>
         <p className="mt-3 text-sm text-text-muted">{t("dissertationNote")}</p>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="font-display text-xl font-semibold text-text-primary">{t("publicationsHeading")}</h2>
+        <ul className="mt-4 space-y-4">
+          {PUBLICATIONS.map((pub) => (
+            <li key={pub.doiUrl} className="rounded-card border border-border p-4">
+              <a
+                href={pub.doiUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-text-primary underline-offset-4 hover:underline"
+              >
+                {pub.title}
+              </a>
+              <p className="mt-1 text-sm text-text-muted">
+                {pub.venue} · {pub.year}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <a
+          href="https://orcid.org/0009-0003-9379-2667"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
+        >
+          {t("orcidCta")}
+        </a>
       </section>
 
       <div className="mt-10 text-center">
