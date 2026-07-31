@@ -73,7 +73,7 @@ const LABS: LabEntry[] = [
       en: "Classify and protect sensitive data across a realistic set of documents and systems.",
       ar: "صنّف واحمِ البيانات الحساسة عبر مجموعة واقعية من المستندات والأنظمة.",
     },
-    href: null,
+    href: "/challenge/data-guardian",
     accent: "bg-success-50 text-success-600",
   },
   {
