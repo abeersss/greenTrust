@@ -33,7 +33,7 @@ export const ACHIEVEMENT_CATALOG: AchievementCatalogEntry[] = [
   { number: "04", key: "webDefender", challengeKey: null, hasMedalArt: false },
   { number: "05", key: "identityGuardian", challengeKey: null, hasMedalArt: false },
   { number: "06", key: "incidentCommander", challengeKey: null, hasMedalArt: false },
-  { number: "07", key: "dataGuardian", challengeKey: null, hasMedalArt: false },
+  { number: "07", key: "dataGuardian", challengeKey: "data-guardian", hasMedalArt: false },
   { number: "08", key: "cloudDefender", challengeKey: null, hasMedalArt: false },
   { number: "09", key: "agentZero", challengeKey: null, hasMedalArt: false },
   { number: "10", key: "grcStrategist", challengeKey: null, hasMedalArt: false },
