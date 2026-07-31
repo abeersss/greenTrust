@@ -40,6 +40,10 @@ import {
   Sparkles,
   Share2,
   Info,
+Flame,
+ShieldCheck,
+Layers,
+Network,
 } from "lucide-react";
 
 export interface NetworkGuardianChallengeProps {
@@ -87,6 +91,46 @@ const NODE_ICON: Record<NodeId, React.ReactNode> = {
   workstations: <Users className="h-5 w-5" aria-hidden="true" />,
   database_server: <Database className="h-5 w-5" aria-hidden="true" />,
 };
+
+const NODE_ACCENT: Record<NodeId, { badgeBg: string; iconColor: string }> = {
+  internet: { badgeBg: "fill-neutral-700", iconColor: "text-white" },
+  web_server: { badgeBg: "fill-primary-50", iconColor: "text-primary-600" },
+  workstations: { badgeBg: "fill-info-50", iconColor: "text-info-600" },
+  database_server: { badgeBg: "fill-success-50", iconColor: "text-success-600" },
+};
+
+const CONTROL_ICON: Record<ControlId, React.ReactNode> = {
+  firewall: <Flame className="h-4 w-4" aria-hidden="true" />,
+  waf: <ShieldCheck className="h-4 w-4" aria-hidden="true" />,
+  dmz: <Layers className="h-4 w-4" aria-hidden="true" />,
+  vlan_segmentation: <Network className="h-4 w-4" aria-hidden="true" />,
+};
+
+const CONTROL_ACCENT: Record<ControlId, { chipBg: string; chipText: string; activeBorder: string }> = {
+  firewall: { chipBg: "bg-danger-50", chipText: "text-danger-600", activeBorder: "border-danger-500" },
+  waf: { chipBg: "bg-primary-50", chipText: "text-primary-600", activeBorder: "border-primary" },
+  dmz: { chipBg: "bg-warning-50", chipText: "text-warning-600", activeBorder: "border-warning-500" },
+  vlan_segmentation: { chipBg: "bg-info-50", chipText: "text-info-600", activeBorder: "border-info-500" },
+};
+
+function TopologyLegend({ locale }: { locale: AppLocale }) {
+  const items: { color: string; label: { en: string; ar: string } }[] = [
+    { color: "bg-neutral-700", label: { en: "Internet", ar: "الإنترنت" } },
+    { color: "bg-primary-500", label: { en: "Web server", ar: "خادم الويب" } },
+    { color: "bg-info-500", label: { en: "Workstations", ar: "محطات العمل" } },
+    { color: "bg-success-500", label: { en: "Database", ar: "قاعدة البيانات" } },
+  ];
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-border pt-3 text-xs text-text-muted">
+      {items.map((item) => (
+        <span key={item.label.en} className="flex items-center gap-1.5">
+          <span className={`h-2.5 w-2.5 rounded-full ${item.color}`} aria-hidden="true" />
+          {pick(item.label, locale)}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 function center(id: NodeId) {
   const p = NODE_POS[id];
@@ -516,7 +560,8 @@ function TopologyDiagram({
             key={edge.id}
             d={path}
             fill="none"
-            strokeWidth={isAttackPath ? 3.5 : 2}
+            strokeWidth={isAttackPath ? 4 : 2.5}
+            strokeLinecap="round"
             strokeDasharray={isBlocked ? "6 5" : undefined}
             className={
               isAttackPath
@@ -535,6 +580,7 @@ function TopologyDiagram({
       {NETWORK_GUARDIAN_NODES.map((node) => {
         const pos = NODE_POS[node.id];
         const isInspected = inspectedNode === node.id;
+        const accent = NODE_ACCENT[node.id];
         return (
           <g key={node.id} className="cursor-pointer" onClick={() => onInspectNode(node.id)}>
             <rect
@@ -542,22 +588,31 @@ function TopologyDiagram({
               y={pos.y}
               width={pos.w}
               height={pos.h}
-              rx={10}
-              strokeWidth={isInspected ? 3 : 2}
-              className={`${nodeFill(node.id)} ${nodeStroke(node.id)}`}
+              rx={12}
+              strokeWidth={isInspected ? 3 : 1.5}
+              className={`${nodeFill(node.id)} ${nodeStroke(node.id)} transition-all`}
+              style={{
+                filter: isInspected
+                  ? "drop-shadow(0 4px 10px rgb(0 0 0 / 0.18))"
+                  : "drop-shadow(0 1px 3px rgb(0 0 0 / 0.08))",
+              }}
             />
+            <circle cx={pos.x + 24} cy={pos.y + pos.h / 2} r={14} className={accent.badgeBg} />
+            <g transform={`translate(${pos.x + 24 - 10}, ${pos.y + pos.h / 2 - 10})`} className={accent.iconColor}>
+              {NODE_ICON[node.id]}
+            </g>
             <text
-              x={pos.x + pos.w / 2}
+              x={pos.x + 46}
               y={pos.y + pos.h / 2 + 5}
-              textAnchor="middle"
+              textAnchor="start"
               className={`text-[11px] font-semibold ${node.id === "internet" ? "fill-white" : "fill-text-primary"}`}
             >
-              {nodeLabel(node.id, locale).slice(0, 24)}
+              {nodeLabel(node.id, locale).slice(0, 20)}
             </text>
           </g>
         );
       })}
-    </svg>
+      </svg>
   );
 }
 
@@ -593,12 +648,13 @@ function WorkstationScreen({
         </Badge>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm">{pick(COPY.topologyHeading, locale)}</CardTitle>
-          <CardDescription>{pick(COPY.inspectHint, locale)}</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className="overflow-hidden py-0">
+        <div className="flex items-center gap-2 bg-neutral-900 px-4 py-3">
+          <ShieldAlert className="h-4 w-4 text-white" aria-hidden="true" />
+          <p className="text-sm font-semibold uppercase tracking-wide text-white">{pick(COPY.topologyHeading, locale)}</p>
+        </div>
+        <CardContent className="pt-4">
+          <p className="mb-3 text-xs text-text-secondary">{pick(COPY.inspectHint, locale)}</p>
           <TopologyDiagram
             locale={locale}
             placedControls={placedControls}
@@ -606,6 +662,7 @@ function WorkstationScreen({
             onInspectNode={onInspectNode}
             mode="decide"
           />
+          <TopologyLegend locale={locale} />
           {inspected && (
             <div className="mt-3 flex items-start gap-2 rounded-md bg-surface-raised p-3 text-sm">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" aria-hidden="true" />
@@ -624,32 +681,38 @@ function WorkstationScreen({
         </CardHeader>
         <CardContent className="space-y-2">
           {NETWORK_GUARDIAN_CONTROLS.map((control) => {
-            const active = placedControls.includes(control.id);
-            return (
-              <button
-                key={control.id}
-                type="button"
-                onClick={() => onToggleControl(control.id)}
-                className={`flex w-full items-start gap-3 rounded-md border p-3 text-start transition-colors ${
-                  active ? "border-primary bg-primary-50" : "border-border bg-surface"
+          const active = placedControls.includes(control.id);
+          const accent = CONTROL_ACCENT[control.id];
+          return (
+            <button
+              key={control.id}
+              type="button"
+              onClick={() => onToggleControl(control.id)}
+              className={`flex w-full items-start gap-3 rounded-md border p-3 text-start transition-colors ${
+                active ? `${accent.activeBorder} bg-primary-50` : "border-border bg-surface hover:bg-surface-raised"
+              }`}
+            >
+              <div
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md ${accent.chipBg} ${accent.chipText}`}
+              >
+                {CONTROL_ICON[control.id]}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-text-primary">{pick(control.name, locale)}</p>
+                <p className="text-xs text-text-secondary">{pick(control.description, locale)}</p>
+              </div>
+              <div
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
+                  active ? "border-primary bg-primary text-white" : "border-border"
                 }`}
               >
-                <div
-                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
-                    active ? "border-primary bg-primary text-white" : "border-border"
-                  }`}
-                >
-                  {active && <CheckCircle2 className="h-4 w-4" aria-hidden="true" />}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-text-primary">{pick(control.name, locale)}</p>
-                  <p className="text-xs text-text-secondary">{pick(control.description, locale)}</p>
-                </div>
-              </button>
-            );
-          })}
+                {active && <CheckCircle2 className="h-4 w-4" aria-hidden="true" />}
+              </div>
+            </button>
+          );
+        })}
 
-          <div className="space-y-2 border-t border-border pt-3">
+        <div className="space-y-2 border-t border-border pt-3">
             <Button
               type="button"
               variant="outline"
