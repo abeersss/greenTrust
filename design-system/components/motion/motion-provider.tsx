@@ -47,7 +47,7 @@ export function MotionProvider({
   children: ReactNode;
 }) {
   const prefersReducedMotion = useReducedMotion();
-  const dir = localeDir(locale);
+  const dir = localeDir[locale];
 
   const value = useMemo<MotionContextValue>(
     () => ({ locale, dir, prefersReducedMotion: Boolean(prefersReducedMotion) }),
