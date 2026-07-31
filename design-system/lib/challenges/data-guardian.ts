@@ -163,7 +163,7 @@ export const DATA_ASSETS: DataAsset[] = [
     title: { en: "Three-year-old customer satisfaction survey results", ar: "نتائج استبيان رضا العملاء منذ ثلاث سنوات" },
     summary: {
       en: "A spreadsheet of survey results from a product line that was discontinued two years ago is still sitting in a shared drive.",
-      ar: "لا يزال جدول بيانات لنتائج استبيان من خط*"منتج تم إيقافه قبل عامين موجودًا في مجلد مشترك.",
+      ar: "لا يزال جدول بيانات لنتائج استبيان من خط منتج تم إيقافه قبل عامين موجودًا في مجلد مشترك.",
     },
     apparentSensitivity: "internal",
     groundTruth: "already_safe",
