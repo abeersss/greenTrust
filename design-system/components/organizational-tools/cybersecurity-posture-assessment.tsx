@@ -103,6 +103,11 @@ export function CyberPostureAssessment({ locale }: CyberPostureAssessmentProps) 
     const nextAnswers = { ...answers, [questionId]: value };
     setAnswers(nextAnswers);
 
+    // Let the selected option paint before advancing, so the user
+    // sees their choice register instead of the screen silently
+    // jumping to the next question.
+    await new Promise((resolve) => setTimeout(resolve, 350));
+
     if (step < questions.length - 1) {
       setStep((s) => s + 1);
       return;
