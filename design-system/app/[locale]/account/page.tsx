@@ -40,6 +40,7 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
   const t = await getTranslations({ locale, namespace: "account" });
+  const tAch = await getTranslations({ locale, namespace: "achievements" });
   return buildMetadata({ locale, path: "account", title: t("title"), description: t("title"), noIndex: true });
 }
 
@@ -118,6 +119,13 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
     ]);
 
   const badges = (badgeRows ?? []) as unknown as BadgeRow[];
+  const academyOrder = ["cyberDefense", "governance", "aiTrust", "dataTrust", "futureTrust"] as const;
+  const earnedAchievementKeys = new Set(badges.map((b) => b.badges?.key).filter(Boolean));
+  const academyProgress = academyOrder.map((academy) => {
+    const entries = ACHIEVEMENT_CATALOG.filter((entry) => entry.academy === academy);
+    const earned = entries.filter((entry) => earnedAchievementKeys.has(entry.key)).length;
+    return { academy, total: entries.length, earned };
+  });
   const attempts = (attemptRows ?? []) as unknown as AttemptRow[];
   const assessments = (assessmentRows ?? []) as unknown as AssessmentRow[];
 
@@ -179,6 +187,27 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
             })}
           </div>
         )}
+      </section>
+
+      <section className="mt-8">
+        <h2 className="font-display text-lg font-semibold text-text-primary">{tAch("academyHeading")}</h2>
+        <div className="mt-3 space-y-3">
+          {academyProgress.map(({ academy, earned, total }) => (
+            <div key={academy} className="rounded-lg border border-border p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-text-primary">{tAch(`academies.${academy}.name`)}</span>
+                <span className="text-xs text-text-muted">{tAch("academyProgressLabel", { earned, total })}</span>
+              </div>
+              <p className="mt-1 text-xs text-text-muted">{tAch(`academies.${academy}.description`)}</p>
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-raised">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{ width: `${total > 0 ? Math.round((earned / total) * 100) : 0}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mt-8">
