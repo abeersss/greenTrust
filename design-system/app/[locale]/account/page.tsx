@@ -23,6 +23,11 @@ import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
 const BADGE_KEY_TO_ACHIEVEMENT: Record<string, string> = {
   first_defender: "phishingHunter",
   phishing_hunter: "phishingHunter",
+  network_guardian: "networkGuardian",
+  soc_responder: "socNightShift",
+  data_guardian: "dataGuardian",
+  grc_strategist: "grcStrategist",
+  agent_zero: "agentZero",
 };
 
 function achievementForBadgeKey(badgeKey: string | undefined) {
@@ -120,7 +125,11 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
 
   const badges = (badgeRows ?? []) as unknown as BadgeRow[];
   const academyOrder = ["cyberDefense", "governance", "aiTrust", "dataTrust", "futureTrust"] as const;
-  const earnedAchievementKeys = new Set(badges.map((b) => b.badges?.key).filter(Boolean));
+  const earnedAchievementKeys = new Set(
+    badges
+      .map((b) => (b.badges?.key ? (BADGE_KEY_TO_ACHIEVEMENT[b.badges.key] ?? b.badges.key) : undefined))
+      .filter(Boolean),
+  );
   const academyProgress = academyOrder.map((academy) => {
     const entries = ACHIEVEMENT_CATALOG.filter((entry) => entry.academy === academy);
     const earned = entries.filter((entry) => earnedAchievementKeys.has(entry.key)).length;
