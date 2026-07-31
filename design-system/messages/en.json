@@ -86,6 +86,7 @@
     "roleLine": "Founder of CyberAbeer, GreenTrust AI, and CyberAbeer Labs",
     "introParagraph1": "Dr. Abeer Alshammari is a cybersecurity governance, risk, and compliance (GRC) practitioner with more than 20 years of experience building and maturing enterprise security programs.",
     "introParagraph2": "Her work spans cybersecurity policy and control frameworks, risk assessment across application, infrastructure, cloud, data, and third-party domains, and coordinating internal and external audits. She founded CyberAbeer to bring that same practitioner discipline to AI governance, through GreenTrust AI, and to security education, through CyberAbeer Labs.",
+    "introParagraph3": "In parallel with her GRC leadership work, Dr. Abeer serves as a Chief Information Security Officer (CISO) and cybersecurity strategic consultant, advising organizations on security strategy, risk posture, and governance at the executive and board level. She works with leadership teams to turn cybersecurity risk into clear business decisions and practical maturity roadmaps.",
     "placeholderNote": "A full extended biography, photo, and additional credentials will be added here as they are finalized.",
     "credentialsHeading": "Credentials",
     "credentials": [
@@ -103,7 +104,7 @@
     "experienceItems": [
       {
         "period": "2023 to present",
-        "title": "Senior Cybersecurity GRC Specialist",
+        "title": "Cybersecurity GRC Consultant",
         "summary": "Leads and matures an enterprise cybersecurity GRC program across a multi-subsidiary organization, sets policy and control frameworks, oversees risk assessments across application, infrastructure, cloud, data, and third-party domains, and coordinates internal and external audits."
       },
       {
