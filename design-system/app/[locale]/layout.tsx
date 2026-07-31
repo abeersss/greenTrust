@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
+import { MotionProvider, PageTransition } from "@/components/motion";
 import { JsonLd } from "@/components/site/json-ld";
 import { AnalyticsScript } from "@/components/site/analytics-script";
 import { RoutePageView } from "@/components/analytics/route-page-view";
@@ -117,6 +118,7 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider messages={messages}>
           <BrandProvider brand="cyberabeer">
+            <MotionProvider locale={locale as AppLocale}>
             <TooltipProvider>
               <a
                 href="#main-content"
@@ -125,10 +127,13 @@ export default async function LocaleLayout({
                 {t("skipToContent")}
               </a>
               <SiteNavbar locale={locale as AppLocale} isAuthenticated={Boolean(user)} />
-              <main id="main-content">{children}</main>
+              <main id="main-content">
+                <PageTransition>{children}</PageTransition>
+              </main>
               <SiteFooter locale={locale as AppLocale} />
               <Toaster />
             </TooltipProvider>
+            </MotionProvider>
           </BrandProvider>
         </NextIntlClientProvider>
         <JsonLd data={[organizationSchema(), websiteSchema(locale as AppLocale)]} />
