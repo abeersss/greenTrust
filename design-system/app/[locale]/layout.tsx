@@ -114,6 +114,7 @@ export default async function LocaleLayout({
       lang={locale}
       dir={dir}
       className={`${inter.variable} ${spaceGrotesk.variable} ${tajawal.variable} ${cairo.variable}`}
+      suppressHydrationWarning
     >
       <body>
         <NextIntlClientProvider messages={messages}>
