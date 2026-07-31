@@ -57,6 +57,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <div className="mt-8 space-y-4 text-text-secondary">
         <p>{t("introParagraph1")}</p>
         <p>{t("introParagraph2")}</p>
+        <p>{t("introParagraph3")}</p>
       </div>
 
       <p className="mt-6 rounded-card border border-dashed border-border-strong bg-surface-raised p-4 text-sm text-text-muted">
