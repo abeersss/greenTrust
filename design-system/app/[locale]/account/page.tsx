@@ -40,7 +40,6 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
   const t = await getTranslations({ locale, namespace: "account" });
-  const tAch = await getTranslations({ locale, namespace: "achievements" });
   return buildMetadata({ locale, path: "account", title: t("title"), description: t("title"), noIndex: true });
 }
 
@@ -96,6 +95,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   }
 
   const t = await getTranslations({ locale, namespace: "account" });
+  const tAch = await getTranslations({ locale, namespace: "achievements" });
 
   const [{ data: profile }, { data: xpTotal }, { data: badgeRows }, { data: attemptRows }, { data: assessmentRows }] =
     await Promise.all([
