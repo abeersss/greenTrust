@@ -57,6 +57,11 @@ export function FreeAssessment({ locale, isLoggedIn }: FreeAssessmentProps) {
     const nextAnswers = { ...answers, [questionIndex]: value };
     setAnswers(nextAnswers);
 
+    // Let the selected option paint before advancing, so the user
+    // sees their choice register instead of the screen silently
+    // jumping to the next question.
+    await new Promise((resolve) => setTimeout(resolve, 350));
+
     if (questionIndex < questions.length - 1) {
       setStep((s) => s + 1);
       return;
