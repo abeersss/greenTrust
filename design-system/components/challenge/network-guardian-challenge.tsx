@@ -616,10 +616,7 @@ function TopologyDiagram({
         const to = center(edge.to);
         const isBlocked = blockedEdgeIds.includes(edge.id);
         const isAttackPath = mode === "result" && attackPathEdgeIds.has(edge.id) && !isBlocked;
-        const isDirect = edge.id === "internet_to_database";
-        const path = isDirect
-          ? `M${from.x},${from.y + 26} C ${from.x + 90},${from.y + 120} ${to.x + 90},${to.y - 40} ${to.x},${to.y - 30}`
-          : `M${from.x},${from.y} L${to.x},${to.y}`;
+        const path = `M${from.x},${from.y} L${to.x},${to.y}`;
         return (
           <path
             key={edge.id}
