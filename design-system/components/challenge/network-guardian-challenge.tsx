@@ -31,7 +31,7 @@ import { trackEvent } from "@/lib/analytics/track";
 import type { AppLocale } from "@/lib/i18n/config";
 import {
   ShieldAlert,
-  Globe,
+  Cloud,
   Server,
   Database,
   Users,
@@ -93,7 +93,7 @@ const SLOT_POS: Record<ControlId, { x: number; y: number; w: number; h: number }
 };
 
 const NODE_ICON: Record<NodeId, React.ReactNode> = {
-  internet: <Globe className="h-5 w-5" aria-hidden="true" />,
+  internet: <Cloud className="h-5 w-5" aria-hidden="true" />,
   web_server: <Server className="h-5 w-5" aria-hidden="true" />,
   workstations: <Users className="h-5 w-5" aria-hidden="true" />,
   database_server: <Database className="h-5 w-5" aria-hidden="true" />,
@@ -134,6 +134,20 @@ const CONTROL_SHORT_LABEL: Record<ControlId, { en: string; ar: string }> = {
   vlan_segmentation: { en: "VLAN", ar: "VLAN" },
 };
 
+const CONTROL_SLOT_LETTER: Record<ControlId, string> = {
+  firewall: "A",
+  waf: "B",
+  dmz: "C",
+  vlan_segmentation: "D",
+};
+
+const CONTROL_SLOT_LETTER_FILL: Record<ControlId, string> = {
+  firewall: "fill-danger-600",
+  waf: "fill-primary-600",
+  dmz: "fill-warning-600",
+  vlan_segmentation: "fill-info-600",
+};
+
 function TopologyLegend({ locale }: { locale: AppLocale }) {
   const items: { color: string; label: { en: string; ar: string } }[] = [
     { color: "bg-neutral-700", label: { en: "Internet", ar: "الإنترنت" } },
@@ -168,6 +182,7 @@ const COPY = {
   },
   workstationTitle: { en: "Network Operations Center", ar: "مركز عمليات الشبكة" },
   topologyHeading: { en: "Network Topology", ar: "بنية الشبكة" },
+  dmzAreaLabel: { en: "DMZ area", ar: "منطقة DMZ" },
   controlsHeading: { en: "Available Controls", ar: "الضوابط المتاحة" },
   controlsPlaced: { en: "Controls placed", ar: "الضوابط الموضوعة" },
   inspectHint: { en: "Tap a system to read its brief.", ar: "اضغط على أي نظام لقراءة موجزه." },
@@ -575,6 +590,27 @@ function TopologyDiagram({
         </marker>
       </defs>
 
+      {/* DMZ zone backdrop: echoes the shaded "DMZ AREA" zone in the reference
+          puzzle diagram around the public-facing web server. */}
+      <rect
+        x={14}
+        y={146}
+        width={192}
+        height={80}
+        rx={12}
+        className="fill-primary-50 stroke-primary-300"
+        strokeDasharray="4 3"
+        strokeWidth={1.5}
+      />
+      <text
+        x={196}
+        y={140}
+        textAnchor="end"
+        className="fill-primary-600 text-[9px] font-bold uppercase tracking-wide"
+      >
+        {pick(COPY.dmzAreaLabel, locale)}
+      </text>
+
       {EDGES.map((edge) => {
         const from = center(edge.from);
         const to = center(edge.to);
@@ -682,16 +718,25 @@ function TopologyDiagram({
                   if (filled) onToggleControl(control.id);
                 }}
               />
-              <text
-                x={slot.x + slot.w / 2}
-                y={slot.y + slot.h / 2 + 4}
-                textAnchor="middle"
-                className={`pointer-events-none text-[10px] font-bold ${
-                  filled ? accent.chipText : "fill-text-muted"
-                }`}
-              >
-                {locale === "ar" ? CONTROL_SHORT_LABEL[control.id].ar : CONTROL_SHORT_LABEL[control.id].en}
-              </text>
+              {filled ? (
+                <text
+                  x={slot.x + slot.w / 2}
+                  y={slot.y + slot.h / 2 + 4}
+                  textAnchor="middle"
+                  className={`pointer-events-none text-[10px] font-bold ${accent.chipText}`}
+                >
+                  {locale === "ar" ? CONTROL_SHORT_LABEL[control.id].ar : CONTROL_SHORT_LABEL[control.id].en}
+                </text>
+              ) : (
+                <text
+                  x={slot.x + slot.w / 2}
+                  y={slot.y + slot.h / 2 + 6}
+                  textAnchor="middle"
+                  className={`pointer-events-none text-[16px] font-extrabold ${CONTROL_SLOT_LETTER_FILL[control.id]}`}
+                >
+                  {CONTROL_SLOT_LETTER[control.id]}
+                </text>
+              )}
             </g>
           );
         })}
@@ -723,7 +768,7 @@ function WorkstationScreen({
   const ready = placedControls.length > 0;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4" dir={dir} data-brand="labs">
+    <div className="mx-auto max-w-6xl space-y-4" dir={dir} data-brand="labs">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.workstationTitle, locale)}</h1>
         <Badge variant="outline">
@@ -731,7 +776,8 @@ function WorkstationScreen({
         </Badge>
       </div>
 
-      <Card className="overflow-hidden py-0">
+      <div className="grid grid-cols-1 gap-4 desktop:grid-cols-[1fr_380px]">
+        <Card className="overflow-hidden py-0">
         <div className="flex items-center gap-2 bg-neutral-900 px-4 py-3">
           <ShieldAlert className="h-4 w-4 text-white" aria-hidden="true" />
           <p className="text-sm font-semibold uppercase tracking-wide text-white">{pick(COPY.topologyHeading, locale)}</p>
@@ -759,8 +805,7 @@ function WorkstationScreen({
           )}
         </CardContent>
       </Card>
-
-      <Card>
+        <Card>
         <CardHeader>
           <CardTitle className="text-sm">{pick(COPY.controlsHeading, locale)}</CardTitle>
         </CardHeader>
@@ -834,6 +879,7 @@ function WorkstationScreen({
           </div>
         </CardContent>
       </Card>
+      </div>
 
       <div className="sticky bottom-4 flex justify-center">
         <Button size="lg" disabled={!ready} onClick={onRunTest} className="shadow-lg">
