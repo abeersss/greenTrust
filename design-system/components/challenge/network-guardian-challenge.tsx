@@ -85,6 +85,13 @@ const NODE_POS: Record<NodeId, { x: number; y: number; w: number; h: number }> =
   database_server: { x: 220, y: 288, w: 160, h: 60 },
 };
 
+const SLOT_POS: Record<ControlId, { x: number; y: number; w: number; h: number }> = {
+  firewall: { x: 254, y: 78, w: 92, h: 34 },
+  waf: { x: 159, y: 100, w: 92, h: 34 },
+  dmz: { x: 159, y: 236, w: 92, h: 34 },
+  vlan_segmentation: { x: 349, y: 236, w: 92, h: 34 },
+};
+
 const NODE_ICON: Record<NodeId, React.ReactNode> = {
   internet: <Globe className="h-5 w-5" aria-hidden="true" />,
   web_server: <Server className="h-5 w-5" aria-hidden="true" />,
@@ -111,6 +118,13 @@ const CONTROL_ACCENT: Record<ControlId, { chipBg: string; chipText: string; acti
   waf: { chipBg: "bg-primary-50", chipText: "text-primary-600", activeBorder: "border-primary" },
   dmz: { chipBg: "bg-warning-50", chipText: "text-warning-600", activeBorder: "border-warning-500" },
   vlan_segmentation: { chipBg: "bg-info-50", chipText: "text-info-600", activeBorder: "border-info-500" },
+};
+
+const CONTROL_SLOT_FILL: Record<ControlId, string> = {
+  firewall: "fill-danger-50",
+  waf: "fill-primary-50",
+  dmz: "fill-warning-50",
+  vlan_segmentation: "fill-info-50",
 };
 
 function TopologyLegend({ locale }: { locale: AppLocale }) {
@@ -150,6 +164,10 @@ const COPY = {
   controlsHeading: { en: "Available Controls", ar: "الضوابط المتاحة" },
   controlsPlaced: { en: "Controls placed", ar: "الضوابط الموضوعة" },
   inspectHint: { en: "Tap a system to read its brief.", ar: "اضغط على أي نظام لقراءة موجزه." },
+  dragHint: {
+    en: "Drag each control from the list below onto its labeled position on the diagram — or tap a control, then tap its slot.",
+    ar: "اسحب كل ضابط من القائمة أدناه إلى موضعه المُسمّى في المخطط — أو اضغط على الضابط ثم اضغط على موضعه.",
+  },
   hint1: { en: "Hint 1", ar: "تلميح 1" },
   hint2: { en: "Hint 2", ar: "تلميح 2" },
   hintText1: {
@@ -497,6 +515,7 @@ function TopologyDiagram({
   compromisedNodes,
   protectedNodes,
   attackPath,
+  onToggleControl,
 }: {
   locale: AppLocale;
   placedControls: ControlId[];
@@ -506,7 +525,10 @@ function TopologyDiagram({
   compromisedNodes?: NodeId[];
   protectedNodes?: NodeId[];
   attackPath?: NodeId[] | null;
+  onToggleControl?: (id: ControlId) => void;
 }) {
+  const [dragOverId, setDragOverId] = React.useState<ControlId | null>(null);
+
   const blockedEdgeIds =
     mode === "decide"
       ? EDGES.filter((e) => placedControls.includes(e.blockedBy)).map((e) => e.id)
@@ -612,6 +634,60 @@ function TopologyDiagram({
           </g>
         );
       })}
+      {onToggleControl &&
+        NETWORK_GUARDIAN_CONTROLS.map((control) => {
+          const slot = SLOT_POS[control.id];
+          const filled = placedControls.includes(control.id);
+          const accent = CONTROL_ACCENT[control.id];
+          const isDragOver = dragOverId === control.id;
+          return (
+            <g key={`slot-${control.id}`}>
+              <rect
+                x={slot.x}
+                y={slot.y}
+                width={slot.w}
+                height={slot.h}
+                rx={8}
+                strokeDasharray={filled ? undefined : "4 3"}
+                strokeWidth={isDragOver ? 2.5 : 1.5}
+                className={
+                  filled
+                    ? `${CONTROL_SLOT_FILL[control.id]} stroke-transparent`
+                    : isDragOver
+                    ? "fill-primary-50 stroke-primary"
+                    : "fill-surface stroke-border"
+                }
+                style={{ cursor: "pointer" }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOverId(control.id);
+                }}
+                onDragLeave={() => setDragOverId((prev) => (prev === control.id ? null : prev))}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOverId(null);
+                  const droppedId = e.dataTransfer.getData("text/plain");
+                  if (droppedId === control.id && !placedControls.includes(control.id)) {
+                    onToggleControl(control.id);
+                  }
+                }}
+                onClick={() => {
+                  if (filled) onToggleControl(control.id);
+                }}
+              />
+              <text
+                x={slot.x + slot.w / 2}
+                y={slot.y + slot.h / 2 + 4}
+                textAnchor="middle"
+                className={`pointer-events-none text-[9px] font-semibold ${
+                  filled ? accent.chipText : "fill-text-muted"
+                }`}
+              >
+                {pick(control.name, locale).slice(0, 14).toUpperCase()}
+              </text>
+            </g>
+          );
+        })}
       </svg>
   );
 }
@@ -655,11 +731,13 @@ function WorkstationScreen({
         </div>
         <CardContent className="pt-4">
           <p className="mb-3 text-xs text-text-secondary">{pick(COPY.inspectHint, locale)}</p>
+          <p className="mb-3 text-xs text-text-muted">{pick(COPY.dragHint, locale)}</p>
           <TopologyDiagram
             locale={locale}
             placedControls={placedControls}
             inspectedNode={inspectedNode}
             onInspectNode={onInspectNode}
+            onToggleControl={onToggleControl}
             mode="decide"
           />
           <TopologyLegend locale={locale} />
@@ -688,6 +766,11 @@ function WorkstationScreen({
               key={control.id}
               type="button"
               onClick={() => onToggleControl(control.id)}
+      draggable={!active}
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/plain", control.id);
+        e.dataTransfer.effectAllowed = "move";
+      }}
               className={`flex w-full items-start gap-3 rounded-md border p-3 text-start transition-colors ${
                 active ? `${accent.activeBorder} bg-primary-50` : "border-border bg-surface hover:bg-surface-raised"
               }`}
