@@ -161,3 +161,21 @@
     @apply border-b-0;
   }
 }
+
+/* ---------- Motion accessibility safety net ----------
+ * Defense-in-depth for prefers-reduced-motion: the CyberAbeer motion
+ * system (components/motion/*) already checks this preference in JS
+ * via MotionProvider, but this CSS-level rule also neutralizes any
+ * plain CSS transition/animation elsewhere in the app (e.g. existing
+ * hover states in components/ui/*) that was not written with motion
+ * primitives. ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
