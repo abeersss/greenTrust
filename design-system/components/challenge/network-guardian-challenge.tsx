@@ -398,7 +398,11 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   }
 
   function handleRunTest() {
-    if (placedControls.length === 0) return;
+    // Gate on whether the player placed anything at all, not on
+    // whether any placement happened to be correct — otherwise a
+    // loadout that's entirely wrong can never be submitted, which
+    // would hide the breach outcome instead of showing it.
+    if (Object.keys(slotAssignments).length === 0) return;
     const submission: NetworkGuardianSubmission = { placedControls, hintsUsed };
     const result = computeNetworkGuardianScore(submission);
     trackEvent("challenge_step_completed", {
