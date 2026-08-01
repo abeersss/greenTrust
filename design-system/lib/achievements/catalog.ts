@@ -26,24 +26,27 @@ export interface AchievementCatalogEntry {
   /** The Labs `challengeKey` (see lib/challenges/*) this achievement unlocks
    * from, or null if the underlying challenge doesn't exist in production yet. */
   challengeKey: string | null;
+  /** Which of the 5 thematic CyberAbeer academies (UI-only grouping, see
+   * messages academies.*) this achievement belongs to. */
+  academy: "cyberDefense" | "governance" | "aiTrust" | "dataTrust" | "futureTrust";
   /** Whether a real, brand-approved medal graphic exists for this entry.
-   * Only `true` for 01 until each subsequent medal is designed. */
+   * Only `true` for 01, 02, 03, and 07 until each subsequent medal is designed. */
   hasMedalArt: boolean;
 }
 
 export const ACHIEVEMENT_CATALOG: AchievementCatalogEntry[] = [
-  { number: "01", key: "phishingHunter", challengeKey: "phishing-hunter", hasMedalArt: true },
-  { number: "02", key: "networkGuardian", challengeKey: "network-guardian", hasMedalArt: true },
-  { number: "03", key: "socNightShift", challengeKey: "soc-night-shift", hasMedalArt: true },
-  { number: "04", key: "webDefender", challengeKey: null, hasMedalArt: false },
-  { number: "05", key: "identityGuardian", challengeKey: null, hasMedalArt: false },
-  { number: "06", key: "incidentCommander", challengeKey: null, hasMedalArt: false },
-  { number: "07", key: "dataGuardian", challengeKey: "data-guardian", hasMedalArt: true },
-  { number: "08", key: "cloudDefender", challengeKey: null, hasMedalArt: false },
-  { number: "09", key: "agentZero", challengeKey: null, hasMedalArt: false },
-  { number: "10", key: "grcStrategist", challengeKey: null, hasMedalArt: false },
-  { number: "11", key: "digitalInvestigator", challengeKey: null, hasMedalArt: false },
-  { number: "12", key: "quantumCountdown", challengeKey: null, hasMedalArt: false },
+  { number: "01", key: "phishingHunter", challengeKey: "phishing-hunter", academy: "cyberDefense", hasMedalArt: true },
+  { number: "02", key: "networkGuardian", challengeKey: "network-guardian", academy: "cyberDefense", hasMedalArt: true },
+  { number: "03", key: "socNightShift", challengeKey: "soc-night-shift", academy: "cyberDefense", hasMedalArt: true },
+  { number: "04", key: "webDefender", challengeKey: null, academy: "futureTrust", hasMedalArt: false },
+  { number: "05", key: "identityGuardian", challengeKey: null, academy: "dataTrust", hasMedalArt: false },
+  { number: "06", key: "incidentCommander", challengeKey: null, academy: "cyberDefense", hasMedalArt: false },
+  { number: "07", key: "dataGuardian", challengeKey: "data-guardian", academy: "governance", hasMedalArt: true },
+  { number: "08", key: "cloudDefender", challengeKey: null, academy: "dataTrust", hasMedalArt: false },
+  { number: "09", key: "agentZero", challengeKey: null, academy: "aiTrust", hasMedalArt: false },
+  { number: "10", key: "grcStrategist", challengeKey: null, academy: "governance", hasMedalArt: false },
+  { number: "11", key: "digitalInvestigator", challengeKey: null, academy: "futureTrust", hasMedalArt: false },
+  { number: "12", key: "quantumCountdown", challengeKey: null, academy: "futureTrust", hasMedalArt: false },
 ];
 
 export function getAchievementByChallengeKey(challengeKey: string): AchievementCatalogEntry | undefined {
