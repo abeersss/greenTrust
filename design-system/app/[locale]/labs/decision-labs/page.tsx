@@ -84,7 +84,7 @@ const LABS: LabEntry[] = [
       en: "Defend a governance decision before a review board using Dr. Abeer Alshammari's GRCL framework.",
       ar: "دافع عن قرار حوكمة أمام مجلس مراجعة باستخدام إطار GRCL للدكتورة عبير الشمري.",
     },
-    href: null,
+    href: "/challenge/grcl-innovation",
     accent: "bg-info-50 text-info-600",
   },
   {
@@ -115,9 +115,11 @@ export async function generateMetadata({
  * Production UX fix (2026-07-27): the "Scenario Labs" card on the main
  * Labs landing page previously went nowhere. This is its real
  * destination: every Decision Lab in the current build order, each
- * either a live link (Phishing Hunter) or clearly marked "Coming
- * soon" (never a dead link pretending to be live, and never hidden
- * entirely, so a visitor can see the full roadmap).
+ * either a live link (Phishing Hunter, Network Guardian, SOC Night
+ * Shift, Data Guardian, and now GRCL: Innovation Under Fire) or
+ * clearly marked "Coming soon" (never a dead link pretending to be
+ * live, and never hidden entirely, so a visitor can see the full
+ * roadmap).
  */
 export default async function DecisionLabsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
