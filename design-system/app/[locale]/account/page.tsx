@@ -14,7 +14,7 @@ import { AchievementMedal } from "@/components/achievements/achievement-medal";
 import { getAchievementSymbol } from "@/components/achievements/achievement-symbols";
 import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
 import BadgeTile from "@/components/account/badge-tile";
-import siteUrl from "@/lib/seo/site";
+import { siteUrl } from "@/lib/seo/site";
 
 /**
  * Mirrors BadgeTile's own slug map so the share URL points at the
