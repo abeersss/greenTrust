@@ -74,18 +74,29 @@ const EDGES: EdgeDef[] = [
   { id: "workstations_to_database", from: "workstations", to: "database_server", blockedBy: "vlan_segmentation" },
 ];
 
+/**
+ * A deliberate hub-and-spoke layout: Internet sits at the top vertex,
+ * the two mid-tier systems sit as left/right vertices, and the
+ * database sits at the bottom vertex. Every edge in EDGES below is a
+ * straight line between two of these four centers, which means the
+ * five connectors form a simple kite shape (four outer sides plus one
+ * vertical diagonal down the middle) with no line ever crossing
+ * another or cutting through an unrelated node's box — unlike the
+ * previous layout, whose "direct" internet-to-database curve bulged
+ * out far enough to visually slice through the workstations column.
+ */
 const NODE_POS: Record<NodeId, { x: number; y: number; w: number; h: number }> = {
-  internet: { x: 220, y: 16, w: 160, h: 52 },
-  web_server: { x: 24, y: 156, w: 172, h: 60 },
-  workstations: { x: 404, y: 156, w: 172, h: 60 },
-  database_server: { x: 220, y: 288, w: 160, h: 60 },
+  internet: { x: 220, y: 16, w: 160, h: 56 },
+  web_server: { x: 24, y: 150, w: 180, h: 64 },
+  workstations: { x: 396, y: 150, w: 180, h: 64 },
+  database_server: { x: 210, y: 296, w: 180, h: 64 },
 };
 
-const NODE_ICON: Record<NodeId, React.ReactNode> = {
-  internet: <Globe className="h-5 w-5" aria-hidden="true" />,
-  web_server: <Server className="h-5 w-5" aria-hidden="true" />,
-  workstations: <Users className="h-5 w-5" aria-hidden="true" />,
-  database_server: <Database className="h-5 w-5" aria-hidden="true" />,
+const NODE_ICON: Record<NodeId, React.ComponentType<{ className?: string; "aria-hidden"?: React.AriaAttributes["aria-hidden"] }>> = {
+  internet: Globe,
+  web_server: Server,
+  workstations: Users,
+  database_server: Database,
 };
 
 function center(id: NodeId) {
@@ -108,11 +119,31 @@ function center(id: NodeId) {
  */
 type SlotAssignments = Partial<Record<ControlId, ControlId>>;
 
+/**
+ * Each slot sits just off to the side of the connector it actually
+ * governs — never centered on top of the stroke — except "firewall",
+ * which naturally lands in the open gap directly beneath Internet
+ * where its two guarded edges (to the database and to workstations)
+ * fan out, so it reads as the perimeter checkpoint both paths pass
+ * through. The other three sit beside their single edge with a short
+ * SLOT_TICKS connector (below) linking badge to line.
+ */
 const SLOT_POS: Record<ControlId, { x: number; y: number; w: number; h: number }> = {
-  firewall: { x: 250, y: 80, w: 100, h: 44 },
-  waf: { x: 55, y: 104, w: 120, h: 44 },
-  dmz: { x: 145, y: 224, w: 120, h: 42 },
-  vlan_segmentation: { x: 345, y: 224, w: 120, h: 42 },
+  firewall: { x: 248, y: 89, w: 104, h: 36 },
+  waf: { x: 102, y: 51, w: 104, h: 36 },
+  dmz: { x: 57, y: 225, w: 104, h: 36 },
+  vlan_segmentation: { x: 439, y: 225, w: 104, h: 36 },
+};
+
+/** Short connector ticks from a point on the governing edge to the
+ * nearest corner of the offset slot badge, so each lettered slot
+ * still visibly "belongs" to its line without sitting on top of the
+ * stroke. Firewall is omitted — it already sits directly on its
+ * guarded path. */
+const SLOT_TICKS: Partial<Record<ControlId, { x1: number; y1: number; x2: number; y2: number }>> = {
+  waf: { x1: 235, y1: 92, x2: 206, y2: 87 },
+  dmz: { x1: 179, y1: 233, x2: 161, y2: 225 },
+  vlan_segmentation: { x1: 421, y1: 233, x2: 439, y2: 225 },
 };
 
 const SLOT_LETTERS: Record<ControlId, string> = {
@@ -605,11 +636,16 @@ function TopologyDiagram({
     }
   }
 
+  // Calmer semantics: while the player is still deciding, a chokepoint
+  // that's provably open reads as "needs attention" (warning/amber),
+  // not "under attack" (danger/red). Strong red is reserved for mode
+  // === "result", where compromisedNodes reflects a genuinely bad,
+  // simulated outcome after RUN THE PENTEST.
   function nodeFill(id: NodeId): string {
     if (mode === "decide") {
       if (id === "internet") return "fill-neutral-800";
       const stillOpen = EDGES.filter((e) => e.to === id).some((e) => edgeState(e) === "open");
-      return stillOpen ? "fill-danger-50" : "fill-surface";
+      return stillOpen ? "fill-warning-50" : "fill-surface";
     }
     if (id === "internet") return "fill-neutral-800";
     if (compromisedNodes?.includes(id)) return "fill-danger-50";
@@ -621,7 +657,7 @@ function TopologyDiagram({
     if (mode === "decide") {
       if (id === "internet") return "stroke-neutral-800";
       const stillOpen = EDGES.filter((e) => e.to === id).some((e) => edgeState(e) === "open");
-      return stillOpen ? "stroke-danger-500" : "stroke-border";
+      return stillOpen ? "stroke-warning-500" : "stroke-border";
     }
     if (id === "internet") return "stroke-neutral-800";
     if (compromisedNodes?.includes(id)) return "stroke-danger-500";
@@ -630,22 +666,24 @@ function TopologyDiagram({
   }
 
   return (
-    <svg viewBox="0 0 600 360" className="h-auto w-full" style={{ direction: "ltr" }} role="img" aria-label={pick(COPY.topologyHeading, locale)}>
+    <svg viewBox="0 0 600 380" className="h-auto w-full" style={{ direction: "ltr" }} role="img" aria-label={pick(COPY.topologyHeading, locale)}>
       <defs>
         <marker id="ng-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" className="fill-danger-500" />
         </marker>
       </defs>
 
+      {/* Every edge is a straight line between two node centers. With
+          Internet/web/workstations/database arranged as a kite (see
+          NODE_POS), that's all five connectors ever need — none of
+          them cross each other or another node's box, so there's no
+          more tangle to route around. */}
       {EDGES.map((edge) => {
         const from = center(edge.from);
         const to = center(edge.to);
         const state = edgeState(edge);
         const isAttackPath = mode === "result" && attackPathEdgeIds.has(edge.id) && state !== "blocked";
-        const isDirect = edge.id === "internet_to_database";
-        const path = isDirect
-          ? `M${from.x},${from.y + 26} C ${from.x + 90},${from.y + 120} ${to.x + 90},${to.y - 40} ${to.x},${to.y - 30}`
-          : `M${from.x},${from.y} L${to.x},${to.y}`;
+        const path = `M${from.x},${from.y} L${to.x},${to.y}`;
         const strokeClass = isAttackPath
           ? "stroke-danger-500"
           : state === "blocked"
@@ -653,7 +691,7 @@ function TopologyDiagram({
             : state === "pending"
               ? "stroke-primary"
               : mode === "decide"
-                ? "stroke-danger-500"
+                ? "stroke-warning-500"
                 : "stroke-neutral-300";
         return (
           <path
@@ -668,9 +706,27 @@ function TopologyDiagram({
         );
       })}
 
+      {/* Subtle tick marks tying each offset lettered slot back to the
+          connector it actually governs, so the HTML slot overlay reads
+          as part of the diagram rather than a floating, disconnected
+          box. Purely decorative — the interactive drop target itself
+          is the absolutely-positioned SlotDropTarget div. */}
+      {(Object.keys(SLOT_TICKS) as ControlId[]).map((role) => {
+        const tick = SLOT_TICKS[role]!;
+        return (
+          <g key={role} className="pointer-events-none">
+            <line x1={tick.x1} y1={tick.y1} x2={tick.x2} y2={tick.y2} strokeWidth={1.5} className="stroke-border" />
+            <circle cx={tick.x1} cy={tick.y1} r={2.5} className="fill-border" />
+          </g>
+        );
+      })}
+
       {NETWORK_GUARDIAN_NODES.map((node) => {
         const pos = NODE_POS[node.id];
         const isInspected = inspectedNode === node.id;
+        const isInternet = node.id === "internet";
+        const Icon = NODE_ICON[node.id];
+        const textColorClass = isInternet ? "text-white" : "text-text-primary";
         return (
           <g
             key={node.id}
@@ -686,14 +742,17 @@ function TopologyDiagram({
               strokeWidth={isInspected ? 3 : 2}
               className={`transition-all duration-300 ease-in-out ${nodeFill(node.id)} ${nodeStroke(node.id)}`}
             />
-            <text
-              x={pos.x + pos.w / 2}
-              y={pos.y + pos.h / 2 + 5}
-              textAnchor="middle"
-              className={`text-[11px] font-semibold ${node.id === "internet" ? "fill-white" : "fill-text-primary"}`}
-            >
-              {nodeLabel(node.id, locale).slice(0, 24)}
-            </text>
+            <foreignObject x={pos.x} y={pos.y} width={pos.w} height={pos.h}>
+              <div
+                xmlns="http://www.w3.org/1999/xhtml"
+                className="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-center"
+              >
+                <Icon className={`h-4 w-4 shrink-0 ${textColorClass}`} aria-hidden="true" />
+                <span className={`text-[11px] font-semibold leading-tight ${textColorClass}`}>
+                  {nodeLabel(node.id, locale).slice(0, 24)}
+                </span>
+              </div>
+            </foreignObject>
           </g>
         );
       })}
@@ -771,23 +830,23 @@ function SlotDropTarget({
         const controlId = e.dataTransfer.getData("text/plain") as ControlId;
         if (controlId) onDrop(controlId);
       }}
-      className={`absolute flex select-none flex-col items-center justify-center rounded-md border-2 border-dashed p-1 text-center transition-all duration-200 ease-out ${
+      className={`absolute flex select-none flex-col items-center justify-center rounded-lg border-2 border-dashed p-1 text-center shadow-sm transition-all duration-200 ease-out ${
         isDragOver
           ? "scale-105 border-primary bg-primary-50 shadow-md"
           : control
             ? "border-primary/60 bg-surface"
             : isSelectable
               ? "border-primary bg-primary-50 animate-pulse"
-              : "border-border bg-surface/70"
+              : "border-border bg-surface/90"
       }`}
       style={{
         left: `${(pos.x / 600) * 100}%`,
-        top: `${(pos.y / 360) * 100}%`,
+        top: `${(pos.y / 380) * 100}%`,
         width: `${(pos.w / 600) * 100}%`,
-        height: `${(pos.h / 360) * 100}%`,
+        height: `${(pos.h / 380) * 100}%`,
       }}
     >
-      <span className="absolute -top-2 -left-2 flex h-5 w-5 items-center justify-center rounded-full bg-neutral-800 text-[10px] font-bold text-white">
+      <span className="absolute -top-2 -left-2 flex h-5 w-5 items-center justify-center rounded-full bg-neutral-800 text-[10px] font-bold text-white shadow-sm ring-2 ring-surface">
         {letter}
       </span>
       {control ? (
