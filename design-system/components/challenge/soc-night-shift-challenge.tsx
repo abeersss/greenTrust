@@ -102,6 +102,7 @@ const COPY = {
   },
   nextMission: { en: "Next Mission: Data Guardian", ar: "المهمة التالية: حارس البيانات" },
   nextMissionComingSoon: { en: "Data Guardian — coming soon", ar: "حارس البيانات — قريبًا" },
+  nextMissionCta: { en: "Start Data Guardian", ar: "ابدأ حارس البيانات" },
   backToLabs: { en: "Back to Decision Labs", ar: "العودة إلى معامل القرار" },
   restart: { en: "Work Another Shift", ar: "اعمل مناوبة أخرى" },
 } as const;
@@ -690,8 +691,10 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 py-5 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Badge variant="outline">{pick(COPY.nextMissionComingSoon, locale)}</Badge>
-          <Button asChild variant="outline" className="w-full tablet:w-auto">
+          <Button asChild variant="primary" className="w-full tablet:w-auto">
+            <Link href="/challenge/data-guardian">{pick(COPY.nextMissionCta, locale)}</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" className="w-full tablet:w-auto">
             <Link href="/labs/decision-labs">{pick(COPY.backToLabs, locale)}</Link>
           </Button>
         </CardContent>
