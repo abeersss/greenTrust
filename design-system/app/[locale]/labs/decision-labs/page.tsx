@@ -95,7 +95,7 @@ const LABS: LabEntry[] = [
       en: "Contain a rogue AI agent before it escalates its own permissions.",
       ar: "احتوِ وكيل ذكاء اصطناعي مارقًا قبل أن يصعّد صلاحياته الخاصة.",
     },
-    href: null,
+    href: "/challenge/agent-zero",
     accent: "bg-danger-50 text-danger-600",
   },
 ];
@@ -114,12 +114,10 @@ export async function generateMetadata({
 /**
  * Production UX fix (2026-07-27): the "Scenario Labs" card on the main
  * Labs landing page previously went nowhere. This is its real
- * destination: every Decision Lab in the current build order, each
- * either a live link (Phishing Hunter, Network Guardian, SOC Night
- * Shift, Data Guardian, and now GRCL: Innovation Under Fire) or
- * clearly marked "Coming soon" (never a dead link pretending to be
- * live, and never hidden entirely, so a visitor can see the full
- * roadmap).
+ * destination: every Decision Lab in the current build order, all six
+ * now live (Phishing Hunter, Network Guardian, SOC Night Shift, Data
+ * Guardian, GRCL: Innovation Under Fire, and Agent Zero) -- never a
+ * dead link pretending to be live, and never hidden entirely.
  */
 export default async function DecisionLabsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
