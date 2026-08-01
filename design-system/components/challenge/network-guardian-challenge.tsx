@@ -106,8 +106,8 @@ function shuffledSlotMap(): Record<ControlId, ControlId> {
   const shuffled = [...order];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const tmp = shuffled[i];
-    shuffled[i] = shuffled[j];
+    const tmp = shuffled[i] as ControlId;
+    shuffled[i] = shuffled[j] as ControlId;
     shuffled[j] = tmp;
   }
   const map = {} as Record<ControlId, ControlId>;
