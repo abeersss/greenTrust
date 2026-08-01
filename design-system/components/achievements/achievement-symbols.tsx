@@ -4,11 +4,12 @@ import * as React from "react";
  * Central medal symbols, one per achievement `key`. Implemented for
  * every achievement that currently has a live challenge behind it
  * (phishingHunter, networkGuardian, socNightShift, dataGuardian,
- * grcStrategist) -- see catalog.ts for why the remaining entries
- * intentionally have no symbol here yet. Each symbol is drawn on a
- * 22x22 grid so it drops straight into <AchievementMedal>'s centered
- * `<g transform="translate(-11 -11)">` wrapper; stroke/fill use
- * `currentColor` so the medal component controls locked-vs-gold color.
+ * grcStrategist, agentZero) -- see catalog.ts for why the remaining
+ * entries intentionally have no symbol here yet. Each symbol is drawn
+ * on a 22x22 grid so it drops straight into <AchievementMedal>'s
+ * centered `<g transform="translate(-11 -11)">` wrapper; stroke/fill
+ * use `currentColor` so the medal component controls locked-vs-gold
+ * color.
  */
 const SYMBOLS: Record<string, React.ReactNode> = {
   phishingHunter: (
@@ -64,6 +65,30 @@ const SYMBOLS: Record<string, React.ReactNode> = {
       <path d="M15.3 10.3 A2.7 2.7 0 0 0 20.7 10.3 Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
       <path d="M6.5 17 H15.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       <path d="M9 15.4 L11 17.6 L13 15.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  /**
+   * Agent Zero (09): a contained AI agent -- a small robot/circuit head
+   * inside a shield outline, with a padlock-like antenna at the shield's
+   * point to read as "an autonomous agent that has been locked down."
+   * Geometry mirrors the other symbols' simple stroked primitives
+   * (rect, circle, path) on the same 22x22 grid, with the same 1.6
+   * stroke weight for the main shapes.
+   */
+  agentZero: (
+    <svg viewBox="0 0 22 22" width="22" height="22" fill="none">
+      <path
+        d="M11 1.2 L19.5 4.4 V10.4 C19.5 15.6 15.9 19.3 11 20.8 C6.1 19.3 2.5 15.6 2.5 10.4 V4.4 Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <rect x="7.3" y="8.1" width="7.4" height="6.2" rx="1.3" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M11 8.1 V6.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="11" cy="5" r="1.1" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="9.4" cy="11.1" r="0.9" fill="currentColor" />
+      <circle cx="12.6" cy="11.1" r="0.9" fill="currentColor" />
+      <path d="M5.6 12.3 H7.3 M14.7 12.3 H16.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   ),
 };
