@@ -13,6 +13,22 @@ import type { GreenTrustDomainKey } from "@/lib/assessments/greentrust-free";
 import { AchievementMedal } from "@/components/achievements/achievement-medal";
 import { getAchievementSymbol } from "@/components/achievements/achievement-symbols";
 import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
+import BadgeTile from "@/components/account/badge-tile";
+import siteUrl from "@/lib/seo/site";
+
+/**
+ * Mirrors BadgeTile's own slug map so the share URL points at the
+ * live challenge page (public, real OG content) rather than the
+ * private /account page. Kept as a local copy since BadgeTile is a
+ * client component and this is computed server-side.
+ */
+const BADGE_SHARE_SLUG: Record<string, string> = {
+  first_defender: "first-defender",
+  phishing_hunter: "first-defender",
+  network_guardian: "network-guardian",
+  soc_responder: "soc-night-shift",
+  data_guardian: "data-guardian",
+};
 
 // The `badges.key` value that shipped in migration 010 was
 // "first_defender" (Milestone 2's original name for this challenge,
@@ -171,27 +187,32 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
             {badges.map((b) => {
               const translation = b.badges?.badge_translations.find((tr) => tr.locale === locale);
               const achievement = achievementForBadgeKey(b.badges?.key);
-              if (achievement) {
-                return (
-                  <div key={b.badges?.key} className="flex flex-col items-center gap-1 text-center">
-                    <AchievementMedal
-                      number={achievement.number}
-                      symbol={getAchievementSymbol(achievement.key)}
-                      locked={false}
-                      size="sm"
-                    />
-                    <span className="max-w-[5.5rem] text-xs font-medium text-text-primary">
-                      {translation?.name ?? b.badges?.key}
-                    </span>
-                  </div>
-                );
-              }
-              // No medal art yet for this badge -- fall back to the
-              // plain text pill rather than hiding it.
+              const badgeKey = b.badges?.key ?? "";
+              const name = translation?.name ?? badgeKey;
+              const slug = BADGE_SHARE_SLUG[badgeKey];
+              const shareUrl = slug
+                ? `${siteUrl}/${locale}/challenge/${slug}`
+                : `${siteUrl}/${locale}/account`;
+              const shareText =
+                locale === "ar"
+                  ? `حصلت للتو على شارة "${name}" في CyberAbeer Labs!`
+                  : `I just earned the "${name}" badge on CyberAbeer Labs!`;
+              const shareLabel = locale === "ar" ? "مشاركة" : "Share";
               return (
-                <Badge key={b.badges?.key} variant="success">
-                  {translation?.name ?? b.badges?.key}
-                </Badge>
+                <BadgeTile
+                  key={badgeKey}
+                  badgeKey={badgeKey}
+                  name={name}
+                  achievement={
+                    achievement
+                      ? { number: achievement.number, symbol: getAchievementSymbol(achievement.key) }
+                      : null
+                  }
+                  locale={locale}
+                  shareUrl={shareUrl}
+                  shareText={shareText}
+                  shareLabel={shareLabel}
+                />
               );
             })}
           </div>
