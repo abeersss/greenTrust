@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Link } from "@/lib/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
-import AchievementMedal from "@/components/achievements/achievement-medal";
+import { AchievementMedal } from "@/components/achievements/achievement-medal";
 import { Share2 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics/track";
 
