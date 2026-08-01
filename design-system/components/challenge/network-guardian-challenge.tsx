@@ -203,7 +203,7 @@ const COPY = {
     ar: "تُحفظ تقدُّماتك على هذا الجهاز. سجّل في أي وقت للاحتفاظ بها بشكل دائم.",
   },
   nextMission: { en: "Next Mission: SOC Night Shift", ar: "المهمة التالية: مناوبة مركز العمليات الليلية" },
-  nextMissionComingSoon: { en: "SOC Night Shift — coming soon", ar: "مناوبة مركز العمليات الليلية — قريبًا" },
+  startNextMission: { en: "Start Next Mission", ar: "ابدأ المهمة التالية" },
   backToLabs: { en: "Back to Decision Labs", ar: "العودة إلى معامل القرار" },
   restart: { en: "Defend Again", ar: "دافع مرة أخرى" },
 } as const;
@@ -546,7 +546,11 @@ function BriefingScreen({ locale, onBegin }: { locale: AppLocale; onBegin: () =>
         <div className="rounded-md bg-surface-raised p-4 text-start">
           <p className="text-sm text-text-secondary">{pick(COPY.briefingBody, locale)}</p>
         </div>
-        <Button className="w-full" size="lg" onClick={onBegin}>
+        <Button
+          className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+          size="lg"
+          onClick={onBegin}
+        >
           {pick(COPY.beginDefense, locale)}
         </Button>
       </CardContent>
@@ -658,7 +662,7 @@ function TopologyDiagram({
             fill="none"
             strokeWidth={isAttackPath ? 3.5 : 2}
             strokeDasharray={state !== "open" ? "6 5" : undefined}
-            className={strokeClass}
+            className={`transition-all duration-300 ease-in-out ${strokeClass}`}
             markerEnd={isAttackPath ? "url(#ng-arrow)" : undefined}
           />
         );
@@ -668,7 +672,11 @@ function TopologyDiagram({
         const pos = NODE_POS[node.id];
         const isInspected = inspectedNode === node.id;
         return (
-          <g key={node.id} className="cursor-pointer" onClick={() => onInspectNode(node.id)}>
+          <g
+            key={node.id}
+            className="cursor-pointer transition-opacity duration-150 ease-out hover:opacity-80"
+            onClick={() => onInspectNode(node.id)}
+          >
             <rect
               x={pos.x}
               y={pos.y}
@@ -676,7 +684,7 @@ function TopologyDiagram({
               height={pos.h}
               rx={10}
               strokeWidth={isInspected ? 3 : 2}
-              className={`${nodeFill(node.id)} ${nodeStroke(node.id)}`}
+              className={`transition-all duration-300 ease-in-out ${nodeFill(node.id)} ${nodeStroke(node.id)}`}
             />
             <text
               x={pos.x + pos.w / 2}
@@ -745,13 +753,13 @@ function SlotDropTarget({
         const controlId = e.dataTransfer.getData("text/plain") as ControlId;
         if (controlId) onDrop(controlId);
       }}
-      className={`absolute flex select-none flex-col items-center justify-center rounded-md border-2 border-dashed p-1 text-center transition-colors ${
+      className={`absolute flex select-none flex-col items-center justify-center rounded-md border-2 border-dashed p-1 text-center transition-all duration-200 ease-out ${
         isDragOver
-          ? "border-primary bg-primary-50"
+          ? "scale-105 border-primary bg-primary-50 shadow-md"
           : control
             ? "border-primary/60 bg-surface"
             : isSelectable
-              ? "border-primary bg-primary-50"
+              ? "border-primary bg-primary-50 animate-pulse"
               : "border-border bg-surface/70"
       }`}
       style={{
@@ -770,7 +778,7 @@ function SlotDropTarget({
           onDragStart={(e) => {
             e.dataTransfer.setData("text/plain", control.id);
           }}
-          className="flex cursor-grab select-none flex-col items-center gap-0.5 active:cursor-grabbing"
+          className="flex origin-center cursor-grab select-none flex-col items-center gap-0.5 transition-transform duration-200 ease-out hover:scale-110 active:cursor-grabbing active:scale-95"
         >
           <GripVertical className="h-3 w-3 text-text-muted" aria-hidden="true" />
           <span className="text-[10px] font-semibold leading-tight text-text-primary">{pick(control.name, locale)}</span>
@@ -896,7 +904,7 @@ function WorkstationScreen({
                     onSelectTrayControl(control.id);
                   }}
                   onClick={() => onSelectTrayControl(control.id)}
-                  className={`flex select-none cursor-grab items-start gap-2 rounded-md border p-3 text-start transition-colors active:cursor-grabbing ${
+                  className={`flex select-none cursor-grab items-start gap-2 rounded-md border p-3 text-start transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95 active:cursor-grabbing ${
                     isSelected ? "border-primary bg-primary-50 ring-2 ring-primary" : "border-border bg-surface"
                   }`}
                 >
@@ -915,7 +923,7 @@ function WorkstationScreen({
               type="button"
               variant="outline"
               size="sm"
-              className="w-full justify-start gap-2"
+              className="w-full justify-start gap-2 transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
               disabled={hintsUsed >= 1}
               onClick={onUseHint}
             >
@@ -929,7 +937,7 @@ function WorkstationScreen({
               type="button"
               variant="outline"
               size="sm"
-              className="w-full justify-start gap-2"
+              className="w-full justify-start gap-2 transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
               disabled={hintsUsed >= 2}
               onClick={onUseHint}
             >
@@ -944,7 +952,12 @@ function WorkstationScreen({
       </Card>
 
       <div className="sticky bottom-4 flex justify-center">
-        <Button size="lg" disabled={!ready} onClick={onRunTest} className="shadow-lg">
+        <Button
+          size="lg"
+          disabled={!ready}
+          onClick={onRunTest}
+          className="shadow-lg transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:scale-95 disabled:hover:translate-y-0 disabled:hover:shadow-lg"
+        >
           {pick(COPY.runTest, locale)}
         </Button>
       </div>
@@ -1012,7 +1025,11 @@ function ConsequenceScreen({
         </CardContent>
       </Card>
 
-      <Button className="w-full" size="lg" onClick={onContinue}>
+      <Button
+        className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+        size="lg"
+        onClick={onContinue}
+      >
         {pick(COPY.continueCta, locale)}
       </Button>
     </div>
@@ -1111,7 +1128,12 @@ function CompleteScreen({
             </ul>
           </div>
 
-          <Button type="button" variant="outline" className="w-full" onClick={onShare}>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+            onClick={onShare}
+          >
             <Share2 className="h-4 w-4" aria-hidden="true" />
             {shareStatus === "copied" ? pick(COPY.shareCopied, locale) : pick(COPY.shareAchievement, locale)}
           </Button>
@@ -1132,7 +1154,13 @@ function CompleteScreen({
               registerCta={pick(COPY.registerCta, locale)}
               onRegistered={onRegistered}
             />
-            <Button type="button" variant="ghost" size="sm" className="w-full" onClick={onHideRegisterForm}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
+              onClick={onHideRegisterForm}
+            >
               {pick(COPY.registerLater, locale)}
             </Button>
           </CardContent>
@@ -1144,15 +1172,31 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 pt-6 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Badge variant="outline">{pick(COPY.nextMissionComingSoon, locale)}</Badge>
-          <Button asChild variant="outline" className="w-full tablet:w-auto">
+          <Button
+            asChild
+            className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 tablet:w-auto"
+          >
+            <Link href="/challenge/soc-night-shift">{pick(COPY.startNextMission, locale)}</Link>
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 tablet:w-auto"
+          >
             <Link href="/labs/decision-labs">{pick(COPY.backToLabs, locale)}</Link>
           </Button>
         </CardContent>
       </Card>
 
       <div className="text-center">
-        <Button type="button" variant="ghost" size="sm" onClick={onRestart}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
+          onClick={onRestart}
+        >
           {pick(COPY.restart, locale)}
         </Button>
       </div>
