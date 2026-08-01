@@ -273,6 +273,7 @@ const COPY = {
   },
   nextMission: { en: "Next Mission: SOC Night Shift", ar: "المهمة التالية: مناوبة مركز العمليات الليلية" },
   nextMissionComingSoon: { en: "SOC Night Shift — coming soon", ar: "مناوبة مركز العمليات الليلية — قريبًا" },
+  nextMissionCta: { en: "Start SOC Night Shift", ar: "ابدأ مناوبة مركز العمليات الليلية" },
   backToLabs: { en: "Back to Decision Labs", ar: "العودة إلى معامل القرار" },
   restart: { en: "Defend Again", ar: "دافع مرة أخرى" },
 } as const;
@@ -1117,8 +1118,10 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 pt-6 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Badge variant="outline">{pick(COPY.nextMissionComingSoon, locale)}</Badge>
-          <Button asChild variant="outline" className="w-full tablet:w-auto">
+          <Button asChild variant="default" className="w-full tablet:w-auto">
+            <Link href="/challenge/soc-night-shift">{pick(COPY.nextMissionCta, locale)}</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" className="w-full tablet:w-auto">
             <Link href="/labs/decision-labs">{pick(COPY.backToLabs, locale)}</Link>
           </Button>
         </CardContent>
