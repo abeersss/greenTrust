@@ -18,6 +18,16 @@ export const dynamic = "force-dynamic";
  * and register are deliberately excluded: they're marked noIndex in
  * their metadata and have no unique content to list.
  *
+ * All 6 Decision Labs (PHASE 8 SEO pass, 2026-08-01): every
+ * `/challenge/*` route that has shipped a real, playable lab must be
+ * listed here -- this array previously only had `challenge/first-defender`
+ * hardcoded, which meant network-guardian, soc-night-shift,
+ * data-guardian, grcl-innovation, and agent-zero were all live and
+ * linked from the Decision Labs landing page but completely invisible
+ * to search engines via the sitemap. `labs/decision-labs` itself (the
+ * landing page that lists all 6 cards) was missing too, for the same
+ * reason -- only the parent `/labs` marketing page was listed.
+ *
  * Insights article URLs are appended dynamically per locale from
  * whatever is actually published; with zero articles published this
  * contributes nothing, which is correct rather than listing
@@ -29,6 +39,7 @@ const staticPaths = [
   "greentrust",
   "for-organizations",
   "labs",
+  "labs/decision-labs",
   "free-tools",
   "free-tools/ai-governance-quick-check",
   "free-tools/quantum-readiness-quick-check",
@@ -38,6 +49,11 @@ const staticPaths = [
   "intelligence",
   "contact",
   "challenge/first-defender",
+  "challenge/network-guardian",
+  "challenge/soc-night-shift",
+  "challenge/data-guardian",
+  "challenge/grcl-innovation",
+  "challenge/agent-zero",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -54,12 +70,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // locale was just set above.
     const languages = Object.fromEntries(urlByLocale);
 
+    // Every playable Decision Lab is a conversion-driving page, so all
+    // of them get the same 0.8 priority `challenge/first-defender` used
+    // to have alone -- there's no reason the first lab built should
+    // outrank the other five in the sitemap's own priority signal.
+    const isChallenge = path.startsWith("challenge/");
+    const priority = path === "" ? 1 : isChallenge ? 0.8 : path === "labs/decision-labs" ? 0.75 : 0.7;
+
     for (const locale of locales) {
       entries.push({
         url: urlByLocale.get(locale) ?? `${siteUrl}/${locale}`,
         lastModified: new Date(),
         changeFrequency: path === "" ? "weekly" : "monthly",
-        priority: path === "" ? 1 : path === "challenge/first-defender" ? 0.8 : 0.7,
+        priority,
         alternates: { languages },
       });
     }
