@@ -1118,7 +1118,7 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 pt-6 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Button asChild variant="default" className="w-full tablet:w-auto">
+          <Button asChild variant="primary" className="w-full tablet:w-auto">
             <Link href="/challenge/soc-night-shift">{pick(COPY.nextMissionCta, locale)}</Link>
           </Button>
           <Button asChild variant="ghost" size="sm" className="w-full tablet:w-auto">
