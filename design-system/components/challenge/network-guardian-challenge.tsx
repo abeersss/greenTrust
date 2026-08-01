@@ -743,10 +743,7 @@ function TopologyDiagram({
               className={`transition-all duration-300 ease-in-out ${nodeFill(node.id)} ${nodeStroke(node.id)}`}
             />
             <foreignObject x={pos.x} y={pos.y} width={pos.w} height={pos.h}>
-              <div
-                xmlns="http://www.w3.org/1999/xhtml"
-                className="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-center"
-              >
+              <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-center">
                 <Icon className={`h-4 w-4 shrink-0 ${textColorClass}`} aria-hidden="true" />
                 <span className={`text-[11px] font-semibold leading-tight ${textColorClass}`}>
                   {nodeLabel(node.id, locale).slice(0, 24)}
