@@ -5,12 +5,13 @@
  * because it is printed on the medal itself and on every share card.
  *
  * Achievements 01 (Phishing Hunter), 02 (Network Guardian), 03 (SOC
- * Night Shift), and 07 (Data Guardian) have real medal graphics and a
- * live challenge behind them -- their labs are built and shipping XP
- * and badges today, so leaving them without medal art meant a player
- * who genuinely earned the badge (row in `user_badges`, correct score)
- * saw an unstyled placeholder pill on /account instead of a medal,
- * which reads as "the badge didn't get awarded" even though it did.
+ * Night Shift), 07 (Data Guardian), and 10 (GRC Strategist) have real
+ * medal graphics and a live challenge behind them -- their labs are
+ * built and shipping XP and badges today, so leaving them without
+ * medal art meant a player who genuinely earned the badge (row in
+ * `user_badges`, correct score) saw an unstyled placeholder pill on
+ * /account instead of a medal, which reads as "the badge didn't get
+ * awarded" even though it did.
  * Every other entry is real metadata (so the "My Achievements"
  * collection page can show the full 12-achievement roadmap and each
  * one's locked slot) but intentionally has no unique medal artwork yet
@@ -30,7 +31,7 @@ export interface AchievementCatalogEntry {
    * messages academies.*) this achievement belongs to. */
   academy: "cyberDefense" | "governance" | "aiTrust" | "dataTrust" | "futureTrust";
   /** Whether a real, brand-approved medal graphic exists for this entry.
-   * Only `true` for 01, 02, 03, and 07 until each subsequent medal is designed. */
+   * Only `true` for 01, 02, 03, 07, and 10 until each subsequent medal is designed. */
   hasMedalArt: boolean;
 }
 
@@ -44,7 +45,7 @@ export const ACHIEVEMENT_CATALOG: AchievementCatalogEntry[] = [
   { number: "07", key: "dataGuardian", challengeKey: "data-guardian", academy: "governance", hasMedalArt: true },
   { number: "08", key: "cloudDefender", challengeKey: null, academy: "dataTrust", hasMedalArt: false },
   { number: "09", key: "agentZero", challengeKey: null, academy: "aiTrust", hasMedalArt: false },
-  { number: "10", key: "grcStrategist", challengeKey: null, academy: "governance", hasMedalArt: false },
+  { number: "10", key: "grcStrategist", challengeKey: "grcl-innovation", academy: "governance", hasMedalArt: true },
   { number: "11", key: "digitalInvestigator", challengeKey: null, academy: "futureTrust", hasMedalArt: false },
   { number: "12", key: "quantumCountdown", challengeKey: null, academy: "futureTrust", hasMedalArt: false },
 ];
