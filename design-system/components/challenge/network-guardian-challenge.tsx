@@ -702,6 +702,33 @@ function TopologyDiagram({
 }
 
 /**
+ * Builds a small, branded drag-preview pill and hands it to the native
+ * drag-image API so mid-drag the cursor shows a clean label instead of
+ * the browser's default auto-cropped snapshot of the source element
+ * (which rasterizes with hard edges and whatever hover/scale transform
+ * happened to be active, and looks broken next to the OS's copy/no-drop
+ * cursor glyph). Also sets `effectAllowed` explicitly -- without it,
+ * Chrome/Firefox fall back to showing the "copy" (plus-sign) or
+ * "no-drop" (circle-slash) cursor even over valid targets, which is the
+ * "ugly cursor" during drag. The ghost node lives off-screen for the
+ * single frame the browser needs to rasterize it, then is removed.
+ */
+function setDragPreview(e: React.DragEvent, label: string) {
+  e.dataTransfer.effectAllowed = "move";
+  const ghost = document.createElement("div");
+  ghost.textContent = label;
+  ghost.style.cssText =
+    "position:fixed;top:-1000px;left:-1000px;padding:6px 14px;border-radius:9999px;" +
+    "background:#0f172a;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;" +
+    "box-shadow:0 6px 16px rgba(15,23,42,0.35);pointer-events:none;";
+  document.body.appendChild(ghost);
+  e.dataTransfer.setDragImage(ghost, 16, 16);
+  requestAnimationFrame(() => {
+    document.body.removeChild(ghost);
+  });
+}
+
+/**
  * One lettered, absolutely-positioned drop target overlaid on top of
  * the SVG topology diagram at a fixed chokepoint. Implemented as a
  * real HTML element (not an SVG node) specifically so native HTML5
@@ -744,6 +771,7 @@ function SlotDropTarget({
       }}
       onDragOver={(e) => {
         e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
         setIsDragOver(true);
       }}
       onDragLeave={() => setIsDragOver(false)}
@@ -777,6 +805,7 @@ function SlotDropTarget({
           draggable
           onDragStart={(e) => {
             e.dataTransfer.setData("text/plain", control.id);
+            setDragPreview(e, pick(control.name, locale));
           }}
           className="flex origin-center cursor-grab select-none flex-col items-center gap-0.5 transition-transform duration-200 ease-out hover:scale-110 active:cursor-grabbing active:scale-95"
         >
@@ -882,7 +911,10 @@ function WorkstationScreen({
         <CardContent className="space-y-2">
           <div
             className="flex flex-wrap gap-2 rounded-md border border-dashed border-border p-2"
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+            }}
             onDrop={(e) => {
               e.preventDefault();
               const controlId = e.dataTransfer.getData("text/plain") as ControlId;
@@ -901,6 +933,7 @@ function WorkstationScreen({
                   draggable
                   onDragStart={(e) => {
                     e.dataTransfer.setData("text/plain", control.id);
+                    setDragPreview(e, pick(control.name, locale));
                     onSelectTrayControl(control.id);
                   }}
                   onClick={() => onSelectTrayControl(control.id)}
