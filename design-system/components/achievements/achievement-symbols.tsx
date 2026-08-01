@@ -1,10 +1,12 @@
 import * as React from "react";
 
 /**
- * Central medal symbols, one per achievement `key`. Only `phishingHunter`
- * is implemented (achievement 01) -- see catalog.ts for why the other
- * 11 intentionally have no entry here yet. Each symbol is drawn on a
- * 22x22 grid so it drops straight into <AchievementMedal>'s centered
+ * Central medal symbols, one per achievement `key`. Implemented for
+ * every achievement that currently has a live challenge behind it
+ * (phishingHunter, networkGuardian, socNightShift, dataGuardian) --
+ * see catalog.ts for why the remaining entries intentionally have no
+ * symbol here yet. Each symbol is drawn on a 22x22 grid so it drops
+ * straight into <AchievementMedal>'s centered
  * `<g transform="translate(-11 -11)">` wrapper; stroke/fill use
  * `currentColor` so the medal component controls locked-vs-gold color.
  */
@@ -15,6 +17,40 @@ const SYMBOLS: Record<string, React.ReactNode> = {
       <path d="M1 5.5 L9 11 L17 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="16.5" cy="15.5" r="4.3" stroke="currentColor" strokeWidth="1.6" />
       <line x1="19.6" y1="18.6" x2="21.8" y2="20.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  ),
+  networkGuardian: (
+    <svg viewBox="0 0 22 22" width="22" height="22" fill="none">
+      <path
+        d="M11 1.2 L18.5 4 V9.6 C18.5 14.6 15.4 18.5 11 20.3 C6.6 18.5 3.5 14.6 3.5 9.6 V4 Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <circle cx="11" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="7" cy="13.5" r="1.5" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="15" cy="13.5" r="1.5" stroke="currentColor" strokeWidth="1.4" />
+      <line x1="10.1" y1="9.1" x2="7.8" y2="12.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="11.9" y1="9.1" x2="14.2" y2="12.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  ),
+  socNightShift: (
+    <svg viewBox="0 0 22 22" width="22" height="22" fill="none">
+      <rect x="1.5" y="3" width="19" height="12.5" rx="1.4" stroke="currentColor" strokeWidth="1.6" />
+      <line x1="7.5" y1="19" x2="14.5" y2="19" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="11" y1="15.5" x2="11" y2="19" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path
+        d="M15.2 6 A3.7 3.7 0 1 0 15.6 12.9 A4.7 4.7 0 0 1 15.2 6 Z"
+        fill="currentColor"
+      />
+    </svg>
+  ),
+  dataGuardian: (
+    <svg viewBox="0 0 22 22" width="22" height="22" fill="none">
+      <rect x="4.5" y="9.5" width="13" height="10" rx="1.6" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M7.5 9.5 V6.8 a3.5 3.5 0 0 1 7 0 V9.5" stroke="currentColor" strokeWidth="1.6" fill="none" />
+      <line x1="8" y1="13.6" x2="14" y2="13.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <line x1="8" y1="16.1" x2="14" y2="16.1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   ),
 };
