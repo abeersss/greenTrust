@@ -702,30 +702,20 @@ function TopologyDiagram({
 }
 
 /**
- * Builds a small, branded drag-preview pill and hands it to the native
- * drag-image API so mid-drag the cursor shows a clean label instead of
- * the browser's default auto-cropped snapshot of the source element
- * (which rasterizes with hard edges and whatever hover/scale transform
- * happened to be active, and looks broken next to the OS's copy/no-drop
- * cursor glyph). Also sets `effectAllowed` explicitly -- without it,
- * Chrome/Firefox fall back to showing the "copy" (plus-sign) or
- * "no-drop" (circle-slash) cursor even over valid targets, which is the
- * "ugly cursor" during drag. The ghost node lives off-screen for the
- * single frame the browser needs to rasterize it, then is removed.
+ * Sets `effectAllowed` explicitly on drag start. Without it, Chrome/
+ * Firefox fall back to showing the "copy" (plus-sign) or "no-drop"
+ * (circle-slash) cursor even over valid targets, which is the ugly
+ * cursor reported during drag. (An earlier version of this function
+ * also tried to swap in a custom drag-preview image via an off-screen
+ * DOM node + `setDragImage`, but elements positioned far outside the
+ * viewport are frequently skipped by the browser's paint pipeline, so
+ * `setDragImage` captured nothing and the OS rendered a broken black
+ * rectangle as the drag ghost instead -- worse than the default. We
+ * intentionally let the browser use its own snapshot of the real,
+ * on-screen draggable element, which paints correctly.)
  */
-function setDragPreview(e: React.DragEvent, label: string) {
+function setDragPreview(e: React.DragEvent, _label: string) {
   e.dataTransfer.effectAllowed = "move";
-  const ghost = document.createElement("div");
-  ghost.textContent = label;
-  ghost.style.cssText =
-    "position:fixed;top:-1000px;left:-1000px;padding:6px 14px;border-radius:9999px;" +
-    "background:#0f172a;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;" +
-    "box-shadow:0 6px 16px rgba(15,23,42,0.35);pointer-events:none;";
-  document.body.appendChild(ghost);
-  e.dataTransfer.setDragImage(ghost, 16, 16);
-  requestAnimationFrame(() => {
-    document.body.removeChild(ghost);
-  });
 }
 
 /**
