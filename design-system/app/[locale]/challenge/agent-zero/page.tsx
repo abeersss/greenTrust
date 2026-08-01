@@ -11,9 +11,15 @@ import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const TITLE = { en: "Agent Zero | CyberAbeer Decision Labs", ar: "العميل زيرو | معامل قرار CyberAbeer" };
+// PHASE 8 SEO pass (2026-08-01): trimmed from ~301/246 chars to match the
+// ~160-195 char range every other lab's meta description already uses
+// (first-defender 164, data-guardian 170, network-guardian 194) so Google
+// stops truncating this mid-sentence in search results -- the original,
+// fuller copy is preserved verbatim as on-page body copy in
+// agent-zero-challenge.tsx, only the <meta name="description"> is shorter.
 const DESCRIPTION = {
-  en: "Contain a rogue AI agent before it escalates its own permissions: investigate five realistic signals, from a prompt-injection payload to a silent IAM privilege escalation, and decide whether to allow, add human approval, revoke a permission, or terminate the session. Free, no signup required to play.",
-  ar: "احتوِ وكيل ذكاء اصطناعي مارقًا قبل أن يصعّد صلاحياته الخاصة: افحص خمس إشارات واقعية، من حمولة حقن أوامر إلى تصعيد صلاحيات صامت في إدارة الهوية والوصول، وقرري بين السماح أو إضافة موافقة بشرية أو سحب صلاحية أو إنهاء الجلسة. مجاني ولا يتطلب تسجيلاً للعب.",
+  en: "Contain a rogue AI agent before it escalates its own permissions. Investigate five realistic signals and decide: allow, add approval, revoke, or terminate. Free, no signup required to play.",
+  ar: "احتوِ وكيل ذكاء اصطناعي مارقًا قبل أن يصعّد صلاحياته الخاصة. افحص خمس إشارات واقعية وقرري: سماح، موافقة بشرية، سحب صلاحية، أو إنهاء الجلسة. مجاني ولا يتطلب تسجيلاً للعب.",
 };
 
 export async function generateMetadata({
