@@ -112,7 +112,7 @@ function shuffledSlotMap(): Record<ControlId, ControlId> {
   }
   const map = {} as Record<ControlId, ControlId>;
   order.forEach((id, i) => {
-    map[id] = shuffled[i];
+    map[id] = shuffled[i] as ControlId;
   });
   return map;
 }
