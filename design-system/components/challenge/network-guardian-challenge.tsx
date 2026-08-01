@@ -92,6 +92,31 @@ const SLOT_POS: Record<ControlId, { x: number; y: number; w: number; h: number }
   vlan_segmentation: { x: 349, y: 236, w: 92, h: 34 },
 };
 
+function identitySlotMap(): Record<ControlId, ControlId> {
+  return {
+    firewall: "firewall",
+    waf: "waf",
+    dmz: "dmz",
+    vlan_segmentation: "vlan_segmentation",
+  };
+}
+
+function shuffledSlotMap(): Record<ControlId, ControlId> {
+  const order: ControlId[] = ["firewall", "waf", "dmz", "vlan_segmentation"];
+  const shuffled = [...order];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = tmp;
+  }
+  const map = {} as Record<ControlId, ControlId>;
+  order.forEach((id, i) => {
+    map[id] = shuffled[i];
+  });
+  return map;
+}
+
 const NODE_ICON: Record<NodeId, React.ReactNode> = {
   internet: <Cloud className="h-5 w-5" aria-hidden="true" />,
   web_server: <Server className="h-5 w-5" aria-hidden="true" />,
@@ -277,6 +302,10 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   const [placedControls, setPlacedControls] = React.useState<ControlId[]>([]);
   const [hintsUsed, setHintsUsed] = React.useState(0);
   const [inspectedNode, setInspectedNode] = React.useState<NodeId | null>(null);
+  const [slotIdentity, setSlotIdentity] = React.useState<Record<ControlId, ControlId>>(identitySlotMap);
+  React.useEffect(() => {
+    setSlotIdentity(shuffledSlotMap());
+  }, []);
   const [startedAt, setStartedAt] = React.useState("");
   const [completedAt, setCompletedAt] = React.useState<string | null>(null);
   const [claimed, setClaimed] = React.useState(false);
@@ -471,13 +500,14 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
         onToggleControl={toggleControl}
         onUseHint={handleUseHint}
         onRunTest={handleRunTest}
+        slotIdentity={slotIdentity}
       />
     );
   }
 
   if (screen === "consequence") {
     const submission: NetworkGuardianSubmission = { placedControls, hintsUsed };
-    return <ConsequenceScreen locale={locale} submission={submission} onContinue={handleFinishConsequence} />;
+    return <ConsequenceScreen locale={locale} submission={submission} onContinue={handleFinishConsequence} slotIdentity={slotIdentity} />;
   }
 
   const result = computeNetworkGuardianScore({ placedControls, hintsUsed });
@@ -538,6 +568,7 @@ function TopologyDiagram({
   protectedNodes,
   attackPath,
   onToggleControl,
+  slotIdentity,
 }: {
   locale: AppLocale;
   placedControls: ControlId[];
@@ -548,6 +579,7 @@ function TopologyDiagram({
   protectedNodes?: NodeId[];
   attackPath?: NodeId[] | null;
   onToggleControl?: (id: ControlId) => void;
+  slotIdentity: Record<ControlId, ControlId>;
 }) {
   const [dragOverId, setDragOverId] = React.useState<ControlId | null>(null);
 
@@ -676,7 +708,7 @@ function TopologyDiagram({
       })}
       {onToggleControl &&
         NETWORK_GUARDIAN_CONTROLS.map((control) => {
-          const slot = SLOT_POS[control.id];
+          const slot = SLOT_POS[slotIdentity[control.id]];
           const filled = placedControls.includes(control.id);
           const accent = CONTROL_ACCENT[control.id];
           const isDragOver = dragOverId === control.id;
@@ -729,9 +761,9 @@ function TopologyDiagram({
                   x={slot.x + slot.w / 2}
                   y={slot.y + slot.h / 2 + 6}
                   textAnchor="middle"
-                  className={`pointer-events-none text-[16px] font-extrabold ${CONTROL_SLOT_LETTER_FILL[control.id]}`}
+                  className={`pointer-events-none text-[16px] font-extrabold ${CONTROL_SLOT_LETTER_FILL[slotIdentity[control.id]]}`}
                 >
-                  {CONTROL_SLOT_LETTER[control.id]}
+                  {CONTROL_SLOT_LETTER[slotIdentity[control.id]]}
                 </text>
               )}
             </g>
@@ -750,6 +782,7 @@ function WorkstationScreen({
   onToggleControl,
   onUseHint,
   onRunTest,
+  slotIdentity,
 }: {
   locale: AppLocale;
   placedControls: ControlId[];
@@ -759,6 +792,7 @@ function WorkstationScreen({
   onToggleControl: (id: ControlId) => void;
   onUseHint: () => void;
   onRunTest: () => void;
+  slotIdentity: Record<ControlId, ControlId>;
 }) {
   const dir = locale === "ar" ? "rtl" : "ltr";
   const inspected = inspectedNode ? NETWORK_GUARDIAN_NODES.find((n) => n.id === inspectedNode) : null;
@@ -789,6 +823,7 @@ function WorkstationScreen({
             onInspectNode={onInspectNode}
             onToggleControl={onToggleControl}
             mode="decide"
+            slotIdentity={slotIdentity}
           />
           <TopologyLegend locale={locale} />
           {inspected && (
@@ -896,10 +931,12 @@ function ConsequenceScreen({
   locale,
   submission,
   onContinue,
+  slotIdentity,
 }: {
   locale: AppLocale;
   submission: NetworkGuardianSubmission;
   onContinue: () => void;
+  slotIdentity: Record<ControlId, ControlId>;
 }) {
   const result = computeNetworkGuardianScore(submission);
   const copy = getNetworkConsequenceCopy(result, submission);
@@ -922,6 +959,7 @@ function ConsequenceScreen({
             inspectedNode={null}
             onInspectNode={() => {}}
             mode="result"
+            slotIdentity={slotIdentity}
             compromisedNodes={result.simulation.compromisedNodes}
             protectedNodes={result.simulation.protectedNodes}
             attackPath={result.simulation.attackPath}
