@@ -1,7 +1,10 @@
 import * as React from "react";
 
 export interface AchievementMedalProps {
-  /** Two-digit achievement number, e.g. "01". Printed on every state. */
+  /** Two-digit achievement number, e.g. "01", for Labs medals -- or a
+   * short CTF label like "CTF 1" for the CTF track. Printed on every
+   * state; font size shrinks automatically for longer strings (see
+   * numberFontSize below) so "CTF 1".."CTF 6" still fit the disc. */
   number: string;
   /** Central symbol. Keep it a single simple glyph -- it renders at
    * roughly 22x22 inside the medal disc. */
@@ -9,6 +12,12 @@ export interface AchievementMedalProps {
   locked: boolean;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  /** Arc text along the top of the disc. Defaults to "CYBERABEER" for
+   * the Labs track; the CTF track passes "CYBERABEER CTF" so the two
+   * badge tracks read as visibly related but distinct at a glance,
+   * without changing the medal's shape, ribbon, or gold/locked states
+   * (founder spec: those stay the one consistent CyberAbeer medal). */
+  arcText?: string;
 }
 
 const SIZE_PX: Record<NonNullable<AchievementMedalProps["size"]>, number> = {
@@ -20,9 +29,9 @@ const SIZE_PX: Record<NonNullable<AchievementMedalProps["size"]>, number> = {
 
 /**
  * The one consistent CyberAbeer medal shape: a ribboned disc that only
- * ever changes its number, central symbol, and locked/gold state. This
- * consistency is intentional (founder spec) -- do not vary the outer
- * shape, ribbon, or "CyberAbeer" arc text per achievement.
+ * ever changes its number, central symbol, arc text, and locked/gold
+ * state. This consistency is intentional (founder spec) -- do not vary
+ * the outer shape or ribbon per achievement or per badge track.
  *
  * Gold state uses a radial gradient across the brand accent gold
  * (#f4d675 -> #c9a227 -> #a9860f) for a metallic look; locked state
@@ -30,9 +39,13 @@ const SIZE_PX: Record<NonNullable<AchievementMedalProps["size"]>, number> = {
  * the desaturated-outline direction from the founder's reference
  * mockup and the existing <AchievementBadge> locked treatment.
  */
-export function AchievementMedal({ number, symbol, locked, size = "md", className }: AchievementMedalProps) {
+export function AchievementMedal({ number, symbol, locked, size = "md", className, arcText = "CYBERABEER" }: AchievementMedalProps) {
   const px = SIZE_PX[size];
   const gradientId = React.useId();
+  // "01".."12" (2 chars) keep the original 15px size; longer labels
+  // like "CTF 1".."CTF 6" (5 chars) step down so they never overflow
+  // the 26px-radius inner disc.
+  const numberFontSize = number.length <= 2 ? 15 : number.length <= 4 ? 12 : 9.5;
 
   return (
     <svg
@@ -75,9 +88,9 @@ export function AchievementMedal({ number, symbol, locked, size = "md", classNam
         d="M22 50 A28 28 0 0 1 78 50"
         fill="none"
       />
-      <text fontSize="7.5" fontWeight="700" letterSpacing="1.5" fill={locked ? "#dde1e6" : "#f4d675"}>
+      <text fontSize={arcText.length > 12 ? "6" : "7.5"} fontWeight="700" letterSpacing="1.2" fill={locked ? "#dde1e6" : "#f4d675"}>
         <textPath href={`#${gradientId}-arc`} startOffset="50%" textAnchor="middle">
-          CYBERABEER
+          {arcText}
         </textPath>
       </text>
 
@@ -87,7 +100,7 @@ export function AchievementMedal({ number, symbol, locked, size = "md", classNam
         </g>
       </g>
 
-      <text x="50" y="66" textAnchor="middle" fontSize="15" fontWeight="800" fill={locked ? "#eef0f2" : "#ffffff"}>
+      <text x="50" y="66" textAnchor="middle" fontSize={numberFontSize} fontWeight="800" fill={locked ? "#eef0f2" : "#ffffff"}>
         {number}
       </text>
 
