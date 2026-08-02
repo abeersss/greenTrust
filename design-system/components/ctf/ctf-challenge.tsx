@@ -17,6 +17,7 @@ import type {
   CtfChallenge as CtfChallengeData,
   CtfDifficulty,
   CtfHint,
+  CtfStage,
   CtfStepsState,
   CtfWorkstationState,
   CryptoArtifact,
@@ -43,6 +44,8 @@ import {
   XCircle,
   Sparkles,
   Share2,
+  ChevronRight,
+  Lock,
 } from "lucide-react";
 
 type Screen = "briefing" | "workstation" | "consequence" | "complete";
@@ -66,6 +69,7 @@ const DIFFICULTY_LABEL: Record<CtfDifficulty, Bilingual> = {
 
 const COPY = {
   beginChallenge: { en: "Start Challenge", ar: "ابدأ التحدي" },
+  stepsSuffix: { en: "steps", ar: "خطوات" },
   artifactHeading: { en: "Artifact", ar: "القطعة" },
   hintsHeading: { en: "Hints", ar: "تلميحات" },
   revealHint: { en: "Reveal hint", ar: "أظهر التلميح" },
@@ -110,6 +114,14 @@ const COPY = {
   ciphertextLabel: { en: "Ciphertext", ar: "النص المشفر" },
   encodedArtifactLabel: { en: "Encoded artifact", ar: "القطعة المرمّزة" },
   decodedPreviewLabel: { en: "Decoded preview", ar: "معاينة فك الترميز" },
+  stepBadge: { en: "Step", ar: "الخطوة" },
+  unlockStep: { en: "Unlock Next Step", ar: "افتح الخطوة التالية" },
+  incorrectUnlock: { en: "Not quite, try again.", ar: "ليس تمامًا، حاول مرة أخرى." },
+  stepUnlockedNote: { en: "Step unlocked below.", ar: "تم فتح الخطوة أدناه." },
+  completeStepsNote: {
+    en: "Complete the steps above to unlock flag submission.",
+    ar: "أكمل الخطوات أعلاه لفتح إرسال العلم.",
+  },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -151,6 +163,42 @@ function normalizeFlag(value: string): string {
   return value.trim().toUpperCase();
 }
 
+/** Case-insensitive, whitespace-normalized comparison for stage-unlock
+ * answers -- lets "  Session_Secret " or "0x00003DA0" match a stored
+ * lowercase, un-prefixed answer without being fussy about it. */
+function normalizeStageAnswer(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/^0x/, "")
+    .replace(/\s+/g, " ");
+}
+
+/** Reads only the keys namespaced to this stage (`${stageId}:${key}`) out
+ * of the shared workstation state bag, stripped of their prefix, so each
+ * stage's artifact sub-tools (shift value, decoded text, last API
+ * response, etc.) never collide with another stage's, even when two
+ * stages in the same challenge reuse the same artifact kind. */
+function scopedWorkstationState(state: CtfWorkstationState, stageId: string): CtfWorkstationState {
+  const prefix = `${stageId}:`;
+  const scoped: CtfWorkstationState = {};
+  for (const [key, value] of Object.entries(state)) {
+    if (key.startsWith(prefix)) scoped[key.slice(prefix.length)] = value;
+  }
+  return scoped;
+}
+
+function scopedOnWorkstationChange(
+  onChange: (patch: CtfWorkstationState) => void,
+  stageId: string
+): (patch: CtfWorkstationState) => void {
+  return (patch: CtfWorkstationState) => {
+    const prefixed: CtfWorkstationState = {};
+    for (const [key, value] of Object.entries(patch)) prefixed[`${stageId}:${key}`] = value;
+    onChange(prefixed);
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
@@ -173,6 +221,9 @@ export function CtfChallenge({
   const [hintsUsed, setHintsUsed] = React.useState<string[]>([]);
   const [solved, setSolved] = React.useState(false);
   const [workstationState, setWorkstationState] = React.useState<CtfWorkstationState>({});
+  const [unlockedStageIndex, setUnlockedStageIndex] = React.useState(0);
+  const [stageUnlockInput, setStageUnlockInput] = React.useState("");
+  const [stageUnlockFeedback, setStageUnlockFeedback] = React.useState<"idle" | "incorrect">("idle");
   const [flagInput, setFlagInput] = React.useState("");
   const [flagFeedback, setFlagFeedback] = React.useState<"idle" | "incorrect">("idle");
   const [startedAt, setStartedAt] = React.useState("");
@@ -199,6 +250,9 @@ export function CtfChallenge({
       setHintsUsed(saved.stepsState.hintsUsed ?? []);
       setSolved(Boolean(saved.stepsState.solved));
       setWorkstationState(saved.stepsState.workstationState ?? {});
+      setUnlockedStageIndex(
+        Math.min(saved.stepsState.unlockedStageIndex ?? 0, challenge.stages.length - 1)
+      );
       setStartedAt(saved.startedAt);
       setClaimed(Boolean(saved.claimed));
       setClaimedXp(saved.claimedXp);
@@ -233,9 +287,19 @@ export function CtfChallenge({
 
   if (!challenge) return null;
 
-  function persistLocal(nextHintsUsed: string[], nextSolved: boolean, nextWorkstationState: CtfWorkstationState) {
+  function persistLocal(
+    nextHintsUsed: string[],
+    nextSolved: boolean,
+    nextWorkstationState: CtfWorkstationState,
+    nextUnlockedStageIndex: number
+  ) {
     const nowIso = new Date().toISOString();
-    const stepsState: CtfStepsState = { hintsUsed: nextHintsUsed, solved: nextSolved, workstationState: nextWorkstationState };
+    const stepsState: CtfStepsState = {
+      hintsUsed: nextHintsUsed,
+      solved: nextSolved,
+      workstationState: nextWorkstationState,
+      unlockedStageIndex: nextUnlockedStageIndex,
+    };
     saveChallengeProgress<CtfStepsState>(challenge!.challengeKey, {
       currentStepIndex: nextSolved ? 1 : 0,
       stepsState,
@@ -247,8 +311,18 @@ export function CtfChallenge({
     if (nextSolved) setCompletedAt((prev) => prev ?? nowIso);
   }
 
-  function persistServer(nextHintsUsed: string[], nextSolved: boolean, nextWorkstationState: CtfWorkstationState) {
-    const stepsState: CtfStepsState = { hintsUsed: nextHintsUsed, solved: nextSolved, workstationState: nextWorkstationState };
+  function persistServer(
+    nextHintsUsed: string[],
+    nextSolved: boolean,
+    nextWorkstationState: CtfWorkstationState,
+    nextUnlockedStageIndex: number
+  ) {
+    const stepsState: CtfStepsState = {
+      hintsUsed: nextHintsUsed,
+      solved: nextSolved,
+      workstationState: nextWorkstationState,
+      unlockedStageIndex: nextUnlockedStageIndex,
+    };
     const score = computeScore(nextHintsUsed, challenge!);
     const xp = computeXp(score, challenge!);
     void saveAnonymousChallengeProgress({
@@ -277,9 +351,30 @@ export function CtfChallenge({
   function handleWorkstationChange(patch: CtfWorkstationState) {
     setWorkstationState((prev) => {
       const next = { ...prev, ...patch };
-      persistLocal(hintsUsed, solved, next);
+      persistLocal(hintsUsed, solved, next, unlockedStageIndex);
       return next;
     });
+  }
+
+  function handleStageUnlockInputChange(value: string) {
+    setStageUnlockInput(value);
+    if (stageUnlockFeedback !== "idle") setStageUnlockFeedback("idle");
+  }
+
+  function handleUnlockStage() {
+    const stage = challenge!.stages[unlockedStageIndex];
+    if (!stage || !stage.unlockAnswer) return;
+    if (normalizeStageAnswer(stageUnlockInput) !== stage.unlockAnswer) {
+      setStageUnlockFeedback("incorrect");
+      return;
+    }
+    const nextIndex = Math.min(unlockedStageIndex + 1, challenge!.stages.length - 1);
+    setUnlockedStageIndex(nextIndex);
+    setStageUnlockInput("");
+    setStageUnlockFeedback("idle");
+    persistLocal(hintsUsed, solved, workstationState, nextIndex);
+    persistServer(hintsUsed, solved, workstationState, nextIndex);
+    trackEvent("ctf_stage_unlocked", { locale, challengeKey: challenge!.challengeKey, stageIndex: nextIndex });
   }
 
   function handleUseHint(hint: CtfHint, index: number) {
@@ -287,8 +382,8 @@ export function CtfChallenge({
     if (hint.requiresHintId && !hintsUsed.includes(hint.requiresHintId)) return;
     const next = [...hintsUsed, hint.id];
     setHintsUsed(next);
-    persistLocal(next, solved, workstationState);
-    persistServer(next, solved, workstationState);
+    persistLocal(next, solved, workstationState, unlockedStageIndex);
+    persistServer(next, solved, workstationState, unlockedStageIndex);
     trackEvent("ctf_hint_used", { locale, challengeKey: challenge!.challengeKey, hintIndex: index });
   }
 
@@ -303,8 +398,8 @@ export function CtfChallenge({
       return;
     }
     setSolved(true);
-    persistLocal(hintsUsed, true, workstationState);
-    persistServer(hintsUsed, true, workstationState);
+    persistLocal(hintsUsed, true, workstationState, unlockedStageIndex);
+    persistServer(hintsUsed, true, workstationState, unlockedStageIndex);
     const score = computeScore(hintsUsed, challenge!);
     const xp = computeXp(score, challenge!);
     trackEvent("challenge_result_computed", { locale, challengeKey: challenge!.challengeKey, score });
@@ -323,7 +418,7 @@ export function CtfChallenge({
     setRegisteredResult(result);
     saveChallengeProgress<CtfStepsState>(challenge!.challengeKey, {
       currentStepIndex: 1,
-      stepsState: { hintsUsed, solved, workstationState },
+      stepsState: { hintsUsed, solved, workstationState, unlockedStageIndex },
       startedAt: startedAt || new Date().toISOString(),
       completedAt: completedAt ?? new Date().toISOString(),
       claimed: true,
@@ -362,6 +457,9 @@ export function CtfChallenge({
     setHintsUsed([]);
     setSolved(false);
     setWorkstationState({});
+    setUnlockedStageIndex(0);
+    setStageUnlockInput("");
+    setStageUnlockFeedback("idle");
     setFlagInput("");
     setFlagFeedback("idle");
     setCompletedAt(null);
@@ -387,6 +485,11 @@ export function CtfChallenge({
         workstationState={workstationState}
         onUseHint={handleUseHint}
         onWorkstationChange={handleWorkstationChange}
+        unlockedStageIndex={unlockedStageIndex}
+        stageUnlockInput={stageUnlockInput}
+        onStageUnlockInputChange={handleStageUnlockInputChange}
+        stageUnlockFeedback={stageUnlockFeedback}
+        onUnlockStage={handleUnlockStage}
         flagInput={flagInput}
         onFlagInputChange={handleFlagInputChange}
         flagFeedback={flagFeedback}
@@ -452,6 +555,9 @@ function BriefingScreen({
           <Badge variant={challenge.difficulty === "beginner" ? "success" : "warning"}>
             {pick(DIFFICULTY_LABEL[challenge.difficulty], locale)}
           </Badge>
+          <Badge variant="outline">
+            {challenge.stages.length} {pick(COPY.stepsSuffix, locale)}
+          </Badge>
         </div>
         <CardTitle className="font-display text-2xl">{pick(challenge.title, locale)}</CardTitle>
       </CardHeader>
@@ -484,6 +590,11 @@ function WorkstationScreen({
   workstationState,
   onUseHint,
   onWorkstationChange,
+  unlockedStageIndex,
+  stageUnlockInput,
+  onStageUnlockInputChange,
+  stageUnlockFeedback,
+  onUnlockStage,
   flagInput,
   onFlagInputChange,
   flagFeedback,
@@ -495,12 +606,20 @@ function WorkstationScreen({
   workstationState: CtfWorkstationState;
   onUseHint: (hint: CtfHint, index: number) => void;
   onWorkstationChange: (patch: CtfWorkstationState) => void;
+  unlockedStageIndex: number;
+  stageUnlockInput: string;
+  onStageUnlockInputChange: (value: string) => void;
+  stageUnlockFeedback: "idle" | "incorrect";
+  onUnlockStage: () => void;
   flagInput: string;
   onFlagInputChange: (value: string) => void;
   flagFeedback: "idle" | "incorrect";
   onSubmitFlag: () => void;
 }) {
   const score = computeScore(hintsUsed, challenge);
+  const stages = challenge.stages;
+  const isFinalStageUnlocked = unlockedStageIndex >= stages.length - 1;
+  const visibleStages = stages.slice(0, unlockedStageIndex + 1);
 
   return (
     <div className="mx-auto max-w-3xl space-y-4" dir={locale === "ar" ? "rtl" : "ltr"} data-brand="labs">
@@ -516,6 +635,9 @@ function WorkstationScreen({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Badge variant="outline">
+              {pick(COPY.stepBadge, locale)} {unlockedStageIndex + 1}/{stages.length}
+            </Badge>
             <Badge variant={challenge.difficulty === "beginner" ? "success" : "warning"}>
               {pick(DIFFICULTY_LABEL[challenge.difficulty], locale)}
             </Badge>
@@ -524,37 +646,80 @@ function WorkstationScreen({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{pick(COPY.artifactHeading, locale)}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {challenge.category === "web" && (
-            <WebArtifactPanel
-              artifact={challenge.artifact as WebArtifact}
-              locale={locale}
-              workstationState={workstationState}
-              onWorkstationChange={onWorkstationChange}
-            />
-          )}
-          {challenge.category === "forensics" && (
-            <ForensicsArtifactPanel
-              artifact={challenge.artifact as ForensicsArtifact}
-              locale={locale}
-              workstationState={workstationState}
-              onWorkstationChange={onWorkstationChange}
-            />
-          )}
-          {challenge.category === "crypto" && (
-            <CryptoArtifactPanel
-              artifact={challenge.artifact as CryptoArtifact}
-              locale={locale}
-              workstationState={workstationState}
-              onWorkstationChange={onWorkstationChange}
-            />
-          )}
-        </CardContent>
-      </Card>
+      {visibleStages.map((stage, index) => {
+        const stageState = scopedWorkstationState(workstationState, stage.id);
+        const stageOnChange = scopedOnWorkstationChange(onWorkstationChange, stage.id);
+        const isActiveUnlockStage = index === unlockedStageIndex && Boolean(stage.unlockAnswer);
+
+        return (
+          <Card key={stage.id}>
+            <CardHeader>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <CardTitle className="text-base">{pick(stage.title, locale)}</CardTitle>
+                <Badge variant="outline" className="shrink-0">
+                  {pick(COPY.stepBadge, locale)} {index + 1}/{stages.length}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-text-secondary">{pick(stage.instruction, locale)}</p>
+
+              {challenge.category === "web" && (
+                <WebArtifactPanel
+                  artifact={stage.artifact as WebArtifact}
+                  locale={locale}
+                  workstationState={stageState}
+                  onWorkstationChange={stageOnChange}
+                />
+              )}
+              {challenge.category === "forensics" && (
+                <ForensicsArtifactPanel
+                  artifact={stage.artifact as ForensicsArtifact}
+                  locale={locale}
+                  workstationState={stageState}
+                  onWorkstationChange={stageOnChange}
+                />
+              )}
+              {challenge.category === "crypto" && (
+                <CryptoArtifactPanel
+                  artifact={stage.artifact as CryptoArtifact}
+                  locale={locale}
+                  workstationState={stageState}
+                  onWorkstationChange={stageOnChange}
+                />
+              )}
+
+              {isActiveUnlockStage && (
+                <div className="space-y-2 rounded-md border border-dashed border-border-strong p-3">
+                  <p className="flex items-center gap-2 text-xs font-medium text-text-muted">
+                    <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+                    {pick(stage.unlockLabel ?? COPY.unlockStep, locale)}
+                  </p>
+                  <div className="flex flex-col gap-2 tablet:flex-row">
+                    <Input
+                      dir="ltr"
+                      value={stageUnlockInput}
+                      onChange={(e) => onStageUnlockInputChange(e.target.value)}
+                      className="font-mono"
+                      aria-label={pick(stage.unlockLabel ?? COPY.unlockStep, locale)}
+                    />
+                    <Button type="button" onClick={onUnlockStage} className="gap-2 shrink-0">
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                      {pick(COPY.unlockStep, locale)}
+                    </Button>
+                  </div>
+                  {stageUnlockFeedback === "incorrect" && (
+                    <p className="flex items-center gap-2 text-sm text-danger-600">
+                      <XCircle className="h-4 w-4" aria-hidden="true" />
+                      {pick(stage.wrongUnlockFeedback ?? COPY.incorrectUnlock, locale)}
+                    </p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
 
       <Card>
         <CardHeader>
@@ -598,24 +763,33 @@ function WorkstationScreen({
           <CardTitle className="text-base">{pick(COPY.submitFlagHeading, locale)}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex flex-col gap-2 tablet:flex-row">
-            <Input
-              dir="ltr"
-              value={flagInput}
-              onChange={(e) => onFlagInputChange(e.target.value)}
-              placeholder="CTF{...}"
-              className="font-mono"
-              aria-label={pick(COPY.flagInputLabel, locale)}
-            />
-            <Button type="button" onClick={onSubmitFlag} className="gap-2">
-              <Send className="h-4 w-4" aria-hidden="true" />
-              {pick(COPY.submitFlag, locale)}
-            </Button>
-          </div>
-          {flagFeedback === "incorrect" && (
-            <p className="flex items-center gap-2 text-sm text-danger-600">
-              <XCircle className="h-4 w-4" aria-hidden="true" />
-              {pick(COPY.incorrectFlag, locale)}
+          {isFinalStageUnlocked ? (
+            <>
+              <div className="flex flex-col gap-2 tablet:flex-row">
+                <Input
+                  dir="ltr"
+                  value={flagInput}
+                  onChange={(e) => onFlagInputChange(e.target.value)}
+                  placeholder="CTF{...}"
+                  className="font-mono"
+                  aria-label={pick(COPY.flagInputLabel, locale)}
+                />
+                <Button type="button" onClick={onSubmitFlag} className="gap-2 shrink-0">
+                  <Send className="h-4 w-4" aria-hidden="true" />
+                  {pick(COPY.submitFlag, locale)}
+                </Button>
+              </div>
+              {flagFeedback === "incorrect" && (
+                <p className="flex items-center gap-2 text-sm text-danger-600">
+                  <XCircle className="h-4 w-4" aria-hidden="true" />
+                  {pick(COPY.incorrectFlag, locale)}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="flex items-center gap-2 text-sm text-text-muted">
+              <Lock className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {pick(COPY.completeStepsNote, locale)}
             </p>
           )}
         </CardContent>
