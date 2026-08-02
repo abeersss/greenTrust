@@ -13,6 +13,10 @@ import { trackEvent } from "@/lib/analytics/track";
  * medal art yet or not -- is a real link back to that lab rather than
  * a dead-end stamp. Labs not yet built (GRCL, Agent Zero) fall back
  * to the Decision Labs hub instead of a route that doesn't exist.
+ *
+ * Only covers Labs badge keys. CTF badges pass `hrefOverride`
+ * explicitly instead (their route is /labs/ctf/[slug], a different
+ * shape from /challenge/[slug]), so this map never needs CTF entries.
  */
 const BADGE_KEY_TO_CHALLENGE_SLUG: Record<string, string> = {
   first_defender: "first-defender",
@@ -35,6 +39,11 @@ export interface BadgeTileProps {
   shareUrl: string;
   shareText: string;
   shareLabel: string;
+  /** Explicit link target, used by CTF badges (route shape
+   * /labs/ctf/[slug] rather than /challenge/[slug]). When omitted,
+   * falls back to the Labs BADGE_KEY_TO_CHALLENGE_SLUG lookup below,
+   * preserving existing behavior for every Labs badge. */
+  hrefOverride?: string;
 }
 
 export default function BadgeTile({
@@ -45,11 +54,12 @@ export default function BadgeTile({
   shareUrl,
   shareText,
   shareLabel,
+  hrefOverride,
 }: BadgeTileProps) {
   const [shareOpen, setShareOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const slug = BADGE_KEY_TO_CHALLENGE_SLUG[badgeKey];
-  const href = slug ? `/challenge/${slug}` : "/labs/decision-labs";
+  const href = hrefOverride ?? (slug ? `/challenge/${slug}` : "/labs/decision-labs");
 
   React.useEffect(() => {
     if (!shareOpen) return;
