@@ -12,7 +12,9 @@ import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import type { GreenTrustDomainKey } from "@/lib/assessments/greentrust-free";
 import { AchievementMedal } from "@/components/achievements/achievement-medal";
 import { getAchievementSymbol } from "@/components/achievements/achievement-symbols";
+import { getCtfAchievementSymbol } from "@/components/achievements/ctf-symbols";
 import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
+import { getCtfAchievementByBadgeKey } from "@/lib/achievements/ctf-catalog";
 import BadgeTile from "@/components/account/badge-tile";
 import { siteUrl } from "@/lib/seo/site";
 
@@ -140,6 +142,14 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
     ]);
 
   const badges = (badgeRows ?? []) as unknown as BadgeRow[];
+  // CTF badges are a visually distinct track (see lib/achievements/ctf-catalog.ts)
+  // but live in the exact same `user_badges` rows as Labs badges -- a
+  // CTF flag's `badges.key` (e.g. "flag_hidden_in_plain_sight") simply
+  // doesn't match any key in BADGE_KEY_TO_ACHIEVEMENT above, so this
+  // split partitions the one query result into two render lists rather
+  // than requiring a second database round-trip.
+  const labsBadges = badges.filter((b) => !getCtfAchievementByBadgeKey(b.badges?.key ?? ""));
+  const ctfBadges = badges.filter((b) => getCtfAchievementByBadgeKey(b.badges?.key ?? ""));
   const academyOrder = ["cyberDefense", "governance", "aiTrust", "dataTrust", "futureTrust"] as const;
   const earnedAchievementKeys = new Set(
     badges
@@ -180,11 +190,11 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
 
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-text-primary">{t("badgesHeading")}</h2>
-        {badges.length === 0 ? (
+        {labsBadges.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">{t("noBadges")}</p>
         ) : (
           <div className="mt-3 flex flex-wrap gap-4">
-            {badges.map((b) => {
+            {labsBadges.map((b) => {
               const translation = b.badges?.badge_translations.find((tr) => tr.locale === locale);
               const achievement = achievementForBadgeKey(b.badges?.key);
               const badgeKey = b.badges?.key ?? "";
@@ -218,6 +228,60 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           </div>
         )}
       </section>
+
+      {/* CTF badges (founder instruction, 2026-08-02): a distinct medal
+          design labeled "CTF 1".."CTF 6" (see AchievementMedal's
+          arcText prop and lib/achievements/ctf-catalog.ts), shown only
+          once actually earned -- directly beneath the Labs badges
+          section above, mirroring how Labs badges only appear once
+          the underlying badge row exists. No "not yet earned" ctf
+          placeholders are rendered, matching the existing Labs
+          section's noBadges fallback pattern. */}
+      {ctfBadges.length > 0 && (
+        <section className="mt-8">
+          {/* Inlined bilingual heading rather than a new next-intl key:
+              messages/en.json and messages/ar.json are large, shared
+              files, and this section only needs one short string.
+              Every other label here still routes through t()/tAch()
+              as before. */}
+          <h2 className="font-display text-lg font-semibold text-text-primary">
+            {locale === "ar" ? "شارات CTF" : "CTF Badges"}
+          </h2>
+          <div className="mt-3 flex flex-wrap gap-4">
+            {ctfBadges.map((b) => {
+              const translation = b.badges?.badge_translations.find((tr) => tr.locale === locale);
+              const badgeKey = b.badges?.key ?? "";
+              const ctfAchievement = getCtfAchievementByBadgeKey(badgeKey);
+              const name = translation?.name ?? badgeKey;
+              const shareUrl = ctfAchievement
+                ? `${siteUrl}/${locale}/labs/ctf/${ctfAchievement.slug}`
+                : `${siteUrl}/${locale}/account`;
+              const shareText =
+                locale === "ar"
+                  ? `حصلت للتو على شارة "${name}" في CyberAbeer CTF!`
+                  : `I just earned the "${name}" badge in CyberAbeer CTF!`;
+              const shareLabel = locale === "ar" ? "مشاركة" : "Share";
+              return (
+                <BadgeTile
+                  key={badgeKey}
+                  badgeKey={badgeKey}
+                  name={name}
+                  achievement={
+                    ctfAchievement
+                      ? { number: ctfAchievement.number, symbol: getCtfAchievementSymbol(ctfAchievement.category) }
+                      : null
+                  }
+                  locale={locale}
+                  shareUrl={shareUrl}
+                  shareText={shareText}
+                  shareLabel={shareLabel}
+                  hrefOverride={ctfAchievement ? `/labs/ctf/${ctfAchievement.slug}` : "/labs/ctf"}
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-text-primary">{tAch("academyHeading")}</h2>
