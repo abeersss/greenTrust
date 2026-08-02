@@ -26,7 +26,8 @@ import {
   clearChallengeProgress,
   type ChallengeLocalProgress,
 } from "@/lib/challenges/anon-session";
-import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser } from "@/lib/actions/challenge";
+import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser, BADGE_PASS_SCORE } from "@/lib/actions/challenge";
+import { WinCelebration } from "@/components/shared/win-celebration";
 import { trackEvent } from "@/lib/analytics/track";
 import type { AppLocale } from "@/lib/i18n/config";
 import {
@@ -36,10 +37,10 @@ import {
   Database,
   Users,
   Lightbulb,
+  CheckCircle2,
   Sparkles,
   Share2,
   Info,
-  GripVertical,
 } from "lucide-react";
 
 export interface NetworkGuardianChallengeProps {
@@ -74,29 +75,18 @@ const EDGES: EdgeDef[] = [
   { id: "workstations_to_database", from: "workstations", to: "database_server", blockedBy: "vlan_segmentation" },
 ];
 
-/**
- * A deliberate hub-and-spoke layout: Internet sits at the top vertex,
- * the two mid-tier systems sit as left/right vertices, and the
- * database sits at the bottom vertex. Every edge in EDGES below is a
- * straight line between two of these four centers, which means the
- * five connectors form a simple kite shape (four outer sides plus one
- * vertical diagonal down the middle) with no line ever crossing
- * another or cutting through an unrelated node's box — unlike the
- * previous layout, whose "direct" internet-to-database curve bulged
- * out far enough to visually slice through the workstations column.
- */
 const NODE_POS: Record<NodeId, { x: number; y: number; w: number; h: number }> = {
-  internet: { x: 220, y: 16, w: 160, h: 56 },
-  web_server: { x: 24, y: 150, w: 180, h: 64 },
-  workstations: { x: 396, y: 150, w: 180, h: 64 },
-  database_server: { x: 210, y: 296, w: 180, h: 64 },
+  internet: { x: 220, y: 16, w: 160, h: 52 },
+  web_server: { x: 24, y: 156, w: 172, h: 60 },
+  workstations: { x: 404, y: 156, w: 172, h: 60 },
+  database_server: { x: 220, y: 288, w: 160, h: 60 },
 };
 
-const NODE_ICON: Record<NodeId, React.ComponentType<{ className?: string; "aria-hidden"?: React.AriaAttributes["aria-hidden"] }>> = {
-  internet: Globe,
-  web_server: Server,
-  workstations: Users,
-  database_server: Database,
+const NODE_ICON: Record<NodeId, React.ReactNode> = {
+  internet: <Globe className="h-5 w-5" aria-hidden="true" />,
+  web_server: <Server className="h-5 w-5" aria-hidden="true" />,
+  workstations: <Users className="h-5 w-5" aria-hidden="true" />,
+  database_server: <Database className="h-5 w-5" aria-hidden="true" />,
 };
 
 function center(id: NodeId) {
@@ -104,79 +94,19 @@ function center(id: NodeId) {
   return { x: p.x + p.w / 2, y: p.y + p.h / 2 };
 }
 
-/**
- * A "slot" is a fixed position on the network diagram — one per
- * chokepoint the scoring engine actually checks (see EDGES above).
- * Slot roles reuse the four ControlId values as stable position
- * identifiers: slotAssignments["waf"] holds whichever control the
- * player actually dropped onto the WAF slot, which may or may not be
- * the WAF control itself. A slot only "counts" toward the pentest
- * simulation when slotAssignments[role] === role — i.e. the right
- * tool was placed in the right spot. This is what makes incorrect
- * placement genuinely possible and consequential: a control dropped
- * in the wrong slot protects nothing, and leaves its own correct slot
- * empty too.
- */
-type SlotAssignments = Partial<Record<ControlId, ControlId>>;
-
-/**
- * Each slot sits just off to the side of the connector it actually
- * governs — never centered on top of the stroke — except "firewall",
- * which naturally lands in the open gap directly beneath Internet
- * where its two guarded edges (to the database and to workstations)
- * fan out, so it reads as the perimeter checkpoint both paths pass
- * through. The other three sit beside their single edge with a short
- * SLOT_TICKS connector (below) linking badge to line.
- */
-const SLOT_POS: Record<ControlId, { x: number; y: number; w: number; h: number }> = {
-  firewall: { x: 248, y: 89, w: 104, h: 36 },
-  waf: { x: 102, y: 51, w: 104, h: 36 },
-  dmz: { x: 57, y: 225, w: 104, h: 36 },
-  vlan_segmentation: { x: 439, y: 225, w: 104, h: 36 },
-};
-
-/** Short connector ticks from a point on the governing edge to the
- * nearest corner of the offset slot badge, so each lettered slot
- * still visibly "belongs" to its line without sitting on top of the
- * stroke. Firewall is omitted — it already sits directly on its
- * guarded path. */
-const SLOT_TICKS: Partial<Record<ControlId, { x1: number; y1: number; x2: number; y2: number }>> = {
-  waf: { x1: 235, y1: 92, x2: 206, y2: 87 },
-  dmz: { x1: 179, y1: 233, x2: 161, y2: 225 },
-  vlan_segmentation: { x1: 421, y1: 233, x2: 439, y2: 225 },
-};
-
-const SLOT_LETTERS: Record<ControlId, string> = {
-  firewall: "A",
-  waf: "B",
-  dmz: "C",
-  vlan_segmentation: "D",
-};
-
 const COPY = {
   caseIdLabel: { en: "SCENARIO", ar: "السيناريو" },
   beginDefense: { en: "BEGIN DEFENSE", ar: "ابدأ الدفاع" },
   missionTitle: { en: "CyberAbeer Decision Labs™ — Network Guardian™", ar: "CyberAbeer Decision Labs™ — حارس الشبكة™" },
   briefingBody: {
-    en: "A red-team penetration test begins in ten minutes. Your public web server, customer database, and employee workstations all currently sit reachable from the open internet. Drag each control onto the slot where it belongs before the test starts — place the wrong tool in the wrong spot and it protects nothing.",
-    ar: "يبدأ اختبار اختراق من فريق أحمر خلال عشر دقائق. خادم الويب العام وقاعدة بيانات العملاء وأجهزة الموظفين جميعها متاحة حاليًا من الإنترنت المفتوح. اسحب كل ضابط إلى الفتحة التي ينتمي إليها قبل بدء الاختبار — إذا وضعت الأداة الخطأ في المكان الخطأ فلن تحمي شيئًا.",
+    en: "A red-team penetration test begins in ten minutes. Your public web server, customer database, and employee workstations all currently sit reachable from the open internet. Decide which security controls to place before the test starts — you will not get a second chance once it begins.",
+    ar: "يبدأ اختبار اختراق من فريق أحمر خلال عشر دقائق. خادم الويب العام وقاعدة بيانات العملاء وأجهزة الموظفين جميعها متاحة حاليًا من الإنترنت المفتوح. قرّر أي ضوابط أمنية ستضعها قبل بدء الاختبار — لن تحصل على فرصة ثانية بعد بدئه.",
   },
   workstationTitle: { en: "Network Operations Center", ar: "مركز عمليات الشبكة" },
   topologyHeading: { en: "Network Topology", ar: "بنية الشبكة" },
-  controlsHeading: { en: "Security Controls to Place", ar: "الضوابط الأمنية المطلوب وضعها" },
+  controlsHeading: { en: "Available Controls", ar: "الضوابط المتاحة" },
   controlsPlaced: { en: "Controls placed", ar: "الضوابط الموضوعة" },
   inspectHint: { en: "Tap a system to read its brief.", ar: "اضغط على أي نظام لقراءة موجزه." },
-  dragHintDesktop: {
-    en: "Drag a control onto the lettered slot in the diagram where you think it belongs.",
-    ar: "اسحب الضابط إلى الفتحة المرقّمة بحرف في المخطط حيث تعتقد أنه ينتمي.",
-  },
-  dragHintTouch: {
-    en: "Tap a control to select it, then tap the lettered slot where it belongs.",
-    ar: "اضغط على الضابط لتحديده، ثم اضغط على الفتحة المرقّمة بحرف التي ينتمي إليها.",
-  },
-  tapToPlace: { en: "Selected — tap a slot in the diagram to place it.", ar: "تم التحديد — اضغط على فتحة في المخطط لوضعه." },
-  dropHere: { en: "Drop control here", ar: "أفلت الضابط هنا" },
-  allPlaced: { en: "All controls placed. Run the test when you're ready.", ar: "تم وضع كل الضوابط. شغّل الاختبار عند الجاهزية." },
   hint1: { en: "Hint 1", ar: "تلميح 1" },
   hint2: { en: "Hint 2", ar: "تلميح 2" },
   hintText1: {
@@ -234,9 +164,23 @@ const COPY = {
     ar: "تُحفظ تقدُّماتك على هذا الجهاز. سجّل في أي وقت للاحتفاظ بها بشكل دائم.",
   },
   nextMission: { en: "Next Mission: SOC Night Shift", ar: "المهمة التالية: مناوبة مركز العمليات الليلية" },
-  startNextMission: { en: "Start Next Mission", ar: "ابدأ المهمة التالية" },
+  nextMissionComingSoon: { en: "SOC Night Shift — coming soon", ar: "مناوبة مركز العمليات الليلية — قريبًا" },
   backToLabs: { en: "Back to Decision Labs", ar: "العودة إلى معامل القرار" },
   restart: { en: "Defend Again", ar: "دافع مرة أخرى" },
+  strictEvaluationNote: {
+    en: `This mission is strictly evaluated. You need a score of ${BADGE_PASS_SCORE}% or higher to earn the badge and trigger the win celebration.`,
+    ar: `يتم تقييم هذه المهمة بصرامة. تحتاج إلى نتيجة ${BADGE_PASS_SCORE}% أو أعلى للحصول على الشارة وتفعيل احتفال الفوز.`,
+  },
+  passedHeading: { en: "MISSION COMPLETE — PASSED", ar: "اكتملت المهمة — نجاح" },
+  notPassedHeading: { en: "Below passing score", ar: "أقل من درجة النجاح" },
+  notPassedBody: {
+    en: `You scored below the ${BADGE_PASS_SCORE}% threshold required for the badge. Defend again with a stronger control loadout to raise your score.`,
+    ar: `حصلت على نتيجة أقل من الحد المطلوب البالغ ${BADGE_PASS_SCORE}% للحصول على الشارة. دافع مرة أخرى بضوابط أقوى لرفع نتيجتك.`,
+  },
+  badgeLockedNote: {
+    en: `Score ${BADGE_PASS_SCORE}%+ to unlock`,
+    ar: `احصل على ${BADGE_PASS_SCORE}%+ لفتحها`,
+  },
 } as const;
 
 function nodeLabel(id: NodeId, locale: AppLocale) {
@@ -247,11 +191,10 @@ function nodeLabel(id: NodeId, locale: AppLocale) {
 /**
  * Orchestrates the full CyberAbeer Decision Labs™ Network Guardian™
  * mission: a briefing, a network-topology workstation where the
- * visitor drags each security control onto the diagram slot where
- * they believe it belongs (with live, non-spoiling feedback about
- * which chokepoints are provably still wide open), a consequence
- * screen that reveals the actual simulated attack against only the
- * correctly-matched controls via lib/challenges/network-guardian.ts's
+ * visitor decides which controls to place (with a live, purely local
+ * preview of which direct connections each control removes), a
+ * consequence screen that reveals the actual simulated attack against
+ * the chosen loadout via lib/challenges/network-guardian.ts's
  * simulateAttack(), and a Mission Complete screen. Follows the exact
  * same self-contained pattern as phishing-hunter-challenge.tsx: inline
  * bilingual copy via pick(), the anon-session localStorage-first
@@ -262,8 +205,7 @@ function nodeLabel(id: NodeId, locale: AppLocale) {
 export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: NetworkGuardianChallengeProps) {
   const [screen, setScreen] = React.useState<Screen>("briefing");
   const [anonId, setAnonId] = React.useState("");
-  const [slotAssignments, setSlotAssignments] = React.useState<SlotAssignments>({});
-  const [selectedControlId, setSelectedControlId] = React.useState<ControlId | null>(null);
+  const [placedControls, setPlacedControls] = React.useState<ControlId[]>([]);
   const [hintsUsed, setHintsUsed] = React.useState(0);
   const [inspectedNode, setInspectedNode] = React.useState<NodeId | null>(null);
   const [startedAt, setStartedAt] = React.useState("");
@@ -277,37 +219,15 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   const startedAnalytics = React.useRef(false);
   const autoClaimAttempted = React.useRef(false);
 
-  // A control only counts toward the pentest simulation when it sits
-  // in the slot matching its own id — i.e. it was placed correctly.
-  // A control dropped in the wrong slot is silently excluded here,
-  // which is exactly what makes an incorrect placement consequential:
-  // it protects nothing, and the slot it should have gone to is empty.
-  const placedControls = React.useMemo(
-    () => (Object.keys(slotAssignments) as ControlId[]).filter((slot) => slotAssignments[slot] === slot),
-    [slotAssignments]
-  );
-
   React.useEffect(() => {
     if (hydrated.current) return;
     hydrated.current = true;
     const id = getOrCreateAnonId();
     setAnonId(id);
-    const saved = loadChallengeProgress<NetworkGuardianSubmission & { slotAssignments?: SlotAssignments; completed?: boolean }>(
-      NETWORK_GUARDIAN_CHALLENGE_KEY
-    );
-    if (saved?.stepsState?.slotAssignments) {
-      setSlotAssignments(saved.stepsState.slotAssignments);
-    } else if (saved && Array.isArray(saved.stepsState?.placedControls)) {
-      // Progress saved before the drag-and-drop redesign only ever
-      // recorded controls that were (by the old, broken rules) always
-      // "correctly" active. Seed each into its own matching slot so
-      // returning visitors don't lose earlier progress.
-      const migrated: SlotAssignments = {};
-      for (const id of saved.stepsState.placedControls) migrated[id] = id;
-      setSlotAssignments(migrated);
-    }
-    if (saved) {
-      setHintsUsed(saved.stepsState?.hintsUsed ?? 0);
+    const saved = loadChallengeProgress<NetworkGuardianSubmission & { completed?: boolean }>(NETWORK_GUARDIAN_CHALLENGE_KEY);
+    if (saved && Array.isArray(saved.stepsState?.placedControls)) {
+      setPlacedControls(saved.stepsState.placedControls);
+      setHintsUsed(saved.stepsState.hintsUsed ?? 0);
       setStartedAt(saved.startedAt);
       setClaimed(Boolean(saved.claimed));
       setClaimedXp(saved.claimedXp);
@@ -340,9 +260,9 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
 
   function persist(submission: NetworkGuardianSubmission, completed: boolean) {
     const nowIso = completed ? new Date().toISOString() : null;
-    const progress: ChallengeLocalProgress<NetworkGuardianSubmission & { slotAssignments: SlotAssignments }> = {
+    const progress: ChallengeLocalProgress<NetworkGuardianSubmission> = {
       currentStepIndex: submission.placedControls.length,
-      stepsState: { ...submission, slotAssignments },
+      stepsState: submission,
       startedAt: startedAt || new Date().toISOString(),
       completedAt: nowIso,
       claimed,
@@ -375,50 +295,9 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
     }
   }
 
-  function assignControlToSlot(slotRole: ControlId, controlId: ControlId) {
-    setSlotAssignments((prev) => {
-      const next: SlotAssignments = {};
-      for (const key of Object.keys(prev) as ControlId[]) {
-        if (prev[key] !== controlId) next[key] = prev[key];
-      }
-      next[slotRole] = controlId;
-      return next;
-    });
-    setSelectedControlId(null);
-    trackEvent("challenge_hotspot_inspected", { locale, challengeKey: NETWORK_GUARDIAN_CHALLENGE_KEY, hotspot: controlId });
-  }
-
-  function removeControlFromSlot(slotRole: ControlId) {
-    setSlotAssignments((prev) => {
-      if (!(slotRole in prev)) return prev;
-      const next = { ...prev };
-      delete next[slotRole];
-      return next;
-    });
-  }
-
-  function returnControlToTray(controlId: ControlId) {
-    setSlotAssignments((prev) => {
-      const next: SlotAssignments = {};
-      for (const key of Object.keys(prev) as ControlId[]) {
-        if (prev[key] !== controlId) next[key] = prev[key];
-      }
-      return next;
-    });
-  }
-
-  function handleSelectTrayControl(controlId: ControlId) {
-    setSelectedControlId((prev) => (prev === controlId ? null : controlId));
-  }
-
-  function handleSlotActivate(slotRole: ControlId) {
-    if (selectedControlId) {
-      assignControlToSlot(slotRole, selectedControlId);
-      return;
-    }
-    if (slotAssignments[slotRole]) {
-      removeControlFromSlot(slotRole);
-    }
+  function toggleControl(id: ControlId) {
+    setPlacedControls((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
+    trackEvent("challenge_hotspot_inspected", { locale, challengeKey: NETWORK_GUARDIAN_CHALLENGE_KEY, hotspot: id });
   }
 
   function handleUseHint() {
@@ -429,11 +308,7 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   }
 
   function handleRunTest() {
-    // Gate on whether the player placed anything at all, not on
-    // whether any placement happened to be correct — otherwise a
-    // loadout that's entirely wrong can never be submitted, which
-    // would hide the breach outcome instead of showing it.
-    if (Object.keys(slotAssignments).length === 0) return;
+    if (placedControls.length === 0) return;
     const submission: NetworkGuardianSubmission = { placedControls, hintsUsed };
     const result = computeNetworkGuardianScore(submission);
     trackEvent("challenge_step_completed", {
@@ -462,15 +337,17 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
 
   function handleClaimed(result: { xpAwarded: number; badgeAwarded: boolean }) {
     setClaimed(true);
-    setClaimedXp(result.xpAwarded);
-    setRegisteredResult(result);
+    const localResult = computeNetworkGuardianScore({ placedControls, hintsUsed });
+    const safeXp = result.xpAwarded || localResult.xp;
+    setClaimedXp(safeXp);
+    setRegisteredResult({ ...result, xpAwarded: safeXp });
     saveChallengeProgress(NETWORK_GUARDIAN_CHALLENGE_KEY, {
       currentStepIndex: placedControls.length,
-      stepsState: { placedControls, hintsUsed, slotAssignments },
+      stepsState: { placedControls, hintsUsed },
       startedAt,
       completedAt: completedAt ?? new Date().toISOString(),
       claimed: true,
-      claimedXp: result.xpAwarded,
+      claimedXp: safeXp,
     });
     if (result.badgeAwarded) {
       trackEvent("badge_earned", { locale, challengeKey: NETWORK_GUARDIAN_CHALLENGE_KEY });
@@ -500,8 +377,7 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   }
 
   function handleRestart() {
-    setSlotAssignments({});
-    setSelectedControlId(null);
+    setPlacedControls([]);
     setHintsUsed(0);
     setCompletedAt(null);
     setClaimed(false);
@@ -521,15 +397,11 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
     return (
       <WorkstationScreen
         locale={locale}
-        slotAssignments={slotAssignments}
-        selectedControlId={selectedControlId}
+        placedControls={placedControls}
         hintsUsed={hintsUsed}
         inspectedNode={inspectedNode}
         onInspectNode={setInspectedNode}
-        onSelectTrayControl={handleSelectTrayControl}
-        onSlotActivate={handleSlotActivate}
-        onDropControlOnSlot={assignControlToSlot}
-        onDropControlOnTray={returnControlToTray}
+        onToggleControl={toggleControl}
         onUseHint={handleUseHint}
         onRunTest={handleRunTest}
       />
@@ -542,13 +414,15 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   }
 
   const result = computeNetworkGuardianScore({ placedControls, hintsUsed });
+  const passed = result.score >= BADGE_PASS_SCORE;
   return (
     <CompleteScreen
       locale={locale}
       result={result}
+      passed={passed}
       anonId={anonId}
       isSaved={claimed || Boolean(registeredResult) || isAuthenticated}
-      displayXp={registeredResult ? registeredResult.xpAwarded : claimed ? claimedXp ?? result.xp : result.xp}
+      displayXp={registeredResult ? registeredResult.xpAwarded || result.xp : claimed ? claimedXp || result.xp : result.xp}
       showRegisterForm={showRegisterForm}
       onHideRegisterForm={() => setShowRegisterForm(false)}
       onRegistered={handleClaimed}
@@ -577,11 +451,11 @@ function BriefingScreen({ locale, onBegin }: { locale: AppLocale; onBegin: () =>
         <div className="rounded-md bg-surface-raised p-4 text-start">
           <p className="text-sm text-text-secondary">{pick(COPY.briefingBody, locale)}</p>
         </div>
-        <Button
-          className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
-          size="lg"
-          onClick={onBegin}
-        >
+        <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start">
+          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-600" aria-hidden="true" />
+          <p className="text-xs text-text-secondary">{pick(COPY.strictEvaluationNote, locale)}</p>
+        </div>
+        <Button className="w-full" size="lg" onClick={onBegin}>
           {pick(COPY.beginDefense, locale)}
         </Button>
       </CardContent>
@@ -595,7 +469,6 @@ function BriefingScreen({ locale, onBegin }: { locale: AppLocale; onBegin: () =>
 
 function TopologyDiagram({
   locale,
-  slotAssignments,
   placedControls,
   inspectedNode,
   onInspectNode,
@@ -605,7 +478,6 @@ function TopologyDiagram({
   attackPath,
 }: {
   locale: AppLocale;
-  slotAssignments?: SlotAssignments;
   placedControls: ControlId[];
   inspectedNode: NodeId | null;
   onInspectNode: (id: NodeId) => void;
@@ -614,17 +486,10 @@ function TopologyDiagram({
   protectedNodes?: NodeId[];
   attackPath?: NodeId[] | null;
 }) {
-  const occupiedSlotRoles = new Set(Object.keys(slotAssignments ?? {}) as ControlId[]);
-
-  // In "decide" mode we deliberately do NOT reveal whether an occupied
-  // slot holds the right control — that would spoil the puzzle. An
-  // edge only ever renders as confidently "open" when its slot is
-  // completely empty (provably unprotected); once any control sits
-  // there, right or wrong, the edge shows as merely "pending".
-  function edgeState(edge: EdgeDef): "blocked" | "pending" | "open" {
-    if (mode === "result") return placedControls.includes(edge.blockedBy) ? "blocked" : "open";
-    return occupiedSlotRoles.has(edge.blockedBy) ? "pending" : "open";
-  }
+  const blockedEdgeIds =
+    mode === "decide"
+      ? EDGES.filter((e) => placedControls.includes(e.blockedBy)).map((e) => e.id)
+      : EDGES.filter((e) => placedControls.includes(e.blockedBy)).map((e) => e.id);
 
   const attackPathEdgeIds = new Set<string>();
   if (attackPath && attackPath.length > 1) {
@@ -636,17 +501,8 @@ function TopologyDiagram({
     }
   }
 
-  // Calmer semantics: while the player is still deciding, a chokepoint
-  // that's provably open reads as "needs attention" (warning/amber),
-  // not "under attack" (danger/red). Strong red is reserved for mode
-  // === "result", where compromisedNodes reflects a genuinely bad,
-  // simulated outcome after RUN THE PENTEST.
   function nodeFill(id: NodeId): string {
-    if (mode === "decide") {
-      if (id === "internet") return "fill-neutral-800";
-      const stillOpen = EDGES.filter((e) => e.to === id).some((e) => edgeState(e) === "open");
-      return stillOpen ? "fill-warning-50" : "fill-surface";
-    }
+    if (mode === "decide") return id === "internet" ? "fill-neutral-800" : "fill-surface";
     if (id === "internet") return "fill-neutral-800";
     if (compromisedNodes?.includes(id)) return "fill-danger-50";
     if (protectedNodes?.includes(id)) return "fill-success-50";
@@ -654,11 +510,7 @@ function TopologyDiagram({
   }
 
   function nodeStroke(id: NodeId): string {
-    if (mode === "decide") {
-      if (id === "internet") return "stroke-neutral-800";
-      const stillOpen = EDGES.filter((e) => e.to === id).some((e) => edgeState(e) === "open");
-      return stillOpen ? "stroke-warning-500" : "stroke-border";
-    }
+    if (mode === "decide") return "stroke-border";
     if (id === "internet") return "stroke-neutral-800";
     if (compromisedNodes?.includes(id)) return "stroke-danger-500";
     if (protectedNodes?.includes(id)) return "stroke-success-500";
@@ -666,73 +518,48 @@ function TopologyDiagram({
   }
 
   return (
-    <svg viewBox="0 0 600 380" className="h-auto w-full" style={{ direction: "ltr" }} role="img" aria-label={pick(COPY.topologyHeading, locale)}>
+    <svg viewBox="0 0 600 360" className="h-auto w-full" style={{ direction: "ltr" }} role="img" aria-label={pick(COPY.topologyHeading, locale)}>
       <defs>
         <marker id="ng-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" className="fill-danger-500" />
         </marker>
       </defs>
 
-      {/* Every edge is a straight line between two node centers. With
-          Internet/web/workstations/database arranged as a kite (see
-          NODE_POS), that's all five connectors ever need — none of
-          them cross each other or another node's box, so there's no
-          more tangle to route around. */}
       {EDGES.map((edge) => {
         const from = center(edge.from);
         const to = center(edge.to);
-        const state = edgeState(edge);
-        const isAttackPath = mode === "result" && attackPathEdgeIds.has(edge.id) && state !== "blocked";
-        const path = `M${from.x},${from.y} L${to.x},${to.y}`;
-        const strokeClass = isAttackPath
-          ? "stroke-danger-500"
-          : state === "blocked"
-            ? "stroke-neutral-300"
-            : state === "pending"
-              ? "stroke-primary"
-              : mode === "decide"
-                ? "stroke-warning-500"
-                : "stroke-neutral-300";
+        const isBlocked = blockedEdgeIds.includes(edge.id);
+        const isAttackPath = mode === "result" && attackPathEdgeIds.has(edge.id) && !isBlocked;
+        const isDirect = edge.id === "internet_to_database";
+        const path = isDirect
+          ? `M${from.x},${from.y + 26} C ${from.x + 90},${from.y + 120} ${to.x + 90},${to.y - 40} ${to.x},${to.y - 30}`
+          : `M${from.x},${from.y} L${to.x},${to.y}`;
         return (
           <path
             key={edge.id}
             d={path}
             fill="none"
             strokeWidth={isAttackPath ? 3.5 : 2}
-            strokeDasharray={state !== "open" ? "6 5" : undefined}
-            className={`transition-all duration-300 ease-in-out ${strokeClass}`}
+            strokeDasharray={isBlocked ? "6 5" : undefined}
+            className={
+              isAttackPath
+                ? "stroke-danger-500"
+                : isBlocked
+                  ? "stroke-neutral-300"
+                  : mode === "result"
+                    ? "stroke-neutral-300"
+                    : "stroke-neutral-400"
+            }
             markerEnd={isAttackPath ? "url(#ng-arrow)" : undefined}
           />
-        );
-      })}
-
-      {/* Subtle tick marks tying each offset lettered slot back to the
-          connector it actually governs, so the HTML slot overlay reads
-          as part of the diagram rather than a floating, disconnected
-          box. Purely decorative — the interactive drop target itself
-          is the absolutely-positioned SlotDropTarget div. */}
-      {(Object.keys(SLOT_TICKS) as ControlId[]).map((role) => {
-        const tick = SLOT_TICKS[role]!;
-        return (
-          <g key={role} className="pointer-events-none">
-            <line x1={tick.x1} y1={tick.y1} x2={tick.x2} y2={tick.y2} strokeWidth={1.5} className="stroke-border" />
-            <circle cx={tick.x1} cy={tick.y1} r={2.5} className="fill-border" />
-          </g>
         );
       })}
 
       {NETWORK_GUARDIAN_NODES.map((node) => {
         const pos = NODE_POS[node.id];
         const isInspected = inspectedNode === node.id;
-        const isInternet = node.id === "internet";
-        const Icon = NODE_ICON[node.id];
-        const textColorClass = isInternet ? "text-white" : "text-text-primary";
         return (
-          <g
-            key={node.id}
-            className="cursor-pointer transition-opacity duration-150 ease-out hover:opacity-80"
-            onClick={() => onInspectNode(node.id)}
-          >
+          <g key={node.id} className="cursor-pointer" onClick={() => onInspectNode(node.id)}>
             <rect
               x={pos.x}
               y={pos.y}
@@ -740,16 +567,16 @@ function TopologyDiagram({
               height={pos.h}
               rx={10}
               strokeWidth={isInspected ? 3 : 2}
-              className={`transition-all duration-300 ease-in-out ${nodeFill(node.id)} ${nodeStroke(node.id)}`}
+              className={`${nodeFill(node.id)} ${nodeStroke(node.id)}`}
             />
-            <foreignObject x={pos.x} y={pos.y} width={pos.w} height={pos.h}>
-              <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-center">
-                <Icon className={`h-4 w-4 shrink-0 ${textColorClass}`} aria-hidden="true" />
-                <span className={`text-[11px] font-semibold leading-tight ${textColorClass}`}>
-                  {nodeLabel(node.id, locale).slice(0, 24)}
-                </span>
-              </div>
-            </foreignObject>
+            <text
+              x={pos.x + pos.w / 2}
+              y={pos.y + pos.h / 2 + 5}
+              textAnchor="middle"
+              className={`text-[11px] font-semibold ${node.id === "internet" ? "fill-white" : "fill-text-primary"}`}
+            >
+              {nodeLabel(node.id, locale).slice(0, 24)}
+            </text>
           </g>
         );
       })}
@@ -757,185 +584,51 @@ function TopologyDiagram({
   );
 }
 
-/**
- * Sets `effectAllowed` explicitly on drag start. Without it, Chrome/
- * Firefox fall back to showing the "copy" (plus-sign) or "no-drop"
- * (circle-slash) cursor even over valid targets, which is the ugly
- * cursor reported during drag. (An earlier version of this function
- * also tried to swap in a custom drag-preview image via an off-screen
- * DOM node + `setDragImage`, but elements positioned far outside the
- * viewport are frequently skipped by the browser's paint pipeline, so
- * `setDragImage` captured nothing and the OS rendered a broken black
- * rectangle as the drag ghost instead -- worse than the default. We
- * intentionally let the browser use its own snapshot of the real,
- * on-screen draggable element, which paints correctly.)
- */
-function setDragPreview(e: React.DragEvent, _label: string) {
-  e.dataTransfer.effectAllowed = "move";
-}
-
-/**
- * One lettered, absolutely-positioned drop target overlaid on top of
- * the SVG topology diagram at a fixed chokepoint. Implemented as a
- * real HTML element (not an SVG node) specifically so native HTML5
- * drag-and-drop behaves consistently across browsers, and so the
- * occupant chip's text can be marked select-none — a bare draggable
- * element containing unselectable text is what makes the browser fire
- * dragstart instead of hijacking the gesture as a text selection.
- */
-function SlotDropTarget({
-  role,
-  locale,
-  letter,
-  assignedControlId,
-  isSelectable,
-  onActivate,
-  onDrop,
-}: {
-  role: ControlId;
-  locale: AppLocale;
-  letter: string;
-  assignedControlId: ControlId | null;
-  isSelectable: boolean;
-  onActivate: () => void;
-  onDrop: (controlId: ControlId) => void;
-}) {
-  const [isDragOver, setIsDragOver] = React.useState(false);
-  const pos = SLOT_POS[role];
-  const control = assignedControlId ? NETWORK_GUARDIAN_CONTROLS.find((c) => c.id === assignedControlId) : null;
-
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onActivate}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onActivate();
-        }
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-        setIsDragOver(true);
-      }}
-      onDragLeave={() => setIsDragOver(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setIsDragOver(false);
-        const controlId = e.dataTransfer.getData("text/plain") as ControlId;
-        if (controlId) onDrop(controlId);
-      }}
-      className={`absolute flex select-none flex-col items-center justify-center rounded-lg border-2 border-dashed p-1 text-center shadow-sm transition-all duration-200 ease-out ${
-        isDragOver
-          ? "scale-105 border-primary bg-primary-50 shadow-md"
-          : control
-            ? "border-primary/60 bg-surface"
-            : isSelectable
-              ? "border-primary bg-primary-50 animate-pulse"
-              : "border-border bg-surface/90"
-      }`}
-      style={{
-        left: `${(pos.x / 600) * 100}%`,
-        top: `${(pos.y / 380) * 100}%`,
-        width: `${(pos.w / 600) * 100}%`,
-        height: `${(pos.h / 380) * 100}%`,
-      }}
-    >
-      <span className="absolute -top-2 -left-2 flex h-5 w-5 items-center justify-center rounded-full bg-neutral-800 text-[10px] font-bold text-white shadow-sm ring-2 ring-surface">
-        {letter}
-      </span>
-      {control ? (
-        <div
-          draggable
-          onDragStart={(e) => {
-            e.dataTransfer.setData("text/plain", control.id);
-            setDragPreview(e, pick(control.name, locale));
-          }}
-          className="flex origin-center cursor-grab select-none flex-col items-center gap-0.5 transition-transform duration-200 ease-out hover:scale-110 active:cursor-grabbing active:scale-95"
-        >
-          <GripVertical className="h-3 w-3 text-text-muted" aria-hidden="true" />
-          <span className="text-[10px] font-semibold leading-tight text-text-primary">{pick(control.name, locale)}</span>
-        </div>
-      ) : (
-        <span className="text-[9px] leading-tight text-text-muted">{pick(COPY.dropHere, locale)}</span>
-      )}
-    </div>
-  );
-}
-
 function WorkstationScreen({
   locale,
-  slotAssignments,
-  selectedControlId,
+  placedControls,
   hintsUsed,
   inspectedNode,
   onInspectNode,
-  onSelectTrayControl,
-  onSlotActivate,
-  onDropControlOnSlot,
-  onDropControlOnTray,
+  onToggleControl,
   onUseHint,
   onRunTest,
 }: {
   locale: AppLocale;
-  slotAssignments: SlotAssignments;
-  selectedControlId: ControlId | null;
+  placedControls: ControlId[];
   hintsUsed: number;
   inspectedNode: NodeId | null;
   onInspectNode: (id: NodeId) => void;
-  onSelectTrayControl: (id: ControlId) => void;
-  onSlotActivate: (slotRole: ControlId) => void;
-  onDropControlOnSlot: (slotRole: ControlId, controlId: ControlId) => void;
-  onDropControlOnTray: (controlId: ControlId) => void;
+  onToggleControl: (id: ControlId) => void;
   onUseHint: () => void;
   onRunTest: () => void;
 }) {
   const dir = locale === "ar" ? "rtl" : "ltr";
   const inspected = inspectedNode ? NETWORK_GUARDIAN_NODES.find((n) => n.id === inspectedNode) : null;
-  const placedCount = Object.keys(slotAssignments).length;
-  const ready = placedCount > 0;
-  const placedControlIds = Object.values(slotAssignments) as ControlId[];
-  const trayControls = NETWORK_GUARDIAN_CONTROLS.filter((c) => !placedControlIds.includes(c.id));
+  const ready = placedControls.length > 0;
 
   return (
     <div className="mx-auto max-w-4xl space-y-4" dir={dir} data-brand="labs">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.workstationTitle, locale)}</h1>
         <Badge variant="outline">
-          {pick(COPY.controlsPlaced, locale)}: {placedCount}/{NETWORK_GUARDIAN_CONTROLS.length}
+          {pick(COPY.controlsPlaced, locale)}: {placedControls.length}/{NETWORK_GUARDIAN_CONTROLS.length}
         </Badge>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="text-sm">{pick(COPY.topologyHeading, locale)}</CardTitle>
-          <CardDescription>{selectedControlId ? pick(COPY.tapToPlace, locale) : pick(COPY.inspectHint, locale)}</CardDescription>
+          <CardDescription>{pick(COPY.inspectHint, locale)}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="relative">
-            <TopologyDiagram
-              locale={locale}
-              slotAssignments={slotAssignments}
-              placedControls={[]}
-              inspectedNode={inspectedNode}
-              onInspectNode={onInspectNode}
-              mode="decide"
-            />
-            {NETWORK_GUARDIAN_CONTROLS.map((control) => (
-              <SlotDropTarget
-                key={control.id}
-                role={control.id}
-                locale={locale}
-                letter={SLOT_LETTERS[control.id]}
-                assignedControlId={(slotAssignments[control.id] as ControlId | undefined) ?? null}
-                isSelectable={Boolean(selectedControlId)}
-                onActivate={() => onSlotActivate(control.id)}
-                onDrop={(controlId) => onDropControlOnSlot(control.id, controlId)}
-              />
-            ))}
-          </div>
+          <TopologyDiagram
+            locale={locale}
+            placedControls={placedControls}
+            inspectedNode={inspectedNode}
+            onInspectNode={onInspectNode}
+            mode="decide"
+          />
           {inspected && (
             <div className="mt-3 flex items-start gap-2 rounded-md bg-surface-raised p-3 text-sm">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" aria-hidden="true" />
@@ -951,58 +644,40 @@ function WorkstationScreen({
       <Card>
         <CardHeader>
           <CardTitle className="text-sm">{pick(COPY.controlsHeading, locale)}</CardTitle>
-          <CardDescription className="hidden tablet:block">{pick(COPY.dragHintDesktop, locale)}</CardDescription>
-          <CardDescription className="tablet:hidden">{pick(COPY.dragHintTouch, locale)}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
-          <div
-            className="flex flex-wrap gap-2 rounded-md border border-dashed border-border p-2"
-            onDragOver={(e) => {
-              e.preventDefault();
-              e.dataTransfer.dropEffect = "move";
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              const controlId = e.dataTransfer.getData("text/plain") as ControlId;
-              if (controlId) onDropControlOnTray(controlId);
-            }}
-          >
-            {trayControls.length === 0 && (
-              <p className="w-full py-2 text-center text-xs text-text-muted">{pick(COPY.allPlaced, locale)}</p>
-            )}
-            {trayControls.map((control) => {
-              const isSelected = selectedControlId === control.id;
-              return (
-                <button
-                  key={control.id}
-                  type="button"
-                  draggable
-                  onDragStart={(e) => {
-                    e.dataTransfer.setData("text/plain", control.id);
-                    setDragPreview(e, pick(control.name, locale));
-                    onSelectTrayControl(control.id);
-                  }}
-                  onClick={() => onSelectTrayControl(control.id)}
-                  className={`flex select-none cursor-grab items-start gap-2 rounded-md border p-3 text-start transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95 active:cursor-grabbing ${
-                    isSelected ? "border-primary bg-primary-50 ring-2 ring-primary" : "border-border bg-surface"
+          {NETWORK_GUARDIAN_CONTROLS.map((control) => {
+            const active = placedControls.includes(control.id);
+            return (
+              <button
+                key={control.id}
+                type="button"
+                onClick={() => onToggleControl(control.id)}
+                className={`flex w-full items-start gap-3 rounded-md border p-3 text-start transition-colors ${
+                  active ? "border-primary bg-primary-50" : "border-border bg-surface"
+                }`}
+              >
+                <div
+                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
+                    active ? "border-primary bg-primary text-white" : "border-border"
                   }`}
                 >
-                  <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
-                  <div>
-                    <p className="text-sm font-semibold text-text-primary">{pick(control.name, locale)}</p>
-                    <p className="text-xs text-text-secondary">{pick(control.description, locale)}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  {active && <CheckCircle2 className="h-4 w-4" aria-hidden="true" />}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">{pick(control.name, locale)}</p>
+                  <p className="text-xs text-text-secondary">{pick(control.description, locale)}</p>
+                </div>
+              </button>
+            );
+          })}
 
           <div className="space-y-2 border-t border-border pt-3">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="w-full justify-start gap-2 transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+              className="w-full justify-start gap-2"
               disabled={hintsUsed >= 1}
               onClick={onUseHint}
             >
@@ -1016,7 +691,7 @@ function WorkstationScreen({
               type="button"
               variant="outline"
               size="sm"
-              className="w-full justify-start gap-2 transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
+              className="w-full justify-start gap-2"
               disabled={hintsUsed >= 2}
               onClick={onUseHint}
             >
@@ -1031,12 +706,7 @@ function WorkstationScreen({
       </Card>
 
       <div className="sticky bottom-4 flex justify-center">
-        <Button
-          size="lg"
-          disabled={!ready}
-          onClick={onRunTest}
-          className="shadow-lg transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:scale-95 disabled:hover:translate-y-0 disabled:hover:shadow-lg"
-        >
+        <Button size="lg" disabled={!ready} onClick={onRunTest} className="shadow-lg">
           {pick(COPY.runTest, locale)}
         </Button>
       </div>
@@ -1104,11 +774,7 @@ function ConsequenceScreen({
         </CardContent>
       </Card>
 
-      <Button
-        className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
-        size="lg"
-        onClick={onContinue}
-      >
+      <Button className="w-full" size="lg" onClick={onContinue}>
         {pick(COPY.continueCta, locale)}
       </Button>
     </div>
@@ -1122,6 +788,7 @@ function ConsequenceScreen({
 function CompleteScreen({
   locale,
   result,
+  passed,
   anonId,
   isSaved,
   displayXp,
@@ -1134,6 +801,7 @@ function CompleteScreen({
 }: {
   locale: AppLocale;
   result: ReturnType<typeof computeNetworkGuardianScore>;
+  passed: boolean;
   anonId: string;
   isSaved: boolean;
   displayXp: number;
@@ -1149,10 +817,11 @@ function CompleteScreen({
 
   return (
     <div className="mx-auto max-w-lg space-y-6" dir={locale === "ar" ? "rtl" : "ltr"} data-brand="labs">
+      <WinCelebration active={passed} />
       <Card>
         <CardHeader className="items-center text-center">
-          <Badge variant="primary" className="mb-2">
-            {pick(COPY.missionComplete, locale)}
+          <Badge variant={passed ? "success" : "primary"} className="mb-2">
+            {passed ? pick(COPY.passedHeading, locale) : pick(COPY.missionComplete, locale)}
           </Badge>
           <CardTitle className="font-display text-2xl">{pick(COPY.completeTitle, locale)}</CardTitle>
         </CardHeader>
@@ -1165,10 +834,20 @@ function CompleteScreen({
               <p className="text-sm text-text-muted">{pick(COPY.xpLabel, locale)}</p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <AchievementBadge name={pick(COPY.badgeName, locale)} description={pick(COPY.badgeDescription, locale)} unlocked size="lg" />
-              <p className="text-sm text-text-muted">{pick(COPY.badgeUnlocked, locale)}</p>
+              <AchievementBadge name={pick(COPY.badgeName, locale)} description={pick(COPY.badgeDescription, locale)} unlocked={passed} size="lg" />
+              <p className="text-sm text-text-muted">{passed ? pick(COPY.badgeUnlocked, locale) : pick(COPY.badgeLockedNote, locale)}</p>
             </div>
           </div>
+
+          {!passed && (
+            <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start">
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-600" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-semibold text-text-primary">{pick(COPY.notPassedHeading, locale)}</p>
+                <p className="mt-1 text-xs text-text-secondary">{pick(COPY.notPassedBody, locale)}</p>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3 text-center text-sm">
             <div className="rounded-md bg-surface-raised p-3">
@@ -1207,12 +886,7 @@ function CompleteScreen({
             </ul>
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95"
-            onClick={onShare}
-          >
+          <Button type="button" variant="outline" className="w-full" onClick={onShare}>
             <Share2 className="h-4 w-4" aria-hidden="true" />
             {shareStatus === "copied" ? pick(COPY.shareCopied, locale) : pick(COPY.shareAchievement, locale)}
           </Button>
@@ -1233,13 +907,7 @@ function CompleteScreen({
               registerCta={pick(COPY.registerCta, locale)}
               onRegistered={onRegistered}
             />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
-              onClick={onHideRegisterForm}
-            >
+            <Button type="button" variant="ghost" size="sm" className="w-full" onClick={onHideRegisterForm}>
               {pick(COPY.registerLater, locale)}
             </Button>
           </CardContent>
@@ -1251,31 +919,15 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 pt-6 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Button
-            asChild
-            className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 tablet:w-auto"
-          >
-            <Link href="/challenge/soc-night-shift">{pick(COPY.startNextMission, locale)}</Link>
-          </Button>
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="w-full transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 tablet:w-auto"
-          >
+          <Badge variant="outline">{pick(COPY.nextMissionComingSoon, locale)}</Badge>
+          <Button asChild variant="outline" className="w-full tablet:w-auto">
             <Link href="/labs/decision-labs">{pick(COPY.backToLabs, locale)}</Link>
           </Button>
         </CardContent>
       </Card>
 
       <div className="text-center">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
-          onClick={onRestart}
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onRestart}>
           {pick(COPY.restart, locale)}
         </Button>
       </div>
