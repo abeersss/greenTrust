@@ -7,13 +7,24 @@
  * scored). Both share the same anonymous-first persistence, XP, and
  * account-claim infrastructure in lib/challenges/anon-session.ts and
  * lib/actions/challenge.ts -- this file only defines what is unique to
- * CTF: categories, artifacts, hints, and scoring shape.
+ * CTF: categories, artifacts, hints, staged progression, and scoring shape.
  *
  * There is no live backend or exploitation infrastructure behind any
  * of this. Every artifact (HTML source, API response, log file, hex
  * dump, ciphertext) is static data rendered client-side; "solving" a
  * challenge means reading or transforming that data in the browser,
  * never calling a real server-side exploit.
+ *
+ * Multi-stage redesign (2026-08-02): every challenge used to expose a
+ * single artifact and the flag was directly derivable from it. Each
+ * challenge is now an ordered sequence of 2-3 CtfStage entries -- e.g.
+ * "enumerate a user ID" then "use that ID to exploit the API" -- where
+ * every stage but the last requires the player to extract a real value
+ * from that stage's artifact and type it in to unlock the next one.
+ * Only the final stage's artifact yields the flag itself, submitted via
+ * the challenge-level flag box unchanged. Wrong stage-unlock attempts
+ * are free and unlimited, same policy as wrong flag guesses -- only
+ * hints cost points.
  */
 
 export interface Bilingual {
@@ -50,7 +61,9 @@ export interface CtfDebrief {
 // ---------------------------------------------------------------------------
 
 /** A single displayed line of "view source" HTML, rendered as plain text
- * inside a monospace code viewer -- never executed, never parsed as markup. */
+ * inside a monospace code viewer -- never executed, never parsed as markup.
+ * Also reused for plain-text file listings (e.g. a recovered config.env)
+ * that need the same read-only monospace viewer without an HTML flavor. */
 export interface HtmlSourceLine {
   content: string;
 }
@@ -125,6 +138,34 @@ export type CryptoArtifact = CryptoCaesarArtifact | CryptoStackedArtifact;
 export type CtfArtifact = WebArtifact | ForensicsArtifact | CryptoArtifact;
 
 // ---------------------------------------------------------------------------
+// Staged progression
+// ---------------------------------------------------------------------------
+
+/**
+ * One step in a challenge's 2-3 step chain. Every stage renders its own
+ * artifact panel in the workstation. A stage with `unlockAnswer` is not
+ * the last stage: the player must extract that value from the artifact
+ * (or from context given in `instruction`) and enter it, case-insensitive
+ * and whitespace-normalized, to reveal the next stage. A stage with no
+ * `unlockAnswer` is the final stage of the chain -- its artifact is where
+ * the flag itself is found, submitted via the challenge-level flag box.
+ */
+export interface CtfStage {
+  /** Stable id, used to namespace this stage's own workstation sub-tool
+   * state (e.g. shift value, decoded text) so multiple stages that reuse
+   * the same artifact kind never collide with each other's state. */
+  id: string;
+  title: Bilingual;
+  instruction: Bilingual;
+  artifact: CtfArtifact;
+  /** Lowercase, trimmed, whitespace-normalized expected answer. Omit on
+   * the final stage. */
+  unlockAnswer?: string;
+  unlockLabel?: Bilingual;
+  wrongUnlockFeedback?: Bilingual;
+}
+
+// ---------------------------------------------------------------------------
 // Challenge definition
 // ---------------------------------------------------------------------------
 
@@ -149,7 +190,9 @@ export interface CtfChallenge {
    * Submission comparison is case-insensitive and trims whitespace, but
    * otherwise must exactly match this string. */
   flag: string;
-  artifact: CtfArtifact;
+  /** Ordered chain of 2-3 steps the player works through to reach the
+   * flag; see CtfStage. */
+  stages: CtfStage[];
   hints: CtfHint[];
   debrief: CtfDebrief;
   badge: CtfBadge;
@@ -162,11 +205,17 @@ export interface CtfChallenge {
 /** Per-category interactive workstation state, kept only as a resume
  * convenience (e.g. the last shift value or invoice id tried) -- never
  * required for correctness, since the flag itself is always re-derivable
- * from the artifact data. */
+ * from the artifact data. Keys are namespaced per-stage as `${stageId}:${key}`
+ * by the workstation component so two stages reusing the same artifact
+ * kind (e.g. two caesar_shift stages) never share sub-tool state. */
 export type CtfWorkstationState = Record<string, unknown>;
 
 export interface CtfStepsState {
   hintsUsed: string[];
   solved: boolean;
   workstationState: CtfWorkstationState;
+  /** Index of the highest unlocked stage (0-based). Starts at 0 -- the
+   * first stage is always visible. Reaching stages.length - 1 means the
+   * final stage (and therefore flag submission) is unlocked. */
+  unlockedStageIndex: number;
 }
