@@ -14,6 +14,20 @@ import { safeAuthErrorMessage, buildEmailRedirectTo } from "./auth-helpers";
 import { getTranslations } from "next-intl/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+/**
+ * The pass threshold every challenge (Decision Labs and CTF alike)
+ * must clear to actually "win" and earn its badge. Founder instruction
+ * (2026-08-02): scoring must be strict -- reaching 100% completion
+ * with a lot of hints/mistakes is not the same as winning, so a badge
+ * (and the win celebration) is only awarded once `score >= 80`. This
+ * is intentionally non-retroactive: it only gates *future* claims
+ * through claimForUser below, so badges already awarded to existing
+ * players before this change are never revoked. Exported so client
+ * components can show the identical "80%+ required" copy/gating
+ * without duplicating the number.
+ */
+export const BADGE_PASS_SCORE = 80;
+
 const saveProgressSchema = z.object({
   anonId: z.string().uuid(),
   challengeKey: z.enum(CHALLENGE_KEYS),
@@ -94,6 +108,17 @@ export async function saveAnonymousChallengeProgress(input: SaveProgressInput): 
  * CHALLENGE_BADGE_KEYS rather than a single hardcoded badge key, so
  * completing Network Guardian (or any future lab) correctly awards
  * that lab's own badge instead of always awarding First Defender's.
+ *
+ * Strict-evaluation gate (2026-08-02, founder instruction, applies to
+ * every Decision Lab and every CTF flag equally since they all flow
+ * through this single function): completing a challenge always
+ * records the attempt and its earned XP, since finishing a run is a
+ * real, honest signal of effort. The badge -- the "you won" artifact
+ * -- is only awarded when `session.score >= BADGE_PASS_SCORE`. A
+ * below-threshold completion is recorded like any other attempt but
+ * intentionally never becomes `badgeAwarded: true`, so the client's
+ * win celebration (confetti + sound) and the medal on /account never
+ * fire for a run that didn't actually pass.
  */
 async function claimForUser(
   admin: SupabaseClient,
@@ -163,22 +188,28 @@ async function claimForUser(
   });
   if (xpError) throw xpError;
 
-  const { data: badgeInsertData, error: badgeInsertError } = await admin
-    .from("user_badges")
-    .upsert({ user_id: userId, badge_id: badge.id }, { onConflict: "user_id,badge_id", ignoreDuplicates: true })
-    .select("id");
-  if (badgeInsertError) throw badgeInsertError;
+  // Strict evaluation: below the pass threshold, the run is recorded
+  // (attempt + XP above) but does not "win" -- no badge, no bonus XP.
+  const passed = session.score >= BADGE_PASS_SCORE;
+  let badgeNewlyAwarded = false;
+  if (passed) {
+    const { data: badgeInsertData, error: badgeInsertError } = await admin
+      .from("user_badges")
+      .upsert({ user_id: userId, badge_id: badge.id }, { onConflict: "user_id,badge_id", ignoreDuplicates: true })
+      .select("id");
+    if (badgeInsertError) throw badgeInsertError;
 
-  const badgeNewlyAwarded = (badgeInsertData?.length ?? 0) > 0;
-  if (badgeNewlyAwarded && badge.xp_bonus > 0) {
-    const { error: bonusError } = await admin.from("xp_events").insert({
-      user_id: userId,
-      event_type: "badge_awarded",
-      points: badge.xp_bonus,
-      related_entity_type: "badge",
-      related_entity_id: badge.id,
-    });
-    if (bonusError) throw bonusError;
+    badgeNewlyAwarded = (badgeInsertData?.length ?? 0) > 0;
+    if (badgeNewlyAwarded && badge.xp_bonus > 0) {
+      const { error: bonusError } = await admin.from("xp_events").insert({
+        user_id: userId,
+        event_type: "badge_awarded",
+        points: badge.xp_bonus,
+        related_entity_type: "badge",
+        related_entity_id: badge.id,
+      });
+      if (bonusError) throw bonusError;
+    }
   }
 
   return {
