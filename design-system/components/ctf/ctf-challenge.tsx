@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScoreGauge } from "@/components/greentrust/score-gauge";
 import { AchievementBadge } from "@/components/labs/achievement-badge";
+import { WinCelebration } from "@/components/shared/win-celebration";
 import { InlineRegisterForm } from "@/components/challenge/inline-register-form";
 import { Link } from "@/lib/i18n/navigation";
 import { pick } from "@/lib/challenges/bilingual";
@@ -30,7 +31,7 @@ import {
   saveChallengeProgress,
   clearChallengeProgress,
 } from "@/lib/challenges/anon-session";
-import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser } from "@/lib/actions/challenge";
+import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser, BADGE_PASS_SCORE } from "@/lib/actions/challenge";
 import { trackEvent } from "@/lib/analytics/track";
 import type { AppLocale } from "@/lib/i18n/config";
 import type { ChallengeKey } from "@/lib/challenges/keys";
@@ -46,6 +47,7 @@ import {
   Share2,
   ChevronRight,
   Lock,
+  ShieldAlert,
 } from "lucide-react";
 
 type Screen = "briefing" | "workstation" | "consequence" | "complete";
@@ -122,6 +124,23 @@ const COPY = {
     en: "Complete the steps above to unlock flag submission.",
     ar: "أكمل الخطوات أعلاه لفتح إرسال العلم.",
   },
+  // Strict-evaluation copy (founder instruction, 2026-08-02): every CTF
+  // challenge must state up front that scoring is strict and that the
+  // CTF badge only unlocks at BADGE_PASS_SCORE (80%) or higher.
+  strictEvaluationNote: {
+    en: `Scoring is strict: every hint you reveal costs points, and the CyberAbeer CTF badge only unlocks at ${BADGE_PASS_SCORE}% or higher. Solve it clean for the win.`,
+    ar: `التقييم صارم: كل تلميح تكشفه يخصم نقاطًا، وشارة CyberAbeer CTF لا تُفتح إلا بنتيجة ${BADGE_PASS_SCORE}% أو أعلى. حلّها بإتقان للفوز.`,
+  },
+  passedHeading: { en: "You passed", ar: "لقد نجحت" },
+  notPassedHeading: { en: "Not quite a pass", ar: "لم تصل لحد النجاح بعد" },
+  notPassedBody: {
+    en: `Strict evaluation: this challenge needs a score of ${BADGE_PASS_SCORE}% or higher to count as a win and unlock the badge. Restart and solve it with fewer hints to earn it.`,
+    ar: `تقييم صارم: يتطلب هذا التحدي نتيجة ${BADGE_PASS_SCORE}% أو أعلى ليُحتسب فوزًا ويفتح الشارة. أعد المحاولة واستخدم تلميحات أقل لكسبها.`,
+  },
+  badgeLockedNote: {
+    en: `Score ${BADGE_PASS_SCORE}%+ to unlock this badge`,
+    ar: `احصل على ${BADGE_PASS_SCORE}%+ لفتح هذه الشارة`,
+  },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -164,7 +183,7 @@ function normalizeFlag(value: string): string {
 }
 
 /** Case-insensitive, whitespace-normalized comparison for stage-unlock
- * answers -- lets "  Session_Secret " or "0x00003DA0" match a stored
+ * answers -- lets " Session_Secret " or "0x00003DA0" match a stored
  * lowercase, un-prefixed answer without being fussy about it. */
 function normalizeStageAnswer(value: string): string {
   return value
@@ -513,11 +532,13 @@ export function CtfChallenge({
 
   const score = computeScore(hintsUsed, challenge);
   const xp = computeXp(score, challenge);
+  const passed = score >= BADGE_PASS_SCORE;
   return (
     <CompleteScreen
       locale={locale}
       challenge={challenge}
       score={score}
+      passed={passed}
       anonId={anonId}
       isSaved={claimed || Boolean(registeredResult) || isAuthenticated}
       displayXp={registeredResult ? registeredResult.xpAwarded : claimed ? claimedXp ?? xp : xp}
@@ -564,6 +585,10 @@ function BriefingScreen({
       <CardContent className="space-y-4 text-center">
         <div className="rounded-md bg-surface-raised p-4 text-start">
           <p className="text-sm text-text-secondary">{pick(challenge.briefing, locale)}</p>
+        </div>
+        <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start text-xs text-warning-800">
+          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <span>{pick(COPY.strictEvaluationNote, locale)}</span>
         </div>
         <div className="flex items-center justify-center gap-2 text-sm text-text-muted">
           <Flag className="h-4 w-4" aria-hidden="true" />
@@ -641,7 +666,7 @@ function WorkstationScreen({
             <Badge variant={challenge.difficulty === "beginner" ? "success" : "warning"}>
               {pick(DIFFICULTY_LABEL[challenge.difficulty], locale)}
             </Badge>
-            <Badge variant="primary">{score} / 100</Badge>
+            <Badge variant={score >= BADGE_PASS_SCORE ? "success" : "primary"}>{score} / 100</Badge>
           </div>
         </CardContent>
       </Card>
@@ -996,7 +1021,7 @@ function ForensicsHexPanel({ artifact }: { artifact: Extract<ForensicsArtifact, 
     >
       {artifact.rows.map((row, i) => (
         <div key={i} className="whitespace-pre">
-          {`${row.offset}  ${row.hexGroup1.join(" ")}  ${row.hexGroup2.join(" ")}  |${row.ascii}|`}
+          {`${row.offset} ${row.hexGroup1.join(" ")} ${row.hexGroup2.join(" ")} |${row.ascii}|`}
         </div>
       ))}
     </div>
@@ -1241,6 +1266,7 @@ function CompleteScreen({
   locale,
   challenge,
   score,
+  passed,
   anonId,
   isSaved,
   displayXp,
@@ -1254,6 +1280,7 @@ function CompleteScreen({
   locale: AppLocale;
   challenge: CtfChallengeData;
   score: number;
+  passed: boolean;
   anonId: string;
   isSaved: boolean;
   displayXp: number;
@@ -1266,10 +1293,11 @@ function CompleteScreen({
 }) {
   return (
     <div className="mx-auto max-w-lg space-y-6" dir={locale === "ar" ? "rtl" : "ltr"} data-brand="labs">
+      <WinCelebration active={passed} />
       <Card>
         <CardHeader className="items-center text-center">
-          <Badge variant="primary" className="mb-2">
-            {pick(COPY.challengeComplete, locale)}
+          <Badge variant={passed ? "success" : "primary"} className="mb-2">
+            {passed ? pick(COPY.passedHeading, locale) : pick(COPY.challengeComplete, locale)}
           </Badge>
           <CardTitle className="font-display text-2xl">{pick(challenge.title, locale)}</CardTitle>
         </CardHeader>
@@ -1286,12 +1314,24 @@ function CompleteScreen({
                 name={pick(challenge.badge.name, locale)}
                 description={pick(challenge.badge.description, locale)}
                 icon={CATEGORY_ICON[challenge.category]}
-                unlocked
+                unlocked={passed}
                 size="lg"
               />
-              <p className="text-sm text-text-muted">{pick(COPY.badgeUnlocked, locale)}</p>
+              <p className="text-sm text-text-muted">
+                {passed ? pick(COPY.badgeUnlocked, locale) : pick(COPY.badgeLockedNote, locale)}
+              </p>
             </div>
           </div>
+
+          {!passed && (
+            <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start text-sm text-warning-800">
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <div>
+                <p className="font-semibold">{pick(COPY.notPassedHeading, locale)}</p>
+                <p className="mt-1 text-xs">{pick(COPY.notPassedBody, locale)}</p>
+              </div>
+            </div>
+          )}
 
           <Button type="button" variant="outline" className="w-full" onClick={onShare}>
             <Share2 className="h-4 w-4" aria-hidden="true" />
