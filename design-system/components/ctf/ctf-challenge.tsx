@@ -541,7 +541,7 @@ export function CtfChallenge({
       passed={passed}
       anonId={anonId}
       isSaved={claimed || Boolean(registeredResult) || isAuthenticated}
-      displayXp={registeredResult ? registeredResult.xpAwarded : claimed ? claimedXp ?? xp : xp}
+      displayXp={registeredResult ? registeredResult.xpAwarded || xp : claimed ? claimedXp || xp : xp}
       showRegisterForm={showRegisterForm}
       onHideRegisterForm={() => setShowRegisterForm(false)}
       onRegistered={handleClaimed}
