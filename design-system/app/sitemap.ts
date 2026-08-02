@@ -28,6 +28,13 @@ export const dynamic = "force-dynamic";
  * landing page that lists all 6 cards) was missing too, for the same
  * reason -- only the parent `/labs` marketing page was listed.
  *
+ * CyberAbeer CTF track (2026-08-02): a second, structurally different
+ * challenge track alongside Decision Labs -- 6 flag-submission
+ * challenges under `/labs/ctf/[slug]`, plus the `/labs/ctf` listing
+ * page itself. Listed individually (not derived dynamically) since
+ * the CTF challenge set is static data in lib/ctf/challenges.ts, same
+ * treatment as the Decision Labs challenge routes above.
+ *
  * Insights article URLs are appended dynamically per locale from
  * whatever is actually published; with zero articles published this
  * contributes nothing, which is correct rather than listing
@@ -40,6 +47,7 @@ const staticPaths = [
   "for-organizations",
   "labs",
   "labs/decision-labs",
+  "labs/ctf",
   "free-tools",
   "free-tools/ai-governance-quick-check",
   "free-tools/quantum-readiness-quick-check",
@@ -54,6 +62,12 @@ const staticPaths = [
   "challenge/data-guardian",
   "challenge/grcl-innovation",
   "challenge/agent-zero",
+  "labs/ctf/web-hidden-in-plain-sight",
+  "labs/ctf/web-broken-access-control",
+  "labs/ctf/forensics-suspicious-log",
+  "labs/ctf/forensics-deleted-file",
+  "labs/ctf/crypto-caesars-mistake",
+  "labs/ctf/crypto-weak-key",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -74,8 +88,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // of them get the same 0.8 priority `challenge/first-defender` used
     // to have alone -- there's no reason the first lab built should
     // outrank the other five in the sitemap's own priority signal.
-    const isChallenge = path.startsWith("challenge/");
-    const priority = path === "" ? 1 : isChallenge ? 0.8 : path === "labs/decision-labs" ? 0.75 : 0.7;
+    // CTF challenge pages get the same 0.8 treatment as Decision Labs
+    // challenge pages -- both are conversion-driving, playable content;
+    // the `labs/ctf` listing page itself sits at 0.75, same tier as
+    // `labs/decision-labs`.
+    const isChallenge = path.startsWith("challenge/") || path.startsWith("labs/ctf/");
+    const priority =
+      path === ""
+        ? 1
+        : isChallenge
+          ? 0.8
+          : path === "labs/decision-labs" || path === "labs/ctf"
+            ? 0.75
+            : 0.7;
 
     for (const locale of locales) {
       entries.push({
