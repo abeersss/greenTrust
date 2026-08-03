@@ -37,13 +37,23 @@ interface ConfettiPiece {
 }
 
 function buildPieces(): ConfettiPiece[] {
+  // PRODUCTION BUILD FIX (2026-08-03): under this project's tsconfig
+  // (noUncheckedIndexedAccess), indexing an array by a computed number
+  // (`CONFETTI_COLORS[i % CONFETTI_COLORS.length]`) types as
+  // `string | undefined`, not `string`, even though the modulo makes
+  // it always in range. ConfettiPiece.color requires a non-null
+  // `string`, so this failed `npm run build` with "Type 'string |
+  // undefined' is not assignable to type 'string'." at this file's
+  // line 40. The `?? CONFETTI_COLORS[0]` fallback (which TypeScript
+  // can prove is a plain string) satisfies the type with no behavior
+  // change, since the modulo already guarantees the index is valid.
   return Array.from({ length: PIECE_COUNT }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     delay: Math.random() * 0.35,
     duration: 2.1 + Math.random() * 1.5,
     rotate: Math.random() * 360,
-    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length] ?? CONFETTI_COLORS[0],
     width: 6 + Math.random() * 6,
     height: 10 + Math.random() * 6,
   }));
