@@ -11,8 +11,9 @@ import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { Link } from "@/lib/i18n/navigation";
 import { pick } from "@/lib/challenges/bilingual";
 import { getCtfChallengesByCategory } from "@/lib/ctf/challenges";
+import { getCtfCompletionStatus } from "@/lib/actions/certificate";
 import type { CtfCategory, CtfChallenge, CtfDifficulty } from "@/lib/ctf/types";
-import { Flag, Globe, FileSearch, KeyRound, Sparkles } from "lucide-react";
+import { Flag, Globe, FileSearch, KeyRound, Sparkles, Award } from "lucide-react";
 
 const copy = {
   title: { en: "CyberAbeer CTF", ar: "تحديات CyberAbeer CTF" },
@@ -28,6 +29,12 @@ const copy = {
   xpSuffix: { en: "XP", ar: "نقطة خبرة" },
   playChallenge: { en: "Play challenge →", ar: "العب التحدي ←" },
   backToLabs: { en: "← Back to CyberAbeer Labs", ar: "← العودة إلى CyberAbeer Labs" },
+  certificateProgress: { en: "flags captured toward your certificate", ar: "أعلام تم جمعها نحو شهادتك" },
+  certificateReady: {
+    en: "All six flags captured — your certificate is ready.",
+    ar: "تم جمع الأعلام الستة كلها — شهادتك جاهزة.",
+  },
+  certificateCta: { en: "View certificate progress →", ar: "عرض تقدّم الشهادة ←" },
 } as const;
 
 const CATEGORY_LABEL: Record<CtfCategory, { en: string; ar: string }> = {
@@ -99,12 +106,21 @@ function ChallengeCard({ challenge, locale }: { challenge: CtfChallenge; locale:
  * single "in development" status card to a real grid of playable
  * challenges grouped by category, matching the Decision Labs landing
  * page's card visual language (see app/[locale]/labs/decision-labs/page.tsx).
+ *
+ * Certificate progress banner (2026-08-03, founder instruction): a
+ * signed-in visitor who has started capturing flags sees a compact
+ * "X/6 captured" banner linking to /labs/ctf/certificate, the same
+ * completion status this page and that page both read from
+ * getCtfCompletionStatus (lib/actions/certificate.ts), so the two
+ * never disagree. Hidden entirely for a signed-out visitor rather than
+ * nagging them to log in before they have even tried a challenge.
  */
 export default async function CtfPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
   const l = locale as AppLocale;
   const tNav = await getTranslations({ locale, namespace: "nav" });
+  const certStatus = await getCtfCompletionStatus();
 
   return (
     <div data-brand="labs">
@@ -130,6 +146,18 @@ export default async function CtfPage({ params }: { params: Promise<{ locale: st
         </div>
         <h1 className="font-display text-3xl font-bold text-text-primary tablet:text-4xl">{copy.title[l]}</h1>
         <p className="mx-auto mt-4 text-lg text-text-secondary">{copy.intro[l]}</p>
+
+        {certStatus.signedIn && certStatus.completedChallenges > 0 && (
+          <Link
+            href="/labs/ctf/certificate"
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent hover:bg-accent/20"
+          >
+            <Award className="h-4 w-4" aria-hidden="true" />
+            {certStatus.allComplete
+              ? pick(copy.certificateReady, l)
+              : `${certStatus.completedChallenges}/${certStatus.totalChallenges} ${pick(copy.certificateProgress, l)}`}
+          </Link>
+        )}
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16 tablet:px-6">
