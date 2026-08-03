@@ -16,7 +16,7 @@
 -- so a future certificate type (e.g. completing all Decision Labs)
 -- can reuse this same table without a new migration.
 
-create table if not exists certificates (
+create table if not exists ctf_certificates (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   certificate_type text not null default 'ctf_completion',
@@ -28,11 +28,11 @@ create table if not exists certificates (
   unique (user_id, certificate_type)
 );
 
-create index if not exists certificates_user_id_idx on certificates (user_id);
-create index if not exists certificates_reference_code_idx on certificates (reference_code);
+create index if not exists ctf_certificates_user_id_idx on ctf_certificates (user_id);
+create index if not exists ctf_certificates_reference_code_idx on ctf_certificates (reference_code);
 
-alter table certificates enable row level security;
-alter table certificates force row level security;
+alter table ctf_certificates enable row level security;
+alter table ctf_certificates force row level security;
 
 -- Defense in depth only: every read/write this app performs against
 -- this table goes through the service-role client in
@@ -42,6 +42,6 @@ alter table certificates force row level security;
 -- user_badges, etc.). This policy exists so a signed-in user could
 -- still see their own certificate row if some future client-side
 -- feature ever queries this table directly.
-create policy "Users can view their own certificates"
-  on certificates for select
+create policy "Users can view their own ctf certificates"
+  on ctf_certificates for select
   using (auth.uid() = user_id);
