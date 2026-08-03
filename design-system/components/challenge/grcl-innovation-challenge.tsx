@@ -26,11 +26,9 @@ import {
   clearChallengeProgress,
 } from "@/lib/challenges/anon-session";
 import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser } from "@/lib/actions/challenge";
-import { BADGE_PASS_SCORE } from "@/lib/challenges/keys";
-import { WinCelebration } from "@/components/shared/win-celebration";
 import { trackEvent } from "@/lib/analytics/track";
 import type { AppLocale } from "@/lib/i18n/config";
-import { Scale, Clock, Search, CheckCircle2, XCircle, Eye, Sparkles, Share2, ShieldCheck, Undo2, ShieldAlert } from "lucide-react";
+import { Scale, Clock, Search, CheckCircle2, XCircle, Eye, Sparkles, Share2, ShieldCheck, Undo2 } from "lucide-react";
 
 type Screen = "briefing" | "boardroom" | "consequence" | "complete";
 
@@ -105,23 +103,9 @@ const COPY = {
     ar: "يتم حفظ تقدمك على هذا الجهاز. سجّل في أي وقت للاحتفاظ به بشكل دائم.",
   },
   nextMission: { en: "Next Mission: Agent Zero", ar: "المهمة التالية: العميل زيرو" },
-  nextMissionComingSoon: { en: "Agent Zero — coming soon", ar: "العميل زيرو — قريبًا" },
+  nextMissionCta: { en: "Start mission →", ar: "ابدأ المهمة ←" },
   backToLabs: { en: "Back to Decision Labs", ar: "العودة إلى معامل القرار" },
   restart: { en: "Convene Another Board", ar: "انعقاد جلسة أخرى" },
-  strictEvaluationNote: {
-    en: `This mission is strictly evaluated. You need a score of ${BADGE_PASS_SCORE}% or higher to earn the badge and trigger the win celebration.`,
-    ar: `يتم تقييم هذه المهمة بصرامة. تحتاج إلى نتيجة ${BADGE_PASS_SCORE}% أو أعلى للحصول على الشارة وتفعيل احتفال الفوز.`,
-  },
-  passedHeading: { en: "REVIEW COMPLETE — PASSED", ar: "انتهت المراجعة — نجاح" },
-  notPassedHeading: { en: "Below passing score", ar: "أقل من درجة النجاح" },
-  notPassedBody: {
-    en: `You scored below the ${BADGE_PASS_SCORE}% threshold required for the badge. Convene another board with sharper GRCL calls to raise your score.`,
-    ar: `حصلت على نتيجة أقل من الحد المطلوب البالغ ${BADGE_PASS_SCORE}% للحصول على الشارة. اعقد جلسة أخرى بقرارات حوكمة أدق لرفع نتيجتك.`,
-  },
-  badgeLockedNote: {
-    en: `Score ${BADGE_PASS_SCORE}%+ to unlock`,
-    ar: `احصل على ${BADGE_PASS_SCORE}%+ لفتحها`,
-  },
 } as const;
 
 export function GRCLInnovationChallenge({
@@ -256,17 +240,15 @@ export function GRCLInnovationChallenge({
 
   function handleClaimed(result: { xpAwarded: number; badgeAwarded: boolean }) {
     setClaimed(true);
-    const localResult = computeGRCLScore({ decisions, investigatedClueIds });
-    const safeXp = result.xpAwarded || localResult.xp;
-    setClaimedXp(safeXp);
-    setRegisteredResult({ ...result, xpAwarded: safeXp });
+    setClaimedXp(result.xpAwarded);
+    setRegisteredResult(result);
     saveChallengeProgress(GRCL_CHALLENGE_KEY, {
       currentStepIndex: Object.keys(decisions).length,
       stepsState: { decisions, investigatedClueIds },
       startedAt: startedAt || new Date().toISOString(),
       completedAt: completedAt ?? new Date().toISOString(),
       claimed: true,
-      claimedXp: safeXp,
+      claimedXp: result.xpAwarded,
     });
     if (result.badgeAwarded) {
       trackEvent("badge_awarded", { locale, challengeKey: GRCL_CHALLENGE_KEY });
@@ -336,15 +318,13 @@ export function GRCLInnovationChallenge({
   }
 
   const result = computeGRCLScore({ decisions, investigatedClueIds });
-  const passed = result.score >= BADGE_PASS_SCORE;
   return (
     <CompleteScreen
       locale={locale}
       result={result}
-      passed={passed}
       anonId={anonId}
       isSaved={claimed || Boolean(registeredResult) || isAuthenticated}
-      displayXp={registeredResult ? registeredResult.xpAwarded || result.xp : claimed ? claimedXp || result.xp : result.xp}
+      displayXp={registeredResult ? registeredResult.xpAwarded : claimed ? claimedXp ?? result.xp : result.xp}
       showRegisterForm={showRegisterForm}
       onHideRegisterForm={() => setShowRegisterForm(false)}
       onRegistered={handleClaimed}
@@ -372,10 +352,6 @@ function BriefingScreen({ locale, onBegin }: { locale: AppLocale; onBegin: () =>
       <CardContent className="space-y-4 text-center">
         <div className="rounded-md bg-surface-raised p-4 text-start">
           <p className="text-sm text-text-secondary">{pick(COPY.briefingBody, locale)}</p>
-        </div>
-        <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start">
-          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-600" aria-hidden="true" />
-          <p className="text-xs text-text-secondary">{pick(COPY.strictEvaluationNote, locale)}</p>
         </div>
         <Button className="w-full" size="lg" onClick={onBegin}>
           {pick(COPY.beginShift, locale)}
@@ -619,7 +595,6 @@ function ConsequenceScreen({
 function CompleteScreen({
   locale,
   result,
-  passed,
   anonId,
   isSaved,
   displayXp,
@@ -632,7 +607,6 @@ function CompleteScreen({
 }: {
   locale: AppLocale;
   result: ReturnType<typeof computeGRCLScore>;
-  passed: boolean;
   anonId: string;
   isSaved: boolean;
   displayXp: number;
@@ -645,11 +619,10 @@ function CompleteScreen({
 }) {
   return (
     <div className="mx-auto max-w-lg space-y-6" dir={locale === "ar" ? "rtl" : "ltr"} data-brand="labs">
-      <WinCelebration active={passed} />
       <Card>
         <CardHeader className="items-center text-center">
-          <Badge variant={passed ? "success" : "primary"} className="mb-2">
-            {passed ? pick(COPY.passedHeading, locale) : pick(COPY.missionComplete, locale)}
+          <Badge variant="primary" className="mb-2">
+            {pick(COPY.missionComplete, locale)}
           </Badge>
           <CardTitle className="font-display text-2xl">{pick(COPY.completeTitle, locale)}</CardTitle>
         </CardHeader>
@@ -662,20 +635,10 @@ function CompleteScreen({
               <p className="text-sm text-text-muted">{pick(COPY.xpLabel, locale)}</p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <AchievementBadge name={pick(COPY.badgeName, locale)} description={pick(COPY.badgeDescription, locale)} unlocked={passed} size="lg" />
-              <p className="text-sm text-text-muted">{passed ? pick(COPY.badgeUnlocked, locale) : pick(COPY.badgeLockedNote, locale)}</p>
+              <AchievementBadge name={pick(COPY.badgeName, locale)} description={pick(COPY.badgeDescription, locale)} unlocked size="lg" />
+              <p className="text-sm text-text-muted">{pick(COPY.badgeUnlocked, locale)}</p>
             </div>
           </div>
-
-          {!passed && (
-            <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-600" aria-hidden="true" />
-              <div>
-                <p className="text-sm font-semibold text-text-primary">{pick(COPY.notPassedHeading, locale)}</p>
-                <p className="mt-1 text-xs text-text-secondary">{pick(COPY.notPassedBody, locale)}</p>
-              </div>
-            </div>
-          )}
 
           <div className="grid grid-cols-2 gap-3 text-center text-sm">
             <div className="rounded-md bg-surface-raised p-3">
@@ -734,7 +697,9 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 py-5 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Badge variant="outline">{pick(COPY.nextMissionComingSoon, locale)}</Badge>
+          <Button asChild className="w-full tablet:w-auto">
+            <Link href="/challenge/agent-zero">{pick(COPY.nextMissionCta, locale)}</Link>
+          </Button>
           <Button asChild variant="outline" className="w-full tablet:w-auto">
             <Link href="/labs/decision-labs">{pick(COPY.backToLabs, locale)}</Link>
           </Button>
