@@ -48,6 +48,7 @@ import {
   ChevronRight,
   Lock,
   ShieldAlert,
+  RotateCcw,
 } from "lucide-react";
 
 type Screen = "briefing" | "workstation" | "consequence" | "complete";
@@ -191,6 +192,27 @@ function normalizeStageAnswer(value: string): string {
     .toLowerCase()
     .replace(/^0x/, "")
     .replace(/\s+/g, " ");
+}
+
+/** Players often type or paste the whole request line shown in the
+ * endpoint label above the input (e.g. "GET /api/users/search?name=admin"
+ * or "GET /api/invoices/1042") rather than just the bare identifier the
+ * console actually looks records up by -- which is exactly what the
+ * label makes it look like you should do. This pulls the real lookup
+ * value out of whatever was typed: prefers the text after the last "="
+ * (covers ?name=admin), falls back to the last "/"-separated path
+ * segment (covers /api/invoices/1042), and otherwise falls back to the
+ * raw trimmed input untouched. */
+function extractLookupValue(raw: string): string {
+  const trimmed = raw.trim();
+  if (trimmed.includes("=")) {
+    return trimmed.slice(trimmed.lastIndexOf("=") + 1).trim();
+  }
+  if (trimmed.includes("/")) {
+    const segments = trimmed.split("/").filter(Boolean);
+    return (segments[segments.length - 1] ?? trimmed).trim();
+  }
+  return trimmed;
 }
 
 /** Reads only the keys namespaced to this stage (`${stageId}:${key}`) out
@@ -513,6 +535,7 @@ export function CtfChallenge({
         onFlagInputChange={handleFlagInputChange}
         flagFeedback={flagFeedback}
         onSubmitFlag={handleSubmitFlag}
+        onRestart={handleRestart}
       />
     );
   }
@@ -624,6 +647,7 @@ function WorkstationScreen({
   onFlagInputChange,
   flagFeedback,
   onSubmitFlag,
+  onRestart,
 }: {
   locale: AppLocale;
   challenge: CtfChallengeData;
@@ -640,6 +664,7 @@ function WorkstationScreen({
   onFlagInputChange: (value: string) => void;
   flagFeedback: "idle" | "incorrect";
   onSubmitFlag: () => void;
+  onRestart: () => void;
 }) {
   const score = computeScore(hintsUsed, challenge);
   const stages = challenge.stages;
@@ -659,7 +684,7 @@ function WorkstationScreen({
               <p className="font-display text-lg font-bold text-text-primary">{pick(challenge.title, locale)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline">
               {pick(COPY.stepBadge, locale)} {unlockedStageIndex + 1}/{stages.length}
             </Badge>
@@ -667,6 +692,10 @@ function WorkstationScreen({
               {pick(DIFFICULTY_LABEL[challenge.difficulty], locale)}
             </Badge>
             <Badge variant={score >= BADGE_PASS_SCORE ? "success" : "primary"}>{score} / 100</Badge>
+            <Button type="button" variant="ghost" size="sm" className="gap-1.5" onClick={onRestart}>
+              <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+              {pick(COPY.restart, locale)}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -891,11 +920,11 @@ function WebApiPanel({
   const [lastResponse, setLastResponse] = React.useState<string | null>(null);
 
   function handleSend() {
-    const trimmed = invoiceIdInput.trim();
-    const record = artifact.records.find((r) => r.id === trimmed);
+    const lookupValue = extractLookupValue(invoiceIdInput);
+    const record = artifact.records.find((r) => r.id === lookupValue);
     const json = record ? record.json : artifact.notFoundJson;
     setLastResponse(json);
-    onWorkstationChange({ invoiceId: trimmed });
+    onWorkstationChange({ invoiceId: invoiceIdInput.trim() });
   }
 
   return (
