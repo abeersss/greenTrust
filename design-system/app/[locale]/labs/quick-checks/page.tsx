@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { SiteBreadcrumb } from "@/components/site/site-breadcrumb";
 import { JsonLd } from "@/components/site/json-ld";
 import { SpotThePhishMicroCheck } from "@/components/labs/spot-the-phish-micro-check";
+import { MicroCheck } from "@/components/labs/micro-check";
+import { QUICK_CHECKS } from "@/lib/labs/quick-checks-data";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
@@ -19,18 +19,9 @@ const copy = {
   },
   breadcrumb: { en: "Quick Checks", ar: "اختبارات سريعة" },
   intro: {
-    en: "Quick Checks are short, single-scenario exercises for a spare few minutes, lighter than a full Decision Lab. Try the one below now.",
-    ar: "الاختبارات السريعة تمارين قصيرة أحادية السيناريو لبضع دقائق فارغة، وهي أخف من معمل قرار كامل. جرّب المثال أدناه الآن.",
+    en: "Quick Checks are short, single-scenario exercises for a spare few minutes, lighter than a full Decision Lab. Six are live below — pick any one and go.",
+    ar: "الاختبارات السريعة تمارين قصيرة أحادية السيناريو لبضع دقائق فارغة، وهي أخف من معمل قرار كامل. ستة اختبارات متاحة الآن أدناه — اختر أيًا منها وابدأ.",
   },
-  upcomingHeading: { en: "More on the way", ar: "المزيد قريبًا" },
-  comingSoon: { en: "Coming soon", ar: "قريبًا" },
-  upcoming: [
-    { en: "Choose the correct firewall placement", ar: "اختر موضع جدار الحماية الصحيح" },
-    { en: "Classify one SOC alert", ar: "صنّف تنبيهًا واحدًا لمركز العمليات الأمنية" },
-    { en: "Identify the risky permission", ar: "حدد الصلاحية عالية الخطورة" },
-    { en: "Classify a document", ar: "صنّف مستندًا" },
-    { en: "Select the best incident action", ar: "اختر أفضل إجراء للحادثة" },
-  ],
 } as const;
 
 export async function generateMetadata({
@@ -45,13 +36,14 @@ export async function generateMetadata({
 }
 
 /**
- * Production UX fix (2026-07-27): the Quick Checks card on the Labs
- * landing page previously went nowhere. This page's scope is
- * deliberately narrow per the fix's explicit DO NOT list (no "dozens
- * of quick quizzes" yet): one real, working example
- * (SpotThePhishMicroCheck) so the format is genuinely interactive
- * rather than a placeholder, plus the rest of the planned exercises
- * listed honestly as "Coming soon".
+ * Full activation (2026-08-03): the five items that previously sat
+ * under "More on the way" / "Coming soon" (firewall placement, SOC
+ * alert triage, risky permission, document classification, incident
+ * response action) are now real, working micro-checks rendered via
+ * the shared MicroCheck component + lib/labs/quick-checks-data.ts, on
+ * the same one-clue/one-decision/immediate-feedback pattern as the
+ * original SpotThePhishMicroCheck. Every quick check on this page is
+ * now genuinely interactive; there is no more "coming soon" list.
  */
 export default async function QuickChecksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -85,28 +77,11 @@ export default async function QuickChecksPage({ params }: { params: Promise<{ lo
         <p className="mx-auto mt-4 text-lg text-text-secondary">{copy.intro[l]}</p>
       </section>
 
-      <section className="mx-auto max-w-lg px-4 pb-10 tablet:px-6">
+      <section className="mx-auto max-w-lg space-y-8 px-4 pb-16 tablet:px-6">
         <SpotThePhishMicroCheck locale={l} />
-      </section>
-
-      <section className="mx-auto max-w-lg px-4 pb-16 tablet:px-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{copy.upcomingHeading[l]}</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <ul className="space-y-2">
-              {copy.upcoming.map((item) => (
-                <li key={item.en} className="flex items-center justify-between gap-2 text-sm text-text-secondary">
-                  <span>{item[l]}</span>
-                  <Badge variant="neutral" className="shrink-0">
-                    {copy.comingSoon[l]}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        {QUICK_CHECKS.map((def) => (
+          <MicroCheck key={def.key} def={def} locale={l} />
+        ))}
       </section>
     </div>
   );
