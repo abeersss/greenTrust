@@ -41,19 +41,20 @@ function buildPieces(): ConfettiPiece[] {
   // (noUncheckedIndexedAccess), indexing an array by a computed number
   // (`CONFETTI_COLORS[i % CONFETTI_COLORS.length]`) types as
   // `string | undefined`, not `string`, even though the modulo makes
-  // it always in range. ConfettiPiece.color requires a non-null
-  // `string`, so this failed `npm run build` with "Type 'string |
-  // undefined' is not assignable to type 'string'." at this file's
-  // line 40. The `?? CONFETTI_COLORS[0]` fallback (which TypeScript
-  // can prove is a plain string) satisfies the type with no behavior
-  // change, since the modulo already guarantees the index is valid.
+  // it always in range -- and that applies to EVERY index access on a
+  // plain (non-tuple) array, including a literal `[0]`, so a fallback
+  // of `?? CONFETTI_COLORS[0]` is *also* `string | undefined` and does
+  // not fix the type error (confirmed: still failed the build after
+  // that first attempt). The fallback must be a plain string literal
+  // ("#ffffff", already one of this palette's own colors) so
+  // TypeScript can prove the final value is never undefined.
   return Array.from({ length: PIECE_COUNT }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     delay: Math.random() * 0.35,
     duration: 2.1 + Math.random() * 1.5,
     rotate: Math.random() * 360,
-    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length] ?? CONFETTI_COLORS[0],
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length] ?? "#ffffff",
     width: 6 + Math.random() * 6,
     height: 10 + Math.random() * 6,
   }));
