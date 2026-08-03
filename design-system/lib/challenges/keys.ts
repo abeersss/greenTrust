@@ -52,3 +52,18 @@ export const CHALLENGE_BADGE_KEYS: Record<ChallengeKey, string> = {
  * client component now import it from here instead.
  */
 export const BADGE_PASS_SCORE = 80;
+
+/**
+ * CTF Completion Certificate (2026-08-03, founder instruction): once a
+ * learner has captured all six CyberAbeer CTF flags -- meaning all six
+ * of these badges are in their user_badges rows, which can only happen
+ * at score >= BADGE_PASS_SCORE per flag, since claimForUser
+ * (lib/actions/challenge.ts) never awards a badge below that threshold
+ * -- they can claim a signed completion certificate. Filtering
+ * CHALLENGE_KEYS/CHALLENGE_BADGE_KEYS here (rather than hardcoding a
+ * second list) means a future 7th CTF challenge is picked up
+ * automatically as long as its key follows the existing "ctf_..."
+ * naming convention, with no separate list to remember to update.
+ */
+export const CTF_CHALLENGE_KEYS = CHALLENGE_KEYS.filter((key) => key.startsWith("ctf_"));
+export const CTF_BADGE_KEYS = CTF_CHALLENGE_KEYS.map((key) => CHALLENGE_BADGE_KEYS[key]);
