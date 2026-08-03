@@ -26,6 +26,15 @@ import type { AppLocale } from "@/lib/i18n/config";
  * every navigation and full page load, this prop is correct after
  * login, logout, a hard refresh, and direct navigation to any route,
  * without this component needing its own client-side session check.
+ *
+ * Duplicate-nav fix (2026-08-03): the authenticated actions area used
+ * to render its own "My Labs" button pointing at /labs, right next to
+ * the main nav's "CyberAbeer Labs" item which points at the exact
+ * same route -- so a signed-in visitor saw two separate labs links in
+ * the header doing the same thing. Removed the redundant one; "My
+ * account" + "Log out" is the only auth-specific state that belongs
+ * here, since Labs already has its permanent home in the main nav for
+ * every visitor, logged in or not.
  */
 export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isAuthenticated: boolean }) {
   const t = useTranslations("nav");
@@ -118,9 +127,6 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
             <>
               <Button asChild variant="ghost" size="sm">
                 <Link href="/account">{t("account")}</Link>
-              </Button>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/labs">{t("myLabs")}</Link>
               </Button>
               <Button variant="outline" size="sm" loading={loggingOut} onClick={handleLogout}>
                 {t("logout")}
