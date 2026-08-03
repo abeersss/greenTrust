@@ -27,6 +27,18 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
     { label: tNav("contact"), href: "/contact" },
   ];
 
+  // Creator credit for the site identity theme song and the CyberAbeer
+  // Labs mascot character (2026-08-03, founder-supplied original
+  // creative works). This is an honest, on-site attribution notice,
+  // not a legal copyright registration -- registering copyright is a
+  // real government filing (e.g. via a national copyright office) that
+  // only the rights-holder can file themselves; this credit line is
+  // the part of that request a code change can actually deliver.
+  const creatorCredit =
+    locale === "ar"
+      ? "الهوية الصوتية للموقع وشخصية معامل CyberAbeer من إبداع الدكتورة عبير الشمري، مؤسسة CyberAbeer. جميع الحقوق محفوظة لصاحبتها."
+      : "Site theme audio and the CyberAbeer Labs mascot character are original creative works by Dr. Abeer Alshammari, founder of CyberAbeer. All rights reserved to their creator.";
+
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 tablet:grid-cols-3 tablet:px-6">
@@ -56,7 +68,10 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
       </div>
 
       <div className="border-t border-border px-4 py-4 text-center text-xs text-text-muted tablet:px-6">
-        © {year} CyberAbeer. {tFooter("rights")}
+        <p>
+          © {year} CyberAbeer. {tFooter("rights")}
+        </p>
+        <p className="mt-1">{creatorCredit}</p>
       </div>
     </footer>
   );
