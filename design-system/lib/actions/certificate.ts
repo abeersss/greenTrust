@@ -65,7 +65,7 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
     let certificateReference: string | null = null;
     if (allComplete) {
       const { data: existing } = await admin
-        .from("certificates")
+        .from("ctf_certificates")
         .select("reference_code")
         .eq("user_id", user.id)
         .eq("certificate_type", CTF_CERTIFICATE_TYPE)
@@ -157,7 +157,7 @@ export async function issueCertificate(
     // able to silently rename it after the fact (which would undercut
     // the verification page's whole purpose).
     const { data: existing, error: existingErr } = await admin
-      .from("certificates")
+      .from("ctf_certificates")
       .select("reference_code, full_name, issued_at")
       .eq("user_id", user.id)
       .eq("certificate_type", CTF_CERTIFICATE_TYPE)
@@ -178,7 +178,7 @@ export async function issueCertificate(
     for (let attempt = 0; attempt < 5; attempt += 1) {
       const referenceCode = generateReferenceCode();
       const { data: inserted, error: insertErr } = await admin
-        .from("certificates")
+        .from("ctf_certificates")
         .insert({
           user_id: user.id,
           certificate_type: CTF_CERTIFICATE_TYPE,
@@ -236,7 +236,7 @@ export async function verifyCertificate(referenceCode: string): Promise<Certific
   try {
     const admin = createSupabaseServiceRoleClient();
     const { data, error } = await admin
-      .from("certificates")
+      .from("ctf_certificates")
       .select("full_name, issued_at, reference_code")
       .eq("reference_code", normalized)
       .eq("certificate_type", CTF_CERTIFICATE_TYPE)
