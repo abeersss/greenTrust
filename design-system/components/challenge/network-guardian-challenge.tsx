@@ -165,7 +165,7 @@ const COPY = {
     ar: "تُحفظ تقدُّماتك على هذا الجهاز. سجّل في أي وقت للاحتفاظ بها بشكل دائم.",
   },
   nextMission: { en: "Next Mission: SOC Night Shift", ar: "المهمة التالية: مناوبة مركز العمليات الليلية" },
-  nextMissionComingSoon: { en: "SOC Night Shift — coming soon", ar: "مناوبة مركز العمليات الليلية — قريبًا" },
+  nextMissionCta: { en: "Start mission →", ar: "ابدأ المهمة ←" },
   backToLabs: { en: "Back to Decision Labs", ar: "العودة إلى معامل القرار" },
   restart: { en: "Defend Again", ar: "دافع مرة أخرى" },
   strictEvaluationNote: {
@@ -920,7 +920,9 @@ function CompleteScreen({
       <Card data-brand="labs">
         <CardContent className="flex flex-col items-center gap-3 pt-6 text-center">
           <h3 className="font-display text-lg font-semibold text-text-primary">{pick(COPY.nextMission, locale)}</h3>
-          <Badge variant="outline">{pick(COPY.nextMissionComingSoon, locale)}</Badge>
+          <Button asChild className="w-full tablet:w-auto">
+            <Link href="/challenge/soc-night-shift">{pick(COPY.nextMissionCta, locale)}</Link>
+          </Button>
           <Button asChild variant="outline" className="w-full tablet:w-auto">
             <Link href="/labs/decision-labs">{pick(COPY.backToLabs, locale)}</Link>
           </Button>
