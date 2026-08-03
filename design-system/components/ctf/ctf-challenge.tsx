@@ -24,6 +24,7 @@ import type {
   CryptoArtifact,
   ForensicsArtifact,
   WebArtifact,
+  WebSourceArtifact,
 } from "@/lib/ctf/types";
 import {
   getOrCreateAnonId,
@@ -737,7 +738,7 @@ function WorkstationScreen({
               )}
               {challenge.category === "crypto" && (
                 <CryptoArtifactPanel
-                  artifact={stage.artifact as CryptoArtifact}
+                  artifact={stage.artifact as CryptoArtifact | WebSourceArtifact}
                   locale={locale}
                   workstationState={stageState}
                   onWorkstationChange={stageOnChange}
@@ -1068,11 +1069,20 @@ function CryptoArtifactPanel({
   workstationState,
   onWorkstationChange,
 }: {
-  artifact: CryptoArtifact;
+  artifact: CryptoArtifact | WebSourceArtifact;
   locale: AppLocale;
   workstationState: CtfWorkstationState;
   onWorkstationChange: (patch: CtfWorkstationState) => void;
 }) {
+  // A crypto-category challenge can still use an html_source artifact
+  // for an earlier "read the config file" stage (e.g. "The Weak Key")
+  // before its final stage becomes actual ciphertext. Route that kind
+  // to the same read-only source viewer the web category uses, instead
+  // of falling through to the stacked-encoding panel below, which reads
+  // a .encodedText field this artifact shape doesn't have.
+  if (artifact.kind === "html_source") {
+    return <WebSourcePanel artifact={artifact} locale={locale} />;
+  }
   if (artifact.kind === "caesar_shift") {
     return (
       <CryptoCaesarPanel
