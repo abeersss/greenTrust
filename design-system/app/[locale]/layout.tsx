@@ -13,6 +13,7 @@ import { MotionProvider, PageTransition } from "@/components/motion";
 import { JsonLd } from "@/components/site/json-ld";
 import { AnalyticsScript } from "@/components/site/analytics-script";
 import { RoutePageView } from "@/components/analytics/route-page-view";
+import { LabsMascot } from "@/components/labs/labs-mascot";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, localeDir, type AppLocale } from "@/lib/i18n/config";
@@ -75,6 +76,14 @@ export async function generateMetadata({
  * useTranslations works in Client Components, and renders the
  * site-wide Organization/WebSite JSON-LD once here rather than
  * per-page.
+ *
+ * `<LabsMascot />` (2026-08-03) is rendered once here rather than in
+ * every individual lab/challenge page; the component itself decides
+ * whether to render anything based on the current route (Decision
+ * Labs, CTF challenges, achievements, account), so this is the single
+ * shared insertion point for the founder's "small recurring mascot"
+ * across all of Labs/CTF, with no per-page wiring needed as more labs
+ * or challenges are added later.
  */
 export default async function LocaleLayout({
   children,
@@ -133,6 +142,7 @@ export default async function LocaleLayout({
               </main>
               <SiteFooter locale={locale as AppLocale} />
               <Toaster />
+              <LabsMascot />
             </TooltipProvider>
             </MotionProvider>
           </BrandProvider>

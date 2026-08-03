@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/site/json-ld";
+import { SiteIdentityAudio } from "@/components/site/site-identity-audio";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
@@ -56,6 +57,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <div className="flex flex-col">
+      {/* Site identity theme song (2026-08-03): muted-autoplay with a
+          click-to-unmute control, homepage-only per the founder's
+          explicit placement choice. */}
+      <SiteIdentityAudio locale={l} />
       <JsonLd
         data={{
           "@context": "https://schema.org",
