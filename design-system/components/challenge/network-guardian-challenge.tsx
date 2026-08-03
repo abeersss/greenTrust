@@ -26,7 +26,8 @@ import {
   clearChallengeProgress,
   type ChallengeLocalProgress,
 } from "@/lib/challenges/anon-session";
-import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser, BADGE_PASS_SCORE } from "@/lib/actions/challenge";
+import { saveAnonymousChallengeProgress, claimChallengeForCurrentUser } from "@/lib/actions/challenge";
+import { BADGE_PASS_SCORE } from "@/lib/challenges/keys";
 import { WinCelebration } from "@/components/shared/win-celebration";
 import { trackEvent } from "@/lib/analytics/track";
 import type { AppLocale } from "@/lib/i18n/config";
