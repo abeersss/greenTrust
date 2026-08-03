@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Playfair_Display, Dancing_Script } from "next/font/google";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { Link } from "@/lib/i18n/navigation";
 import { pick } from "@/lib/challenges/bilingual";
@@ -8,13 +9,21 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { siteUrl } from "@/lib/seo/site";
 import { ShieldCheck, ShieldX } from "lucide-react";
 
+// Decorative fonts for the certificate artwork only (English name /
+// title styling). Arabic keeps the site's existing font-display
+// family, which already has proper Arabic glyph coverage.
+const displayFont = Playfair_Display({ subsets: ["latin"], weight: ["700", "800", "900"] });
+const scriptFont = Dancing_Script({ subsets: ["latin"], weight: ["600", "700"] });
+
 const copy = {
   title: { en: "CTF Completion Certificate", ar: "شهادة إتمام تحديات CTF" },
   validBadge: { en: "Verified certificate", ar: "شهادة موثّقة" },
-  issuedTo: { en: "This certifies that", ar: "تشهد هذه الوثيقة بأن" },
+  certificateWord: { en: "Certificate", ar: "شهادة" },
+  ofAchievement: { en: "of Achievement", ar: "إنجاز" },
+  issuedTo: { en: "This certificate is proudly presented to", ar: "تُمنح هذه الشهادة بكل فخر إلى" },
   bodyText: {
-    en: "has successfully completed all six CyberAbeer Capture-the-Flag challenges, each cleared at 80% or higher.",
-    ar: "قد أتمّ/أتمّت بنجاح جميع تحديات CyberAbeer الستة من نوع Capture the Flag، بنسبة 80% أو أكثر لكل تحدٍ.",
+    en: "for successfully completing all six CyberAbeer Capture-the-Flag challenges, each cleared at 80% or higher.",
+    ar: "لإتمامه/إتمامها بنجاح جميع تحديات CyberAbeer الستة من نوع Capture the Flag، بنسبة 80% أو أكثر لكل تحدٍ.",
   },
   issuedOn: { en: "Issued on", ar: "تاريخ الإصدار" },
   reference: { en: "Reference code", ar: "رمز المرجع" },
@@ -52,15 +61,17 @@ export async function generateMetadata({
 /**
  * Public CTF Completion Certificate + verification page (2026-08-03,
  * founder instruction: "should show ref or QR to authenticate across
- * cyberabeer.com with my sign Dr. Abeer Alshammari"). Deliberately one
- * page for both purposes -- the certificate a learner shares IS the
- * verification page -- reached either by the link itself or by
- * scanning the QR code printed on it, which points back to this exact
- * URL. No login required to view: verifyCertificate
- * (lib/actions/certificate.ts) only ever returns the display-safe
- * fields (name, reference code, issue date), never the owning
- * account's user_id or email, so this is safe to expose to anyone who
- * has the link.
+ * cyberabeer.com with my sign Dr. Abeer Alshammari"; restyled
+ * 2026-08-03 to match the founder-provided certificate reference
+ * design -- a framed, ribbon-sealed certificate rather than a plain
+ * status card). Deliberately one page for both purposes -- the
+ * certificate a learner shares IS the verification page -- reached
+ * either by the link itself or by scanning the QR code printed on
+ * it, which points back to this exact URL. No login required to
+ * view: verifyCertificate (lib/actions/certificate.ts) only ever
+ * returns the display-safe fields (name, reference code, issue
+ * date), never the owning account's user_id or email, so this is
+ * safe to expose to anyone who has the link.
  */
 export default async function CertificatePage({
   params,
@@ -73,7 +84,7 @@ export default async function CertificatePage({
 
   const result = await verifyCertificate(referenceCode);
   const verifyUrl = `${siteUrl}/${l}/certificate/${referenceCode}`;
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verifyUrl)}`;
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}`;
   const issuedDate = result.issuedAt
     ? new Date(result.issuedAt).toLocaleDateString(l === "ar" ? "ar" : "en-US", {
         year: "numeric",
@@ -82,8 +93,11 @@ export default async function CertificatePage({
       })
     : "";
 
+  const nameFontClass = l === "en" ? scriptFont.className : "font-display italic";
+  const titleFontClass = l === "en" ? displayFont.className : "font-display";
+
   return (
-    <div data-brand="labs" className="mx-auto max-w-2xl px-4 py-16 tablet:px-6">
+    <div data-brand="labs" className="mx-auto max-w-3xl px-4 py-16 tablet:px-6">
       {!result.found ? (
         <div className="rounded-lg border border-border bg-surface p-8 text-center shadow-sm">
           <ShieldX className="mx-auto h-10 w-10 text-danger-500" aria-hidden="true" />
@@ -94,40 +108,100 @@ export default async function CertificatePage({
           </Link>
         </div>
       ) : (
-        <div className="rounded-lg border-2 border-accent/30 bg-surface p-10 text-center shadow-md">
+        <div>
           <div className="mx-auto mb-4 flex w-fit items-center gap-2 rounded-full bg-success-50 px-3 py-1 text-xs font-semibold text-success-700">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             {pick(copy.validBadge, l)}
           </div>
 
-          <p className="font-display text-lg text-text-secondary">{pick(copy.title, l)}</p>
-          <p className="mt-6 text-sm uppercase tracking-wide text-text-muted">{pick(copy.issuedTo, l)}</p>
-          <h1 className="mt-2 font-display text-3xl font-bold text-text-primary tablet:text-4xl">{result.fullName}</h1>
-          <p className="mx-auto mt-4 max-w-md text-text-secondary">{pick(copy.bodyText, l)}</p>
+          {/* Certificate artwork: green outer frame, gold inner
+              rule, dotted texture background -- matches the
+              founder-provided reference design. */}
+          <div className="rounded-xl bg-gradient-to-br from-green-800 via-green-700 to-green-800 p-[6px] shadow-xl">
+            <div className="rounded-[10px] border-2 border-yellow-500/80 p-[3px]">
+              <div
+                className="relative overflow-hidden rounded-lg bg-surface px-6 py-10 text-center tablet:px-14 tablet:py-14"
+                style={{
+                  backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)",
+                  backgroundSize: "18px 18px",
+                  color: "rgba(0,0,0,0.05)",
+                }}
+              >
+                {/* content wrapper resets text color since the dot
+                    pattern above uses `color` as its dot color */}
+                <div className="relative text-text-primary">
+                  {/* Ribbon medal seal */}
+                  <div className="relative mx-auto mb-2 h-20 w-16 tablet:absolute tablet:start-0 tablet:top-0 tablet:mx-0">
+                    <div
+                      className="absolute start-1/2 top-11 h-12 w-5 -translate-x-3 rotate-[8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:translate-x-3"
+                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%)" }}
+                    />
+                    <div
+                      className="absolute start-1/2 top-11 h-12 w-5 translate-x-2 rotate-[-8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:-translate-x-2"
+                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%)" }}
+                    />
+                    <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-yellow-300 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-600 shadow-md">
+                      <span className="font-display text-[11px] font-extrabold tracking-wide text-yellow-900">
+                        CTF
+                      </span>
+                    </div>
+                  </div>
 
-          <div className="mx-auto mt-8 flex max-w-xs items-center justify-between gap-6 border-t border-border pt-6 text-start">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-text-muted">{pick(copy.issuedOn, l)}</p>
-              <p className="text-sm font-semibold text-text-primary">{issuedDate}</p>
+                  <p className={`${titleFontClass} text-3xl font-extrabold uppercase tracking-wide text-text-primary tablet:text-4xl`}>
+                    {pick(copy.certificateWord, l)}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-[0.2em] text-green-700">
+                    {pick(copy.ofAchievement, l)}
+                  </p>
+
+                  <p className="mx-auto mt-8 max-w-md text-xs font-medium uppercase tracking-wide text-text-muted">
+                    {pick(copy.issuedTo, l)}
+                  </p>
+
+                  <h1
+                    className={`${nameFontClass} mx-auto mt-3 max-w-lg text-4xl font-bold leading-tight text-green-700 tablet:text-5xl`}
+                  >
+                    {result.fullName}
+                  </h1>
+                  <div className="mx-auto mt-3 h-px w-64 bg-text-primary/30" />
+
+                  <p className="mx-auto mt-4 max-w-md text-sm text-text-secondary">{pick(copy.bodyText, l)}</p>
+
+                  <div className="mx-auto mt-10 grid max-w-md grid-cols-3 items-end gap-4 border-t border-dashed border-border pt-6 text-start">
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        {pick(copy.issuedOn, l)}
+                      </p>
+                      <p className="text-xs font-semibold text-text-primary">{issuedDate}</p>
+                      <p className="mt-3 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        {pick(copy.reference, l)}
+                      </p>
+                      <p className="font-mono text-[11px] text-text-primary">{result.referenceCode}</p>
+                    </div>
+
+                    <div className="flex justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- a
+                          plain <img> avoids registering api.qrserver.com as a
+                          next/image remote pattern for one small, non-critical
+                          decorative code image. */}
+                      <img src={qrSrc} alt="" width={64} height={64} className="shrink-0 rounded" />
+                    </div>
+
+                    <div className="text-end">
+                      <p className={`${nameFontClass} text-lg text-text-primary`}>{pick(copy.signature, l)}</p>
+                      <div className="mt-1 border-t border-text-primary/40 pt-1">
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-text-secondary">
+                          {pick(copy.signatureTitle, l)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            {/* eslint-disable-next-line @next/next/no-img-element -- a
-                plain <img> avoids registering api.qrserver.com as a
-                next/image remote pattern for one small, non-critical
-                decorative code image. */}
-            <img src={qrSrc} alt="" width={80} height={80} className="shrink-0 rounded" />
           </div>
 
-          <div className="mx-auto mt-6 max-w-xs border-t border-border pt-4 text-start">
-            <p className="text-xs font-medium uppercase tracking-wide text-text-muted">{pick(copy.reference, l)}</p>
-            <p className="font-mono text-sm text-text-primary">{result.referenceCode}</p>
-          </div>
-
-          <div className="mt-8 border-t border-border pt-6">
-            <p className="font-display text-lg italic text-text-primary">{pick(copy.signature, l)}</p>
-            <p className="text-sm text-text-secondary">{pick(copy.signatureTitle, l)}</p>
-          </div>
-
-          <p className="mx-auto mt-6 max-w-sm text-xs text-text-muted">{pick(copy.verifyNote, l)}</p>
+          <p className="mx-auto mt-6 max-w-sm text-center text-xs text-text-muted">{pick(copy.verifyNote, l)}</p>
         </div>
       )}
     </div>
