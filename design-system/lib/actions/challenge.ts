@@ -7,26 +7,12 @@ import { registerSchema } from "@/lib/validation/schemas";
 import { actionError, actionSuccess, type ActionResult } from "./types";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/request-ip";
-import { CHALLENGE_KEYS, CHALLENGE_BADGE_KEYS, type ChallengeKey } from "@/lib/challenges/keys";
+import { CHALLENGE_KEYS, CHALLENGE_BADGE_KEYS, BADGE_PASS_SCORE, type ChallengeKey } from "@/lib/challenges/keys";
 import { sendEmail } from "@/lib/email/send";
 import { welcomeEmail } from "@/lib/email/templates";
 import { safeAuthErrorMessage, buildEmailRedirectTo } from "./auth-helpers";
 import { getTranslations } from "next-intl/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
-
-/**
- * The pass threshold every challenge (Decision Labs and CTF alike)
- * must clear to actually "win" and earn its badge. Founder instruction
- * (2026-08-02): scoring must be strict -- reaching 100% completion
- * with a lot of hints/mistakes is not the same as winning, so a badge
- * (and the win celebration) is only awarded once `score >= 80`. This
- * is intentionally non-retroactive: it only gates *future* claims
- * through claimForUser below, so badges already awarded to existing
- * players before this change are never revoked. Exported so client
- * components can show the identical "80%+ required" copy/gating
- * without duplicating the number.
- */
-export const BADGE_PASS_SCORE = 80;
 
 const saveProgressSchema = z.object({
   anonId: z.string().uuid(),
