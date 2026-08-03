@@ -31,6 +31,16 @@ interface LabEntry {
   accent: string;
 }
 
+/**
+ * All 6 labs live (2026-08-03): GRCL Innovation Under Fire and Agent
+ * Zero were previously marked href: null / "Coming soon" here even
+ * though both pages (/challenge/grcl-innovation,
+ * /challenge/agent-zero) were fully built, wired into shared XP/badge
+ * infra, and given the same 80%-pass-gate + WinCelebration treatment
+ * as the other 4 labs. This page's LABS array simply never got
+ * updated after those builds landed, so it was quietly telling
+ * visitors two live labs weren't ready yet.
+ */
 const LABS: LabEntry[] = [
   {
     key: "phishing-hunter",
@@ -114,10 +124,10 @@ export async function generateMetadata({
 /**
  * Production UX fix (2026-07-27): the "Scenario Labs" card on the main
  * Labs landing page previously went nowhere. This is its real
- * destination: every Decision Lab in the current build order, all six
- * now live (Phishing Hunter, Network Guardian, SOC Night Shift, Data
- * Guardian, GRCL: Innovation Under Fire, and Agent Zero) -- never a
- * dead link pretending to be live, and never hidden entirely.
+ * destination: every Decision Lab in the current build order, each
+ * either a live link (Phishing Hunter) or clearly marked "Coming
+ * soon" (never a dead link pretending to be live, and never hidden
+ * entirely, so a visitor can see the full roadmap).
  */
 export default async function DecisionLabsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
