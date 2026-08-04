@@ -33,6 +33,14 @@ const copy = {
  * has spaces and parentheses, so it's referenced through
  * encodeURIComponent rather than a literal path, matching the same
  * convention already used for the Labs/CTF win sound.
+ *
+ * 2026-08-04 revision (founder feedback: "where is cyberabeer song
+ * ... return with sound icon with color"): the control was easy to
+ * miss -- a plain gray icon on a white circle with no visual weight.
+ * It now uses the brand's primary token as a solid fill so it reads
+ * as a deliberate, colorful control rather than blending into the
+ * page chrome, plus a soft pulse ring while muted to draw a first-
+ * time visitor's eye to it.
  */
 export function SiteIdentityAudio({ locale }: { locale: AppLocale }) {
   const [muted, setMuted] = React.useState(true);
@@ -63,8 +71,14 @@ export function SiteIdentityAudio({ locale }: { locale: AppLocale }) {
         onClick={handleToggle}
         title="CyberAbeer site theme — created by Dr. Abeer Alshammari"
         aria-label={muted ? copy.unmute[locale] : copy.mute[locale]}
-        className="fixed bottom-4 z-toast flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text-secondary shadow-lg transition-colors hover:text-text-primary [inset-inline-end:1rem]"
+        className="fixed bottom-4 z-toast flex h-11 w-11 items-center justify-center rounded-full bg-primary text-text-on-primary shadow-lg transition-colors hover:bg-primary-hover [inset-inline-end:1rem]"
       >
+        {muted && (
+          <span
+            className="absolute inset-0 -z-10 animate-ping rounded-full bg-primary opacity-40"
+            aria-hidden="true"
+          />
+        )}
         {muted ? (
           <VolumeX className="h-5 w-5" aria-hidden="true" />
         ) : (
