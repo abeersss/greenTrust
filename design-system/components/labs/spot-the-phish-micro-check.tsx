@@ -91,12 +91,21 @@ export function SpotThePhishMicroCheck({ locale }: { locale: AppLocale }) {
                 key={option.id}
                 type="button"
                 variant={isSelected ? (option.correct ? "primary" : "destructive") : "outline"}
-                className={cn("justify-between", showState && !isSelected && "opacity-60")}
+                // Same overflow fix as MicroCheck (2026-08-04): a
+                // nowrap grid-item button forces its track wider than
+                // the card once a label is long enough, which shows
+                // up as the option row visibly overflowing the card's
+                // right edge. min-w-0 + whitespace-normal + h-auto
+                // let it shrink and wrap instead.
+                className={cn(
+                  "h-auto min-h-10 w-full min-w-0 items-center justify-between gap-3 whitespace-normal py-2.5 text-start",
+                  showState && !isSelected && "opacity-60",
+                )}
                 onClick={() => handleSelect(option.id, option.correct)}
                 disabled={showState}
               >
                 {option.label[locale]}
-                {isSelected && (option.correct ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : <XCircle className="h-4 w-4" aria-hidden="true" />)}
+                {isSelected && (option.correct ? <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" /> : <XCircle className="h-4 w-4 shrink-0" aria-hidden="true" />)}
               </Button>
             );
           })}

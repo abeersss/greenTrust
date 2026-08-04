@@ -18,7 +18,7 @@ import type { QuickCheckDef } from "@/lib/labs/quick-checks-data";
  * (bespoke, left as-is) but is data-driven via QuickCheckDef so each
  * of the five new checks doesn't need its own component file. No
  * persistence, XP, or badge is attached, matching the format's scope
- * — it exists to be a real, working exercise and to route an
+ * -- it exists to be a real, working exercise and to route an
  * interested learner to the full Decision Lab that covers the topic.
  */
 export function MicroCheck({ def, locale }: { def: QuickCheckDef; locale: AppLocale }) {
@@ -56,7 +56,25 @@ export function MicroCheck({ def, locale }: { def: QuickCheckDef; locale: AppLoc
                 key={option.id}
                 type="button"
                 variant={isSelected ? (option.correct ? "primary" : "destructive") : "outline"}
-                className={cn("justify-between text-start", showState && !isSelected && "opacity-60")}
+                // Fix (2026-08-04): the base Button variants force
+                // `whitespace-nowrap` and a fixed `h-10`, which is
+                // fine for short labels but let long answer options
+                // (e.g. "Nowhere -- internal LANs don't need one if
+                // they use strong passwords") force their own
+                // intrinsic min-width past the grid cell -- as a
+                // grid item, a nowrap button's minimum width defaults
+                // to its full unwrapped content width, so the button
+                // overflowed the card's right edge instead of
+                // shrinking to fit. `min-w-0` lets the grid item
+                // shrink below that intrinsic width, `whitespace-normal`
+                // lets the label actually wrap once it does, and
+                // `h-auto` + vertical padding replace the fixed
+                // single-line height so wrapped two-line labels have
+                // room instead of being clipped.
+                className={cn(
+                  "h-auto min-h-10 w-full min-w-0 items-center justify-between gap-3 whitespace-normal py-2.5 text-start",
+                  showState && !isSelected && "opacity-60",
+                )}
                 onClick={() => handleSelect(option.id, option.correct)}
                 disabled={showState}
               >
