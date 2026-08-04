@@ -32,8 +32,8 @@ const copy = {
   },
   browseCtf: { en: "Browse CTF Challenges", ar: "تصفح تحديات CTF" },
   allDone: {
-    en: "All six flags captured. Enter your name to generate your certificate.",
-    ar: "تم جمع الأعلام الستة كلها. أدخل اسمك لإصدار شهادتك.",
+    en: "All six flags captured. Confirm your name to generate your certificate.",
+    ar: "تم جمع الأعلام الستة كلها. أكّد اسمك لإصدار شهادتك.",
   },
   alreadyIssued: { en: "Your certificate has already been issued.", ar: "تم إصدار شهادتك بالفعل." },
   viewCertificate: { en: "View your certificate →", ar: "عرض شهادتك ←" },
@@ -149,7 +149,7 @@ export default async function CtfCertificatePage({ params }: { params: Promise<{
                 <div className="mt-6">
                   <CheckCircle2 className="mx-auto h-8 w-8 text-success-600" aria-hidden="true" />
                   <p className="mt-2 text-text-secondary">{pick(copy.allDone, l)}</p>
-                  <CertificateClaimForm locale={l} />
+                  <CertificateClaimForm locale={l} accountFullName={status.accountFullName} />
                 </div>
               )}
             </>
