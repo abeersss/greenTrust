@@ -12,8 +12,9 @@ import { Link } from "@/lib/i18n/navigation";
 import { pick } from "@/lib/challenges/bilingual";
 import { getCtfChallengesByCategory } from "@/lib/ctf/challenges";
 import { getCtfCompletionStatus } from "@/lib/actions/certificate";
+import { CtfPathRail } from "@/components/ctf/ctf-path-rail";
 import type { CtfCategory, CtfChallenge, CtfDifficulty } from "@/lib/ctf/types";
-import { Flag, Globe, FileSearch, KeyRound, Sparkles, Award } from "lucide-react";
+import { Flag, Globe, FileSearch, KeyRound, Sparkles } from "lucide-react";
 
 const copy = {
   title: { en: "CyberAbeer CTF", ar: "تحديات CyberAbeer CTF" },
@@ -146,19 +147,20 @@ export default async function CtfPage({ params }: { params: Promise<{ locale: st
         </div>
         <h1 className="font-display text-3xl font-bold text-text-primary tablet:text-4xl">{copy.title[l]}</h1>
         <p className="mx-auto mt-4 text-lg text-text-secondary">{copy.intro[l]}</p>
-
-        {certStatus.signedIn && certStatus.completedChallenges > 0 && (
-          <Link
-            href="/labs/ctf/certificate"
-            className="mt-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent hover:bg-accent/20"
-          >
-            <Award className="h-4 w-4" aria-hidden="true" />
-            {certStatus.allComplete
-              ? pick(copy.certificateReady, l)
-              : `${certStatus.completedChallenges}/${certStatus.totalChallenges} ${pick(copy.certificateProgress, l)}`}
-          </Link>
-        )}
       </section>
+
+      {certStatus.signedIn && (
+        <div className="mx-auto max-w-6xl px-4 tablet:px-6">
+          <CtfPathRail
+            locale={l}
+            challenges={CATEGORY_ORDER.flatMap((category) => getCtfChallengesByCategory(category))}
+            completedBadgeKeys={certStatus.completedBadgeKeys}
+            allComplete={certStatus.allComplete}
+            certificateReference={certStatus.certificateReference}
+            signedIn={certStatus.signedIn}
+          />
+        </div>
+      )}
 
       <section className="mx-auto max-w-6xl px-4 pb-16 tablet:px-6">
         <div className="space-y-12">
