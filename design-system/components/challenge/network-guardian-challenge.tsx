@@ -299,8 +299,8 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   const startedAnalytics = React.useRef(false);
   const autoClaimAttempted = React.useRef(false);
 
-  const mission = missions[missionIndex];
-  const current = missionState[mission?.id] ?? { placedControls: [], hintsUsed: 0 };
+  const mission = missions[missionIndex] ?? missions[0]!;
+  const current = missionState[mission.id] ?? { placedControls: [], hintsUsed: 0 };
 
   React.useEffect(() => {
     if (hydrated.current) return;
