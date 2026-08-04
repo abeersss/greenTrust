@@ -56,6 +56,14 @@ const MASCOT_ROUTE_PREFIXES = ["/labs", "/challenge", "/achievements", "/account
  * the browser blocks audio, so it never gets in the way of the
  * bubble's actual job of showing the hint.
  *
+ * 2026-08-04 (later still, founder feedback: a screenshot showed
+ * Chrome's built-in "hover to pop out" picture-in-picture icon
+ * appearing over the mascot's video on hover): disablePictureInPicture
+ * (plus a matching CSS fallback that hides the -webkit PiP button for
+ * older engines) turns that off, since it's a browser chrome affordance
+ * for pausable/seekable video, not something this always-looping,
+ * silent, decorative avatar should ever expose.
+ *
  * Rendered once in the root layout rather than per-page; new labs and
  * CTF challenges automatically get a working (if generic) explanation
  * the moment they're added to route-hints.ts, with zero per-page
@@ -122,9 +130,12 @@ export function LabsMascot() {
           muted
           loop
           playsInline
+          disablePictureInPicture
+          disableRemotePlayback
+          controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
           title="CyberAbeer Labs mascot — created by Dr. Abeer Alshammari"
           aria-hidden="true"
-          className="h-16 w-16 rounded-full border-2 border-border bg-surface object-cover shadow-lg tablet:h-20 tablet:w-20"
+          className="h-16 w-16 rounded-full border-2 border-border bg-surface object-cover shadow-lg tablet:h-20 tablet:w-20 [&::-webkit-media-controls-picture-in-picture-button]:hidden [&::-webkit-media-controls]:hidden"
         />
       </button>
     </div>
