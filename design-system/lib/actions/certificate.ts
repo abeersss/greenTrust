@@ -35,6 +35,12 @@ const CTF_CERTIFICATE_TYPE = "ctf_completion";
 export interface CtfCompletionStatus {
   totalChallenges: number;
   completedChallenges: number;
+  /** Badge keys (e.g. "flag_hidden_in_plain_sight") this user has
+   * actually earned, out of CTF_BADGE_KEYS. Added so the CTF Path rail
+   * (components/ctf/ctf-path-rail.tsx) can mark each individual
+   * challenge node complete rather than only showing an aggregate
+   * count -- the count alone can't say *which* flags are done. */
+  completedBadgeKeys: string[];
   allComplete: boolean;
   certificateReference: string | null;
   signedIn: boolean;
@@ -55,12 +61,19 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { totalChallenges, completedChallenges: 0, allComplete: false, certificateReference: null, signedIn: false };
+    return {
+      totalChallenges,
+      completedChallenges: 0,
+      completedBadgeKeys: [],
+      allComplete: false,
+      certificateReference: null,
+      signedIn: false,
+    };
   }
 
   try {
     const admin = createSupabaseServiceRoleClient();
-    const { completedChallenges, allComplete } = await countEarnedCtfBadges(admin, user.id);
+    const { completedChallenges, allComplete, completedBadgeKeys } = await countEarnedCtfBadges(admin, user.id);
 
     let certificateReference: string | null = null;
     if (allComplete) {
@@ -73,10 +86,17 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
       certificateReference = existing?.reference_code ?? null;
     }
 
-    return { totalChallenges, completedChallenges, allComplete, certificateReference, signedIn: true };
+    return { totalChallenges, completedChallenges, completedBadgeKeys, allComplete, certificateReference, signedIn: true };
   } catch (err) {
     console.error("getCtfCompletionStatus failed", err);
-    return { totalChallenges, completedChallenges: 0, allComplete: false, certificateReference: null, signedIn: true };
+    return {
+      totalChallenges,
+      completedChallenges: 0,
+      completedBadgeKeys: [],
+      allComplete: false,
+      certificateReference: null,
+      signedIn: true,
+    };
   }
 }
 
@@ -90,13 +110,14 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
 async function countEarnedCtfBadges(
   admin: ReturnType<typeof createSupabaseServiceRoleClient>,
   userId: string
-): Promise<{ completedChallenges: number; allComplete: boolean }> {
-  const { data: badgeDefs, error: badgeDefErr } = await admin.from("badges").select("id").in("key", CTF_BADGE_KEYS);
+): Promise<{ completedChallenges: number; allComplete: boolean; completedBadgeKeys: string[] }> {
+  const { data: badgeDefs, error: badgeDefErr } = await admin.from("badges").select("id, key").in("key", CTF_BADGE_KEYS);
   if (badgeDefErr) throw badgeDefErr;
 
-  const badgeIds = (badgeDefs ?? []).map((row) => row.id as string);
+  const idToKey = new Map((badgeDefs ?? []).map((row) => [row.id as string, row.key as string]));
+  const badgeIds = [...idToKey.keys()];
   if (badgeIds.length === 0) {
-    return { completedChallenges: 0, allComplete: false };
+    return { completedChallenges: 0, allComplete: false, completedBadgeKeys: [] };
   }
 
   const { data: earned, error: earnedErr } = await admin
@@ -106,8 +127,10 @@ async function countEarnedCtfBadges(
     .in("badge_id", badgeIds);
   if (earnedErr) throw earnedErr;
 
-  const completedChallenges = new Set((earned ?? []).map((row) => row.badge_id as string)).size;
-  return { completedChallenges, allComplete: completedChallenges >= CTF_BADGE_KEYS.length };
+  const earnedIds = new Set((earned ?? []).map((row) => row.badge_id as string));
+  const completedBadgeKeys = [...earnedIds].map((id) => idToKey.get(id)).filter((key): key is string => Boolean(key));
+  const completedChallenges = completedBadgeKeys.length;
+  return { completedChallenges, allComplete: completedChallenges >= CTF_BADGE_KEYS.length, completedBadgeKeys };
 }
 
 const issueCertificateSchema = z.object({
