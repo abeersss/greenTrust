@@ -17,6 +17,8 @@ import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
 import { getCtfAchievementByBadgeKey } from "@/lib/achievements/ctf-catalog";
 import BadgeTile from "@/components/account/badge-tile";
 import { siteUrl } from "@/lib/seo/site";
+import { getCtfCompletionStatus } from "@/lib/actions/certificate";
+import { User, Award } from "lucide-react";
 
 /**
  * Mirrors BadgeTile's own slug map so the share URL points at the
@@ -168,18 +170,57 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
     ? new Intl.DateTimeFormat(locale, { year: "numeric", month: "long" }).format(new Date(profile.created_at))
     : "";
 
+  // CTF certificate CTA (CTF 2.0 Phase 2, founder instruction: "make
+  // it a certificate for CTF that can be shown under account"). Reuses
+  // the same getCtfCompletionStatus the CTF Path rail reads, so the
+  // account page and /labs/ctf never disagree about whether a
+  // certificate exists yet.
+  const ctfCertStatus = await getCtfCompletionStatus();
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 tablet:px-6">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">{t("title")}</p>
-          <h1 className="font-display text-2xl font-bold text-text-primary tablet:text-3xl">
-            {profile?.full_name || t("title")}
-          </h1>
-          {memberSince && <p className="mt-1 text-sm text-text-muted">{t("memberSince", { date: memberSince })}</p>}
+        <div className="flex items-start gap-3">
+          {/* Account avatar (founder instruction: "make my account an
+              icon of user"). A generic user-circle glyph rather than a
+              photo upload -- there is no avatar-image field or upload
+              flow in this schema, and initials would require choosing
+              a deterministic color scheme; the icon is the simplest
+              correct representation of "this is a person's account". */}
+          <span
+            className="mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary tablet:h-14 tablet:w-14"
+            aria-hidden="true"
+          >
+            <User className="h-6 w-6 tablet:h-7 tablet:w-7" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">{t("title")}</p>
+            <h1 className="font-display text-2xl font-bold text-text-primary tablet:text-3xl">
+              {profile?.full_name || t("title")}
+            </h1>
+            {memberSince && <p className="mt-1 text-sm text-text-muted">{t("memberSince", { date: memberSince })}</p>}
+          </div>
         </div>
         <LogoutButton label={t("logoutCta")} />
       </div>
+
+      {ctfCertStatus.allComplete && (
+        <Link
+          href={
+            ctfCertStatus.certificateReference ? `/certificate/${ctfCertStatus.certificateReference}` : "/labs/ctf/certificate"
+          }
+          className="mt-6 flex items-center gap-3 rounded-lg border border-yellow-500/40 bg-gradient-to-r from-yellow-50 to-transparent px-4 py-3 text-sm font-semibold text-yellow-800 hover:from-yellow-100"
+        >
+          <Award className="h-5 w-5 shrink-0" aria-hidden="true" />
+          {locale === "ar"
+            ? ctfCertStatus.certificateReference
+              ? "شهادة إتمام CTF جاهزة — عرضها ←"
+              : "أكملت جميع تحديات CTF — احصل على شهادتك ←"
+            : ctfCertStatus.certificateReference
+              ? "Your CTF certificate is ready — view it →"
+              : "All CTF challenges complete — claim your certificate →"}
+        </Link>
+      )}
 
       <Card className="mt-8">
         <CardContent className="flex items-center justify-between py-6">
