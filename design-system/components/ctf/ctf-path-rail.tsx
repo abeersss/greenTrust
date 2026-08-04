@@ -154,14 +154,28 @@ export function CtfPathRail({
               </span>
             </Link>
           ) : (
-            <div className="flex flex-col items-center gap-1.5 p-1" title={pick(copy.certificateLockedHint, locale)}>
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-border-strong bg-surface text-text-muted">
+            /* Locked state (fewer than 6 flags captured): still a real
+               link, not an inert div. An earlier version rendered this
+               as a plain <div title="..."> -- the only feedback on
+               click was a native browser tooltip, which is invisible
+               on mobile/tap and easy to miss on desktop, so the node
+               looked broken/unresponsive even though it was working
+               as designed. Now it always navigates to the certificate
+               page, which shows the real "X/6 captured" progress and
+               explains exactly what's left -- clicking a locked node
+               is never a dead end. */
+            <Link
+              href="/labs/ctf/certificate"
+              className="group flex flex-col items-center gap-1.5 rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              title={pick(copy.certificateLockedHint, locale)}
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-border-strong bg-surface text-text-muted transition-colors group-hover:border-primary group-hover:text-primary">
                 <Lock className="h-4 w-4" aria-hidden="true" />
               </span>
-              <span className="max-w-[6rem] text-center text-[11px] font-medium leading-tight text-text-muted">
+              <span className="max-w-[6rem] text-center text-[11px] font-medium leading-tight text-text-muted group-hover:text-primary">
                 {pick(copy.certificateNode, locale)}
               </span>
-            </div>
+            </Link>
           )}
         </li>
       </ol>
