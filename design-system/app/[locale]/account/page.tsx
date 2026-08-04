@@ -86,7 +86,7 @@ function buildBadgeShareUrl(
  */
 function buildBadgeImageUrl(locale: string, badgeKey: string, name: string, number: string | undefined) {
   const params = new URLSearchParams({ name, number: number ?? "", locale });
-  return `${siteUrl}/badge-image/${encodeURIComponent(badgeKey)}?${params.toString()}`;
+  return `${siteUrl}/api/badge-image/${encodeURIComponent(badgeKey)}?${params.toString()}`;
 }
 
 export async function generateMetadata({
