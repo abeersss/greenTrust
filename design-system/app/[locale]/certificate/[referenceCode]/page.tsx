@@ -7,6 +7,7 @@ import { pick } from "@/lib/challenges/bilingual";
 import { verifyCertificate } from "@/lib/actions/certificate";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { siteUrl } from "@/lib/seo/site";
+import CertificateShareButton from "@/components/certificate/certificate-share-button";
 import { ShieldCheck, ShieldX } from "lucide-react";
 
 // Decorative fonts for the certificate artwork only (English name /
@@ -33,6 +34,7 @@ const copy = {
     en: "Authenticated on cyberabeer.com. Scan the QR code or visit this page directly to re-verify at any time.",
     ar: "تم التحقق عبر موقع cyberabeer.com. امسح رمز QR أو زر هذه الصفحة مباشرة لإعادة التحقق في أي وقت.",
   },
+  shareLabel: { en: "Share", ar: "مشاركة" },
   notFoundTitle: { en: "Certificate not found", ar: "الشهادة غير موجودة" },
   notFoundBody: {
     en: "We could not verify a certificate with this reference code. Double-check the link or QR code, or contact support if you believe this is an error.",
@@ -49,12 +51,40 @@ export async function generateMetadata({
   const { locale, referenceCode } = await params;
   if (!isAppLocale(locale)) notFound();
   const l = locale as AppLocale;
+  const result = await verifyCertificate(referenceCode);
+
+  // Founder instruction (2026-08-04): "make sharing for certificate
+  // as an image post with link to site." Only wire a real OG/Twitter
+  // image once the certificate actually verified -- an unresolved
+  // reference code has no name or issue date to render, and this
+  // page's own notFound branch below already handles that case with
+  // plain text, no image needed. buildMetadata's own `ogImagePath`
+  // param already builds correctly-shaped openGraph/twitter blocks,
+  // so passing the certificate image straight through here is safer
+  // than manually re-assembling those objects.
+  let ogImagePath: string | undefined;
+  if (result.found) {
+    const issuedDate = result.issuedAt
+      ? new Date(result.issuedAt).toLocaleDateString(l === "ar" ? "ar" : "en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "";
+    ogImagePath = `${siteUrl}/api/certificate-image/${encodeURIComponent(referenceCode)}?${new URLSearchParams({
+      name: result.fullName ?? "",
+      locale,
+      issued: issuedDate,
+    }).toString()}`;
+  }
+
   return buildMetadata({
     locale,
     path: `certificate/${referenceCode}`,
     title: copy.title[l],
     description: pick(copy.bodyText, l),
     noIndex: true,
+    ogImagePath,
   });
 }
 
@@ -72,6 +102,20 @@ export async function generateMetadata({
  * returns the display-safe fields (name, reference code, issue
  * date), never the owning account's user_id or email, so this is
  * safe to expose to anyone who has the link.
+ *
+ * 2026-08-04 revision (founder feedback on the live page): the
+ * signature block used to sit in the last of three equal-width grid
+ * columns, too narrow for "Dr. Abeer Alshammari" in the cursive
+ * signature font, so it wrapped onto two lines. The grid now gives
+ * that column more room and the name itself no longer wraps. The
+ * founder also asked for the CTF ribbon seal to be adjusted rather
+ * than removed, so it's sized and spaced a little more generously
+ * than the original reference-image proportions. A Share button was
+ * also added (previously this page had no share affordance at all),
+ * wired the same way as the badge Share buttons on /account: native
+ * Web Share with the certificate image attached where supported,
+ * falling back to X/LinkedIn/Facebook links that carry this page's
+ * new Open Graph image (see app/api/certificate-image/[referenceCode]/route.ts).
  */
 export default async function CertificatePage({
   params,
@@ -95,6 +139,17 @@ export default async function CertificatePage({
 
   const nameFontClass = l === "en" ? scriptFont.className : "font-display italic";
   const titleFontClass = l === "en" ? displayFont.className : "font-display";
+  const imageUrl = result.found
+    ? `${siteUrl}/api/certificate-image/${encodeURIComponent(referenceCode)}?${new URLSearchParams({
+        name: result.fullName ?? "",
+        locale,
+        issued: issuedDate,
+      }).toString()}`
+    : "";
+  const shareText =
+    l === "ar"
+      ? `حصلت على شهادة إتمام تحديات CyberAbeer CTF!`
+      : `I just earned my CyberAbeer CTF Completion Certificate!`;
 
   return (
     <div data-brand="labs" className="mx-auto max-w-3xl px-4 py-16 tablet:px-6">
@@ -130,18 +185,22 @@ export default async function CertificatePage({
                 {/* content wrapper resets text color since the dot
                     pattern above uses `color` as its dot color */}
                 <div className="relative text-text-primary">
-                  {/* Ribbon medal seal */}
-                  <div className="relative mx-auto mb-2 h-20 w-16 tablet:absolute tablet:start-0 tablet:top-0 tablet:mx-0">
+                  {/* Ribbon medal seal -- enlarged and given more
+                      top clearance (2026-08-04 founder feedback:
+                      "adjust or remove"; chose to adjust rather than
+                      remove, since it's the certificate's one
+                      distinguishing seal element). */}
+                  <div className="relative mx-auto mb-3 h-24 w-20 tablet:absolute tablet:start-3 tablet:top-3 tablet:mx-0">
                     <div
-                      className="absolute start-1/2 top-11 h-12 w-5 -translate-x-3 rotate-[8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:translate-x-3"
+                      className="absolute start-1/2 top-[3.1rem] h-14 w-6 -translate-x-3.5 rotate-[8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:translate-x-3.5"
                       style={{ clipPath: "polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%)" }}
                     />
                     <div
-                      className="absolute start-1/2 top-11 h-12 w-5 translate-x-2 rotate-[-8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:-translate-x-2"
+                      className="absolute start-1/2 top-[3.1rem] h-14 w-6 translate-x-2.5 rotate-[-8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:-translate-x-2.5"
                       style={{ clipPath: "polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%)" }}
                     />
-                    <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-yellow-300 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-600 shadow-md">
-                      <span className="font-display text-[11px] font-extrabold tracking-wide text-yellow-900">
+                    <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full border-4 border-yellow-300 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-600 shadow-md">
+                      <span className="font-display text-xs font-extrabold tracking-wide text-yellow-900">
                         CTF
                       </span>
                     </div>
@@ -167,7 +226,16 @@ export default async function CertificatePage({
 
                   <p className="mx-auto mt-4 max-w-md text-sm text-text-secondary">{pick(copy.bodyText, l)}</p>
 
-                  <div className="mx-auto mt-10 grid max-w-md grid-cols-3 items-end gap-4 border-t border-dashed border-border pt-6 text-start">
+                  {/* Fix (2026-08-04, founder feedback: "my signature
+                      i want it in one line"): the bottom strip used
+                      to be three equal grid columns, and "Dr. Abeer
+                      Alshammari" in the cursive signature font didn't
+                      fit the narrow third column, so it wrapped.
+                      Giving that column noticeably more of the row
+                      (and the QR column only as much as its own
+                      fixed pixel size needs) plus whitespace-nowrap
+                      on the name itself keeps it on one line. */}
+                  <div className="mx-auto mt-10 grid max-w-lg grid-cols-[1fr_auto_1.5fr] items-end gap-4 border-t border-dashed border-border pt-6 text-start">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
                         {pick(copy.issuedOn, l)}
@@ -187,8 +255,10 @@ export default async function CertificatePage({
                       <img src={qrSrc} alt="" width={64} height={64} className="shrink-0 rounded" />
                     </div>
 
-                    <div className="text-end">
-                      <p className={`${nameFontClass} text-lg text-text-primary`}>{pick(copy.signature, l)}</p>
+                    <div className="min-w-0 text-end">
+                      <p className={`${nameFontClass} whitespace-nowrap text-base tablet:text-lg text-text-primary`}>
+                        {pick(copy.signature, l)}
+                      </p>
                       <div className="mt-1 border-t border-text-primary/40 pt-1">
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-text-secondary">
                           {pick(copy.signatureTitle, l)}
@@ -200,6 +270,17 @@ export default async function CertificatePage({
               </div>
             </div>
           </div>
+
+          {imageUrl && (
+            <CertificateShareButton
+              referenceCode={referenceCode}
+              shareUrl={verifyUrl}
+              shareImageUrl={imageUrl}
+              shareText={shareText}
+              shareLabel={pick(copy.shareLabel, l)}
+              locale={l === "ar" ? "ar" : "en"}
+            />
+          )}
 
           <p className="mx-auto mt-6 max-w-sm text-center text-xs text-text-muted">{pick(copy.verifyNote, l)}</p>
         </div>
