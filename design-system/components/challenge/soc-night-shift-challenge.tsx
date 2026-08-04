@@ -243,7 +243,7 @@ export function SocNightShiftChallenge({
     saveChallengeProgress(SOC_NIGHT_SHIFT_CHALLENGE_KEY, {
       currentStepIndex: Object.keys(decisions).length,
       stepsState: { decisions, investigatedClueIds },
-      startedAt,
+      startedAt: startedAt || new Date().toISOString(),
       completedAt: completedAt ?? new Date().toISOString(),
       claimed: true,
       claimedXp: result.xpAwarded,
