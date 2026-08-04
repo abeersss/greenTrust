@@ -26,7 +26,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     locale === "ar"
       ? "شارة تم الحصول عليها على منصة CyberAbeer للتوعية الأمنية."
       : "A badge earned on the CyberAbeer security awareness platform.";
-  const imageUrl = `${siteUrl}/badge-image/${encodeURIComponent(badgeKey)}?name=${encodeURIComponent(
+  const imageUrl = `${siteUrl}/api/badge-image/${encodeURIComponent(badgeKey)}?name=${encodeURIComponent(
     name,
   )}&number=${encodeURIComponent(number)}&locale=${locale}`;
   const pageUrl = `${siteUrl}/${locale}/badge/${encodeURIComponent(badgeKey)}?name=${encodeURIComponent(
@@ -59,8 +59,9 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
  * the intent link itself -- so every badge Share button on /account
  * now points here instead of straight at the challenge page. This
  * page's only job is to carry a real badge image in its OG/Twitter
- * meta tags (see app/badge-image/[badgeKey]/route.ts) and hand the
- * visitor back to the actual challenge.
+ * meta tags (see app/api/badge-image/[badgeKey]/route.ts -- an API
+ * route so next-intl's locale-prefix middleware never intercepts it)
+ * and hand the visitor back to the actual challenge.
  */
 export default async function BadgeSharePage({ params, searchParams }: PageProps) {
   const { locale, badgeKey } = await params;
