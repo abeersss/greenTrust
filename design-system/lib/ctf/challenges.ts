@@ -719,3 +719,9 @@ export function getCtfChallengeBySlug(slug: string): CtfChallenge | undefined {
 export function getCtfChallengesByCategory(category: CtfChallenge["category"]): CtfChallenge[] {
   return CTF_CHALLENGES.filter((challenge) => challenge.category === category);
 }
+
+
+export function getCtfBadgeName(badgeKey: string, locale: "en" | "ar"): string | undefined {
+    const challenge = CTF_CHALLENGES.find((c) => c.badge.key === badgeKey);
+    return challenge?.badge.name[locale];
+}
