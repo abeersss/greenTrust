@@ -7,6 +7,7 @@ import { usePathname } from "@/lib/i18n/navigation";
 import { pick } from "@/lib/challenges/bilingual";
 import { useMascotDisplayedHint } from "@/lib/mascot/mascot-context";
 import { getRouteHint } from "@/lib/mascot/route-hints";
+import { playMascotBubbleSound } from "@/lib/mascot/bubble-sound";
 import type { AppLocale } from "@/lib/i18n/config";
 
 const MASCOT_SRC = `/mascot/${encodeURIComponent(
@@ -45,6 +46,16 @@ const MASCOT_ROUTE_PREFIXES = ["/labs", "/challenge", "/achievements", "/account
  * navigation so it doesn't carry a stale explanation into the next
  * page.
  *
+ * 2026-08-04 (later, founder feedback: "have sound not picture"):
+ * tapping the mascot now plays a small synthesized "bubble pop" sound
+ * (playMascotBubbleSound, lib/mascot/bubble-sound.ts) the moment the
+ * explanation bubble opens -- the character itself is unchanged
+ * (still the founder-supplied video), but the *interaction* now has
+ * an audible cue instead of being a purely visual tap. Only fires when
+ * opening the bubble, not when dismissing it, and fails silently if
+ * the browser blocks audio, so it never gets in the way of the
+ * bubble's actual job of showing the hint.
+ *
  * Rendered once in the root layout rather than per-page; new labs and
  * CTF challenges automatically get a working (if generic) explanation
  * the moment they're added to route-hints.ts, with zero per-page
@@ -66,7 +77,11 @@ export function LabsMascot() {
   const hint = liveHint ?? getRouteHint(pathname ?? "");
 
   function handleToggle() {
-    setBubbleOpen((open) => !open);
+    setBubbleOpen((open) => {
+      const next = !open;
+      if (next) playMascotBubbleSound();
+      return next;
+    });
   }
 
   return (
