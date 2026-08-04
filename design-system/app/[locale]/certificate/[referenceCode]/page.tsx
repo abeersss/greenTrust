@@ -31,14 +31,14 @@ const copy = {
   signature: { en: "Dr. Abeer Alshammari", ar: "د. عبير الشمري" },
   signatureTitle: { en: "Founder, CyberAbeer", ar: "المؤسِّسة، CyberAbeer" },
   verifyNote: {
-    en: "Authenticated on cyberabeer.com. Scan the QR code or visit this page directly to re-verify at any time.",
-    ar: "تم التحقق عبر موقع cyberabeer.com. امسح رمز QR أو زر هذه الصفحة مباشرة لإعادة التحقق في أي وقت.",
+    en: "Authenticated on cyberabeer.com. Visit this page directly at any time to re-verify.",
+    ar: "تم التحقق عبر موقع cyberabeer.com. زر هذه الصفحة مباشرة في أي وقت لإعادة التحقق.",
   },
   shareLabel: { en: "Share", ar: "مشاركة" },
   notFoundTitle: { en: "Certificate not found", ar: "الشهادة غير موجودة" },
   notFoundBody: {
-    en: "We could not verify a certificate with this reference code. Double-check the link or QR code, or contact support if you believe this is an error.",
-    ar: "تعذّر التحقق من وجود شهادة بهذا الرمز المرجعي. تحقق من الرابط أو رمز QR، أو تواصل مع الدعم إذا كنت تعتقد أن هذا خطأ.",
+    en: "We could not verify a certificate with this reference code. Double-check the link, or contact support if you believe this is an error.",
+    ar: "تعذّر التحقق من وجود شهادة بهذا الرمز المرجعي. تحقق من الرابط، أو تواصل مع الدعم إذا كنت تعتقد أن هذا خطأ.",
   },
   backHome: { en: "← Back to CyberAbeer", ar: "← العودة إلى CyberAbeer" },
 } as const;
@@ -116,6 +116,16 @@ export async function generateMetadata({
  * Web Share with the certificate image attached where supported,
  * falling back to X/LinkedIn/Facebook links that carry this page's
  * new Open Graph image (see app/api/certificate-image/[referenceCode]/route.ts).
+ *
+ * 2026-08-04 (later, founder feedback: circled the QR code on a live
+ * screenshot -- it was rendering as a broken-image icon instead of an
+ * actual code, most likely api.qrserver.com being unreachable or
+ * blocked from the server). Rather than depend on a third-party QR
+ * service for something this decorative, the QR image is removed
+ * entirely; the reference code + Share button (which already carries
+ * the verification link) are enough to re-verify a certificate. The
+ * founder's original "should show ref or QR" instruction is still
+ * satisfied via the printed reference code shown in this same strip.
  */
 export default async function CertificatePage({
   params,
@@ -128,7 +138,6 @@ export default async function CertificatePage({
 
   const result = await verifyCertificate(referenceCode);
   const verifyUrl = `${siteUrl}/${l}/certificate/${referenceCode}`;
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}`;
   const issuedDate = result.issuedAt
     ? new Date(result.issuedAt).toLocaleDateString(l === "ar" ? "ar" : "en-US", {
         year: "numeric",
@@ -219,7 +228,7 @@ export default async function CertificatePage({
                       (and the QR column only as much as its own
                       fixed pixel size needs) plus whitespace-nowrap
                       on the name itself keeps it on one line. */}
-                  <div className="mx-auto mt-10 grid max-w-lg grid-cols-[1fr_auto_1.5fr] items-end gap-4 border-t border-dashed border-border pt-6 text-start">
+                  <div className="mx-auto mt-10 grid max-w-lg grid-cols-2 items-end gap-4 border-t border-dashed border-border pt-6 text-start">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
                         {pick(copy.issuedOn, l)}
@@ -229,14 +238,6 @@ export default async function CertificatePage({
                         {pick(copy.reference, l)}
                       </p>
                       <p className="font-mono text-[11px] text-text-primary">{result.referenceCode}</p>
-                    </div>
-
-                    <div className="flex justify-center">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- a
-                          plain <img> avoids registering api.qrserver.com as a
-                          next/image remote pattern for one small, non-critical
-                          decorative code image. */}
-                      <img src={qrSrc} alt="" width={64} height={64} className="shrink-0 rounded" />
                     </div>
 
                     <div className="min-w-0 text-end">
