@@ -32,27 +32,6 @@ export async function GET(request: Request) {
       ? "أتمّ جميع تحديات CyberAbeer الستة من نوع Capture the Flag"
       : "Completed all six CyberAbeer Capture-the-Flag challenges";
 
-  const seal = React.createElement(
-    "div",
-    {
-      style: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 128,
-        height: 128,
-        borderRadius: "50%",
-        background: "linear-gradient(135deg, #fde68a 0%, #eab308 55%, #b45309 100%)",
-        border: "6px solid #f8fafc",
-        fontSize: 24,
-        fontWeight: 700,
-        color: "#1c1305",
-        marginBottom: 32,
-      },
-    },
-    "CTF",
-  );
-
   const headingLine = React.createElement(
     "div",
     {
@@ -128,7 +107,6 @@ export async function GET(request: Request) {
         color: "#f8fafc",
       },
     },
-    seal,
     headingLine,
     nameLine,
     subLine,
