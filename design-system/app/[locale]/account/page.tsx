@@ -15,6 +15,7 @@ import { getAchievementSymbol } from "@/components/achievements/achievement-symb
 import { getCtfAchievementSymbol } from "@/components/achievements/ctf-symbols";
 import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
 import { getCtfAchievementByBadgeKey } from "@/lib/achievements/ctf-catalog";
+import { getCtfBadgeName } from "@/lib/ctf/challenges";
 import BadgeTile from "@/components/account/badge-tile";
 import { siteUrl } from "@/lib/seo/site";
 import { getCtfCompletionStatus } from "@/lib/actions/certificate";
@@ -55,6 +56,37 @@ function achievementForBadgeKey(badgeKey: string | undefined) {
   const achievementKey = BADGE_KEY_TO_ACHIEVEMENT[badgeKey];
   if (!achievementKey) return undefined;
   return ACHIEVEMENT_CATALOG.find((entry) => entry.key === achievementKey && entry.hasMedalArt);
+}
+
+/**
+ * Builds the public, unauthenticated /badge/[badgeKey] share-card URL
+ * used as `shareUrl` for every badge Share button (founder
+ * instruction, 2026-08-04: "the sharing will be with badge as image
+ * in the post"). X/LinkedIn/Facebook's link-preview scrapers read the
+ * Open Graph image from this page, not from the intent link itself,
+ * so every share now routes through here instead of straight at the
+ * challenge page.
+ */
+function buildBadgeShareUrl(
+  locale: string,
+  badgeKey: string,
+  name: string,
+  number: string | undefined,
+  backHref: string,
+) {
+  const params = new URLSearchParams({ name, number: number ?? "", back: backHref });
+  return `${siteUrl}/${locale}/badge/${encodeURIComponent(badgeKey)}?${params.toString()}`;
+}
+
+/**
+ * Direct PNG image URL for a badge (see
+ * app/badge-image/[badgeKey]/route.ts), passed to BadgeTile as
+ * `shareImageUrl` so it can fetch and attach the actual image to the
+ * native Web Share sheet on supporting devices.
+ */
+function buildBadgeImageUrl(locale: string, badgeKey: string, name: string, number: string | undefined) {
+  const params = new URLSearchParams({ name, number: number ?? "", locale });
+  return `${siteUrl}/badge-image/${encodeURIComponent(badgeKey)}?${params.toString()}`;
 }
 
 export async function generateMetadata({
@@ -241,9 +273,9 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
               const badgeKey = b.badges?.key ?? "";
               const name = translation?.name ?? badgeKey;
               const slug = BADGE_SHARE_SLUG[badgeKey];
-              const shareUrl = slug
-                ? `${siteUrl}/${locale}/challenge/${slug}`
-                : `${siteUrl}/${locale}/account`;
+              const backHref = slug ? `/challenge/${slug}` : "/labs/decision-labs";
+              const shareUrl = buildBadgeShareUrl(locale, badgeKey, name, achievement?.number, backHref);
+              const shareImageUrl = buildBadgeImageUrl(locale, badgeKey, name, achievement?.number);
               const shareText =
                 locale === "ar"
                   ? `حصلت للتو على شارة "${name}" في CyberAbeer Labs!`
@@ -263,6 +295,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
                   shareUrl={shareUrl}
                   shareText={shareText}
                   shareLabel={shareLabel}
+                  shareImageUrl={shareImageUrl}
                 />
               );
             })}
@@ -293,10 +326,20 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
               const translation = b.badges?.badge_translations.find((tr) => tr.locale === locale);
               const badgeKey = b.badges?.key ?? "";
               const ctfAchievement = getCtfAchievementByBadgeKey(badgeKey);
-              const name = translation?.name ?? badgeKey;
-              const shareUrl = ctfAchievement
-                ? `${siteUrl}/${locale}/labs/ctf/${ctfAchievement.slug}`
-                : `${siteUrl}/${locale}/account`;
+              // Fix (2026-08-04): the CTF `badges` rows carry no
+              // `badge_translations` (only Labs badges were backfilled
+              // with those), so `translation` is always undefined here
+              // -- falling straight back to the raw DB key (e.g.
+              // "flag_hidden_in_plain_sight") produced the garbled,
+              // overlapping text the founder flagged. getCtfBadgeName
+              // reads the same bilingual name already authored per
+              // challenge in lib/ctf/challenges.ts, so this now shows
+              // a real title ("Hidden in Plain Sight") without needing
+              // a database backfill.
+              const name = translation?.name ?? getCtfBadgeName(badgeKey, l) ?? badgeKey;
+              const backHref = ctfAchievement ? `/labs/ctf/${ctfAchievement.slug}` : "/labs/ctf";
+              const shareUrl = buildBadgeShareUrl(locale, badgeKey, name, ctfAchievement?.number, backHref);
+              const shareImageUrl = buildBadgeImageUrl(locale, badgeKey, name, ctfAchievement?.number);
               const shareText =
                 locale === "ar"
                   ? `حصلت للتو على شارة "${name}" في CyberAbeer CTF!`
@@ -316,6 +359,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
                   shareUrl={shareUrl}
                   shareText={shareText}
                   shareLabel={shareLabel}
+                  shareImageUrl={shareImageUrl}
                   hrefOverride={ctfAchievement ? `/labs/ctf/${ctfAchievement.slug}` : "/labs/ctf"}
                 />
               );
