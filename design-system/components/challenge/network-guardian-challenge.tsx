@@ -91,13 +91,12 @@ interface MissionLayout {
 
 const MISSION_LAYOUTS: Record<MissionId, MissionLayout> = {
   basic_perimeter: {
-    viewBox: "0 0 640 420",
+    viewBox: "0 0 640 380",
     positions: {
       internet: { x: 240, y: 14, w: 160, h: 48 },
-      router: { x: 240, y: 94, w: 160, h: 48 },
-      web_server: { x: 30, y: 200, w: 175, h: 58 },
-      workstations: { x: 435, y: 200, w: 175, h: 58 },
-      database_server: { x: 225, y: 330, w: 190, h: 60 },
+      web_server: { x: 30, y: 140, w: 175, h: 58 },
+      workstations: { x: 435, y: 140, w: 175, h: 58 },
+      database_server: { x: 225, y: 280, w: 190, h: 60 },
     },
   },
   internal_segmentation: {
@@ -169,8 +168,16 @@ const COPY = {
   workstationTitle: { en: "Network Operations Center", ar: "مركز عمليات الشبكة" },
   topologyHeading: { en: "Network Topology", ar: "بنية الشبكة" },
   controlsHeading: { en: "Available Controls", ar: "الضوابط المتاحة" },
-  controlsPlaced: { en: "Controls placed", ar: "الضوابط الموضوعة" },
+  controlsPlaced: { en: "Slots used", ar: "الفتحات المستخدمة" },
   inspectHint: { en: "Tap a system to read its brief. Hover a control to see what it protects.", ar: "اضغط على أي نظام لقراءة موجزه. مرّر فوق ضابط لترى ما يحميه." },
+  budgetIntro: {
+    en: "You have {n} control slots — not enough to place every option. Trace every route into the database, then spend your slots covering each route rather than doubling up on one.",
+    ar: "لديك {n} فتحات ضوابط — لا تكفي لوضع كل الخيارات. تتبّع كل مسار إلى قاعدة البيانات، ثم أنفق فتحاتك على تغطية كل مسار بدل تكرارها على مسار واحد.",
+  },
+  budgetFull: {
+    en: "Slots full — remove a control before adding another.",
+    ar: "الفتحات ممتلئة — أزل ضابطًا قبل إضافة آخر.",
+  },
   hint1: { en: "Hint 1", ar: "تلميح 1" },
   hint2: { en: "Hint 2", ar: "تلميح 2" },
   runTest: { en: "RUN THE PENTEST", ar: "شغّل اختبار الاختراق" },
@@ -239,7 +246,6 @@ const COPY = {
 
 const OUTCOME_ICON_LABEL: Record<MissionResult["outcome"], Bilingual> = {
   secured: { en: "Secured", ar: "مؤمّنة" },
-  partial: { en: "Partial", ar: "جزئية" },
   breached: { en: "Breached", ar: "مخترقة" },
 };
 
@@ -388,13 +394,20 @@ export function NetworkGuardianChallenge({ locale, shareUrl, isAuthenticated }: 
   }
 
   function toggleControl(id: ControlId) {
+    let blockedByBudget = false;
     setMissionState((prev) => {
       const state = prev[mission.id] ?? { placedControls: [], hintsUsed: 0 };
-      const placedControls = state.placedControls.includes(id)
+      const isPlaced = state.placedControls.includes(id);
+      if (!isPlaced && state.placedControls.length >= mission.controlBudget) {
+        blockedByBudget = true;
+        return prev;
+      }
+      const placedControls = isPlaced
         ? state.placedControls.filter((c) => c !== id)
         : [...state.placedControls, id];
       return { ...prev, [mission.id]: { ...state, placedControls } };
     });
+    if (blockedByBudget) return;
     trackEvent("challenge_hotspot_inspected", { locale, challengeKey: NETWORK_GUARDIAN_CHALLENGE_KEY, hotspot: id });
   }
 
@@ -845,6 +858,7 @@ function WorkstationScreen({
   const ready = placedControls.length > 0;
   const controls = NETWORK_GUARDIAN_CONTROLS.filter((c) => mission.availableControls.includes(c.id));
   const hasUnblockableEdge = mission.edges.some((e) => !e.blockedBy);
+  const budgetFull = placedControls.length >= mission.controlBudget;
 
   return (
     <div className="mx-auto max-w-4xl space-y-4" dir={dir} data-brand="labs">
@@ -853,9 +867,14 @@ function WorkstationScreen({
           <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">{fmt(COPY.missionOf, locale, missionNumber)}</p>
           <h1 className="font-display text-lg font-semibold text-text-primary">{pick(mission.title, locale)}</h1>
         </div>
-        <Badge variant="outline">
-          {pick(COPY.controlsPlaced, locale)}: {placedControls.length}/{controls.length}
+        <Badge variant={budgetFull ? "warning" : "outline"}>
+          {pick(COPY.controlsPlaced, locale)}: {placedControls.length}/{mission.controlBudget}
         </Badge>
+      </div>
+
+      <div className="flex items-start gap-2 rounded-md border border-warning-200 bg-warning-50 p-3 text-start">
+        <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-600" aria-hidden="true" />
+        <p className="text-xs text-text-secondary">{fmt(COPY.budgetIntro, locale, mission.controlBudget)}</p>
       </div>
 
       <Card>
@@ -896,19 +915,24 @@ function WorkstationScreen({
           <CardTitle className="text-sm">{pick(COPY.controlsHeading, locale)}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
+          {budgetFull && (
+            <p className="rounded-md bg-warning-50 p-2 text-xs font-medium text-warning-700">{pick(COPY.budgetFull, locale)}</p>
+          )}
           {controls.map((control) => {
             const active = placedControls.includes(control.id);
+            const disabled = !active && budgetFull;
             return (
               <button
                 key={control.id}
                 type="button"
+                disabled={disabled}
                 onClick={() => onToggleControl(control.id)}
                 onMouseEnter={() => onHoverControl(control.id)}
                 onMouseLeave={() => onHoverControl(null)}
                 onFocus={() => onHoverControl(control.id)}
                 onBlur={() => onHoverControl(null)}
                 className={`flex w-full items-start gap-3 rounded-md border p-3 text-start transition-colors ${
-                  active ? "border-primary bg-primary-50" : "border-border bg-surface"
+                  active ? "border-primary bg-primary-50" : disabled ? "border-border bg-surface opacity-50 cursor-not-allowed" : "border-border bg-surface"
                 }`}
               >
                 <div
@@ -991,8 +1015,7 @@ function ConsequenceScreen({
   onContinue: () => void;
 }) {
   const copy = getNetworkConsequenceCopy(mission.id, result);
-  const outcomeVariant: "success" | "warning" | "danger" =
-    result.outcome === "secured" ? "success" : result.outcome === "partial" ? "warning" : "danger";
+  const outcomeVariant: "success" | "danger" = result.outcome === "secured" ? "success" : "danger";
 
   return (
     <div className="mx-auto max-w-2xl space-y-4" dir={locale === "ar" ? "rtl" : "ltr"} data-brand="labs">
