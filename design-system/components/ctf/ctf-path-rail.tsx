@@ -109,12 +109,18 @@ export function CtfPathRail({
                   </span>
                 </Link>
               </div>
-              {/* Connector line: vertical on mobile, horizontal on tablet+ */}
+              {/* Connector line: a 2px-wide vertical stroke on mobile
+                  (stacked layout), a 2px-tall horizontal stroke that
+                  grows to fill the gap between nodes on tablet+ (row
+                  layout). Pure Tailwind, deliberately no inline style:
+                  an earlier version set width/height via inline style,
+                  which always wins the cascade over the tablet:h-0.5/
+                  tablet:flex-1 utilities below and silently broke the
+                  horizontal line at desktop widths. */}
               <div
-                className={`mx-2 my-1 shrink-0 tablet:mx-0 tablet:mb-6 tablet:mt-5 tablet:h-0.5 tablet:flex-1 ${
+                className={`mx-auto my-1 h-6 w-0.5 shrink-0 tablet:mx-0 tablet:mb-6 tablet:mt-5 tablet:h-0.5 tablet:w-auto tablet:flex-1 ${
                   node.complete ? "bg-success-500" : "bg-border"
-                } ${isLastChallenge ? "tablet:mr-0" : ""}`}
-                style={{ width: "2px", minHeight: "1.5rem" }}
+                }`}
                 aria-hidden="true"
               />
             </li>
