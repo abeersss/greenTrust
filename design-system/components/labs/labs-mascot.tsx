@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { X } from "lucide-react";
 import { usePathname } from "@/lib/i18n/navigation";
@@ -20,12 +20,6 @@ const MASCOT_SRC = `/mascot/${encodeURIComponent(
 // choice (2026-08-03).
 const MASCOT_ROUTE_PREFIXES = ["/labs", "/challenge", "/achievements", "/account"];
 
-// How long the mascot stays visible after each navigation into/within
-// these routes, in milliseconds, before fading back out, per the
-// founder's 2026-08-03 follow-up (only appear briefly on transitions,
-// not persist through gameplay). Tapping it re-shows it regardless.
-const VISIBLE_DURATION_MS = 2500;
-
 /**
  * CyberAbeer Labs mascot (2026-08-03, founder-supplied asset; original
  * creative work by Dr. Abeer Alshammari, founder of CyberAbeer).
@@ -44,6 +38,13 @@ const VISIBLE_DURATION_MS = 2500;
  *      has *some* explanation available even before it's wired up
  *      for stage-by-stage hints.
  *
+ * The mascot stays visible and tappable at all times on in-scope
+ * routes (earlier revision faded it out and disabled pointer events
+ * after 2.5s, which silently broke the whole point of this feature --
+ * there was nothing left on screen to tap). The bubble auto-closes on
+ * navigation so it doesn't carry a stale explanation into the next
+ * page.
+ *
  * Rendered once in the root layout rather than per-page; new labs and
  * CTF challenges automatically get a working (if generic) explanation
  * the moment they're added to route-hints.ts, with zero per-page
@@ -53,36 +54,18 @@ export function LabsMascot() {
   const pathname = usePathname();
   const locale = useLocale() as AppLocale;
   const inScope = MASCOT_ROUTE_PREFIXES.some((prefix) => pathname?.startsWith(prefix));
-  const [visible, setVisible] = useState(false);
   const [bubbleOpen, setBubbleOpen] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const liveHint = useMascotDisplayedHint();
 
   useEffect(() => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
     setBubbleOpen(false);
-    if (!inScope) {
-      setVisible(false);
-      return;
-    }
-    setVisible(true);
-    hideTimer.current = setTimeout(() => setVisible(false), VISIBLE_DURATION_MS);
-    return () => {
-      if (hideTimer.current) clearTimeout(hideTimer.current);
-    };
-    // Re-run on every pathname change so navigating between labs, CTF
-    // challenges, or knowledge-check questions re-triggers a fresh
-    // transition appearance instead of only firing once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, inScope]);
+  }, [pathname]);
 
   if (!inScope) return null;
 
   const hint = liveHint ?? getRouteHint(pathname ?? "");
 
   function handleToggle() {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    setVisible(true);
     setBubbleOpen((open) => !open);
   }
 
@@ -116,9 +99,7 @@ export function LabsMascot() {
         onClick={handleToggle}
         aria-label={locale === "ar" ? "اسأل مرشد المختبرات" : "Ask the Labs guide"}
         aria-expanded={bubbleOpen}
-        className={`block rounded-full transition-opacity duration-500 ${
-          visible || bubbleOpen ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
+        className="block rounded-full shadow-lg transition-transform hover:scale-105"
       >
         <video
           src={MASCOT_SRC}
