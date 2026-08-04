@@ -60,10 +60,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <p>{t("introParagraph3")}</p>
       </div>
 
-      <p className="mt-6 rounded-card border border-dashed border-border-strong bg-surface-raised p-4 text-sm text-text-muted">
-        {t("placeholderNote")}
-      </p>
-
       {/* Credentials */}
       <section className="mt-12">
         <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-text-primary">
