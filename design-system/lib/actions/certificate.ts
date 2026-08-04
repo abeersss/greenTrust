@@ -44,6 +44,14 @@ export interface CtfCompletionStatus {
   allComplete: boolean;
   certificateReference: string | null;
   signedIn: boolean;
+  /** The signed-in user's name on file (profiles.full_name, set at
+   * registration), or null if that field is somehow empty. Founder
+   * instruction (2026-08-04): "make sure that the certificate has
+   * the name of the user account otherwise he should enter the name
+   * before issuing." The claim UI uses this to skip straight to a
+   * one-click confirm when the account already has a name, and only
+   * falls back to a free-text prompt when it doesn't. */
+  accountFullName: string | null;
 }
 
 /**
@@ -68,6 +76,7 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
       allComplete: false,
       certificateReference: null,
       signedIn: false,
+      accountFullName: null,
     };
   }
 
@@ -86,7 +95,17 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
       certificateReference = existing?.reference_code ?? null;
     }
 
-    return { totalChallenges, completedChallenges, completedBadgeKeys, allComplete, certificateReference, signedIn: true };
+    const accountFullName = await getAccountFullName(admin, user.id);
+
+    return {
+      totalChallenges,
+      completedChallenges,
+      completedBadgeKeys,
+      allComplete,
+      certificateReference,
+      signedIn: true,
+      accountFullName,
+    };
   } catch (err) {
     console.error("getCtfCompletionStatus failed", err);
     return {
@@ -96,8 +115,26 @@ export async function getCtfCompletionStatus(): Promise<CtfCompletionStatus> {
       allComplete: false,
       certificateReference: null,
       signedIn: true,
+      accountFullName: null,
     };
   }
+}
+
+/**
+ * profiles.full_name is set once at registration (registerUser,
+ * lib/actions/auth.ts) and is the account's name of record -- the
+ * single source of truth issueCertificate below trusts over anything
+ * a client might submit. Returns null (rather than throwing) on a
+ * missing/blank value so callers can treat "no name on file" as a
+ * normal case, not an error.
+ */
+async function getAccountFullName(
+  admin: ReturnType<typeof createSupabaseServiceRoleClient>,
+  userId: string
+): Promise<string | null> {
+  const { data } = await admin.from("profiles").select("full_name").eq("id", userId).maybeSingle();
+  const name = (data?.full_name as string | null | undefined)?.trim();
+  return name && name.length > 0 ? name : null;
 }
 
 /**
@@ -133,8 +170,15 @@ async function countEarnedCtfBadges(
   return { completedChallenges, allComplete: completedChallenges >= CTF_BADGE_KEYS.length, completedBadgeKeys };
 }
 
+// fullName is optional here (2026-08-04 founder instruction: "make
+// sure that the certificate has the name of the user account
+// otherwise he should enter the name before issuing"): issueCertificate
+// below always prefers the account's own profiles.full_name over
+// whatever the client sends, and only falls back to this field --
+// making it required in practice -- when the account has no name on
+// file yet.
 const issueCertificateSchema = z.object({
-  fullName: z.string().trim().min(2).max(120),
+  fullName: z.string().trim().min(2).max(120).optional(),
 });
 
 export interface IssuedCertificate {
@@ -175,6 +219,34 @@ export async function issueCertificate(
       return actionError("You need to capture all six CTF flags (80%+ on each) before claiming a certificate.");
     }
 
+    // Name resolution (2026-08-04 founder instruction: "make sure
+    // that the certificate has the name of the user account
+    // otherwise he should enter the name before issuing"). The
+    // account's own profiles.full_name is always the source of
+    // truth when it exists -- a client can never override it, which
+    // also closes off a learner typing a different name than the
+    // one their account was registered under. Only when the account
+    // has no name on file does the client-submitted fullName get
+    // used, and that value is then saved back to the profile so the
+    // account itself has a name going forward, not just this one
+    // certificate.
+    const accountFullName = await getAccountFullName(admin, user.id);
+    const finalName = accountFullName ?? parsed.data.fullName;
+    if (!finalName) {
+      return actionError("Please enter your full name as you'd like it to appear on the certificate.");
+    }
+    if (!accountFullName) {
+      const { error: profileUpdateErr } = await admin
+        .from("profiles")
+        .update({ full_name: finalName })
+        .eq("id", user.id);
+      if (profileUpdateErr) {
+        // Best-effort: a failed profile backfill should never block
+        // certificate issuance itself.
+        console.error("issueCertificate: could not backfill profiles.full_name", profileUpdateErr);
+      }
+    }
+
     // Idempotent: a learner who already has a certificate gets the
     // existing one back rather than a duplicate, and rather than being
     // able to silently rename it after the fact (which would undercut
@@ -205,7 +277,7 @@ export async function issueCertificate(
         .insert({
           user_id: user.id,
           certificate_type: CTF_CERTIFICATE_TYPE,
-          full_name: parsed.data.fullName,
+          full_name: finalName,
           reference_code: referenceCode,
         })
         .select("reference_code, full_name, issued_at")
