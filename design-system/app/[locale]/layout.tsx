@@ -14,6 +14,7 @@ import { JsonLd } from "@/components/site/json-ld";
 import { AnalyticsScript } from "@/components/site/analytics-script";
 import { RoutePageView } from "@/components/analytics/route-page-view";
 import { LabsMascot } from "@/components/labs/labs-mascot";
+import { MascotHintProvider } from "@/lib/mascot/mascot-context";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, localeDir, type AppLocale } from "@/lib/i18n/config";
@@ -84,6 +85,11 @@ export async function generateMetadata({
  * shared insertion point for the founder's "small recurring mascot"
  * across all of Labs/CTF, with no per-page wiring needed as more labs
  * or challenges are added later.
+ *
+ * `<MascotHintProvider>` (2026-08-04) wraps everything so any page
+ * further down the tree can register a stage-specific explanation for
+ * the mascot's tap-to-explain bubble via useMascotHint(), without
+ * needing its own provider or prop-drilling down from here.
  */
 export default async function LocaleLayout({
   children,
@@ -129,21 +135,23 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <BrandProvider brand="cyberabeer">
             <MotionProvider locale={locale as AppLocale}>
-            <TooltipProvider>
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:[inset-inline-start:1rem] focus:z-toast focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-text-on-primary"
-              >
-                {t("skipToContent")}
-              </a>
-              <SiteNavbar locale={locale as AppLocale} isAuthenticated={Boolean(user)} />
-              <main id="main-content">
-                <PageTransition>{children}</PageTransition>
-              </main>
-              <SiteFooter locale={locale as AppLocale} />
-              <Toaster />
-              <LabsMascot />
-            </TooltipProvider>
+              <MascotHintProvider>
+                <TooltipProvider>
+                  <a
+                    href="#main-content"
+                    className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:[inset-inline-start:1rem] focus:z-toast focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-text-on-primary"
+                  >
+                    {t("skipToContent")}
+                  </a>
+                  <SiteNavbar locale={locale as AppLocale} isAuthenticated={Boolean(user)} />
+                  <main id="main-content">
+                    <PageTransition>{children}</PageTransition>
+                  </main>
+                  <SiteFooter locale={locale as AppLocale} />
+                  <Toaster />
+                  <LabsMascot />
+                </TooltipProvider>
+              </MascotHintProvider>
             </MotionProvider>
           </BrandProvider>
         </NextIntlClientProvider>
