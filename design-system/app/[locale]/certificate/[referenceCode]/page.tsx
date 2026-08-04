@@ -185,26 +185,10 @@ export default async function CertificatePage({
                 {/* content wrapper resets text color since the dot
                     pattern above uses `color` as its dot color */}
                 <div className="relative text-text-primary">
-                  {/* Ribbon medal seal -- enlarged and given more
-                      top clearance (2026-08-04 founder feedback:
-                      "adjust or remove"; chose to adjust rather than
-                      remove, since it's the certificate's one
-                      distinguishing seal element). */}
-                  <div className="relative mx-auto mb-3 h-24 w-20 tablet:absolute tablet:start-3 tablet:top-3 tablet:mx-0">
-                    <div
-                      className="absolute start-1/2 top-[3.1rem] h-14 w-6 -translate-x-3.5 rotate-[8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:translate-x-3.5"
-                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%)" }}
-                    />
-                    <div
-                      className="absolute start-1/2 top-[3.1rem] h-14 w-6 translate-x-2.5 rotate-[-8deg] bg-gradient-to-b from-yellow-400 to-yellow-600 rtl:-translate-x-2.5"
-                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%)" }}
-                    />
-                    <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full border-4 border-yellow-300 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-600 shadow-md">
-                      <span className="font-display text-xs font-extrabold tracking-wide text-yellow-900">
-                        CTF
-                      </span>
-                    </div>
-                  </div>
+                  {/* Ribbon medal seal removed (2026-08-04 founder
+                      feedback: after seeing it adjusted/enlarged,
+                      founder asked to just remove it from the
+                      certificate). */}
 
                   <p className={`${titleFontClass} text-3xl font-extrabold uppercase tracking-wide text-text-primary tablet:text-4xl`}>
                     {pick(copy.certificateWord, l)}
