@@ -59,7 +59,6 @@ interface ArticleRow {
 
 function groupForCategoryKey(key: string | null): FounderContentGroup {
   if (!key) return "other";
-  if (key === "category_dr_abeer_insights") return "insights";
   if (
     key.startsWith("pillar_cyber_intelligence") ||
     key.startsWith("hub_threat_intel") ||
@@ -71,6 +70,13 @@ function groupForCategoryKey(key: string | null): FounderContentGroup {
     return "intelligence";
   }
   if (key.startsWith("hub_")) return "learn";
+  // Flagship pillar content (pillar_cyber_defense, pillar_learn_cybersecurity,
+  // pillar_grc_governance, category_dr_abeer_insights, etc.) is what actually
+  // populates /insights on the live site -- confirmed via direct DB query
+  // (category_dr_abeer_insights has 0 articles; the real Insights articles
+  // live under the pillar_* categories). Cyber Intelligence pillar is already
+  // routed above, so any remaining pillar_ or category_ key is Insights.
+  if (key.startsWith("pillar_") || key.startsWith("category_")) return "insights";
   return "other";
 }
 
