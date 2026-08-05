@@ -68,4 +68,3 @@ export function FounderSidebar({ locale }: { locale: AppLocale }) {
           </nav>
         );
 }
-f</nav>
