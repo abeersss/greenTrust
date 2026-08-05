@@ -121,9 +121,26 @@ export default async function FounderContentPage({
               </TableHeader>
               <TableBody>
                 {articles.map((article) => {
-                  const publish = setArticleStatus.bind(null, l, article.id, "published");
-                  const unpublish = setArticleStatus.bind(null, l, article.id, "draft");
-                  const archive = setArticleStatus.bind(null, l, article.id, "archived");
+                  // Wrapped instead of `setArticleStatus.bind(...)` directly: a
+                  // <form action> must type as (formData: FormData) => void |
+                  // Promise<void>, but setArticleStatus resolves to
+                  // Promise<ActionResult> for its own callers. This thin async
+                  // wrapper discards that return value so the form action's
+                  // inferred type checks, while the underlying call is still the
+                  // same gated server action.
+                  const articleId = article.id;
+                  async function publish() {
+                    "use server";
+                    await setArticleStatus(l, articleId, "published");
+                  }
+                  async function unpublish() {
+                    "use server";
+                    await setArticleStatus(l, articleId, "draft");
+                  }
+                  async function archive() {
+                    "use server";
+                    await setArticleStatus(l, articleId, "archived");
+                  }
                   return (
                     <TableRow key={article.id}>
                       <TableCell className="max-w-xs font-medium text-text-primary">
