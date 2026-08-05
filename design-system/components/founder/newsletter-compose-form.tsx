@@ -136,7 +136,7 @@ export function NewsletterComposeForm({
       {confirming ? (
         <div className="flex flex-wrap items-center gap-3 rounded-card border border-border bg-surface-raised p-4">
           <p className="text-sm text-text-primary">
-            Send to <strong>{recipientCount}</strong> subscriber{recipientCount === 1 ? "" : "s"}? This can't be
+            Send to <strong>{recipientCount}</strong> subscriber{recipientCount === 1 ? "" : "s"}? This can&apos;t be
             undone.
           </p>
           <div className="flex gap-2">
