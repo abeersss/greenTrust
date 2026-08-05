@@ -39,7 +39,7 @@ const SEGMENT_COPY: Record<string, { en: { subject: string; body: string }; ar: 
  * action itself -- worst case, no confirmation email goes out yet.
  */
 async function sendSubscriptionConfirmation(email: string, locale: "en" | "ar", segment: string) {
-  const copy = SEGMENT_COPY[segment] ?? SEGMENT_COPY.default;
+  const copy = SEGMENT_COPY[segment] ?? SEGMENT_COPY.default!;
   const { subject, body } = copy[locale];
   const dir = locale === "ar" ? ' dir="rtl"' : "";
   const html = `
