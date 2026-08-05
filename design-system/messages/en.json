@@ -1,1077 +1,1093 @@
 {
-  "nav": {
-    "home": "Home",
-    "about": "About Dr. Abeer",
-    "greentrust": "GreenTrust AI",
-    "forOrganizations": "For Organizations",
-    "labs": "CyberAbeer Labs",
-    "freeTools": "Free Tools",
-    "research": "Research",
-    "insights": "Insights",
-    "learn": "Learn",
-    "intelligence": "Cyber Intelligence",
-    "contact": "Contact",
-    "login": "Log in",
-    "register": "Register",
-    "challenge": "Free Challenge",
-    "account": "My account",
-    "myLabs": "My Labs",
-    "logout": "Log out"
-  },
-  "common": {
-    "learnMore": "Learn more",
-    "getStarted": "Get started",
-    "readMore": "Read more",
-    "submit": "Submit",
-    "sending": "Sending...",
-    "email": "Email",
-    "fullName": "Full name",
-    "organization": "Organization",
-    "organizationOptional": "Organization (optional)",
-    "message": "Message",
-    "loading": "Loading...",
-    "requiredField": "This field is required",
-    "invalidEmail": "Enter a valid email address",
-    "successGeneric": "Thank you. We received your submission.",
-    "errorGeneric": "Something went wrong. Please try again.",
-    "skipToContent": "Skip to content",
-    "language": "Language",
-    "backToHome": "Back to home",
-    "comingSoon": "Coming soon"
-  },
-  "footer": {
-    "tagline": "Cybersecurity governance, AI risk, and practical security education.",
-    "rights": "All rights reserved.",
-    "newsletterHeading": "Get occasional updates",
-    "newsletterBody": "New research, free tools, and product updates. No spam, unsubscribe anytime.",
-    "newsletterPlaceholder": "you@example.com",
-    "newsletterSubmit": "Subscribe",
-    "newsletterSuccess": "You're subscribed. Thank you.",
-    "newsletterError": "Could not subscribe right now. Please try again.",
-    "sitemapHeading": "Site",
-    "connectHeading": "Connect",
-    "dataNote": "By submitting this form, you agree to be contacted about your request."
-  },
-  "home": {
-    "heroKicker": "CyberAbeer",
-    "heroTitle": "Cybersecurity governance and practical security skills, in one place",
-    "heroSubtitle": "CyberAbeer is the home of GreenTrust AI, an AI governance and risk platform for organizations, and CyberAbeer Labs, a bilingual hands-on cybersecurity learning platform for individuals.",
-    "brandPromise": "Learn. Practice. Grow. Free with CyberAbeer.",
-    "journeysHeading": "Choose your path",
-    "orgTitle": "For organizations",
-    "orgBody": "Govern AI agents, manage third-party and quantum risk, and produce audit-ready evidence with GreenTrust AI.",
-    "orgCta": "Explore GreenTrust AI",
-    "learnerTitle": "For learners",
-    "learnerBody": "Build real cybersecurity skills through gamified, bilingual, hands-on labs and challenges with CyberAbeer Labs.",
-    "learnerCta": "Explore CyberAbeer Labs",
-    "founderHeading": "Built on real practitioner experience",
-    "founderBody": "CyberAbeer is founded and led by Dr. Abeer Alshammari, a cybersecurity governance, risk, and compliance practitioner with over 20 years of experience.",
-    "founderCta": "About Dr. Abeer",
-    "toolsHeading": "Try a free self-assessment",
-    "toolsBody": "Quick, no-signup tools to sanity-check your AI governance and quantum readiness posture.",
-    "toolsCta": "See free tools",
-    "insightsHeading": "Insights",
-    "insightsBody": "Research notes and practical write-ups on governance, risk, and security, published as they're ready.",
-    "insightsCta": "Read insights",
-    "researchHeading": "Research",
-    "researchBody": "Dr. Abeer's doctoral research and ongoing work on adaptive cybersecurity governance.",
-    "researchCta": "See research",
-    "latestInsightsHeading": "Latest CyberAbeer Insights",
-    "latestInsightsIntro": "Fresh research notes and practical guides on AI security, governance, and data trust.",
-    "exploreAllInsightsCta": "Explore All Insights"
-  },
-  "about": {
-    "kicker": "About",
-    "title": "Dr. Abeer Alshammari",
-    "roleLine": "Founder of CyberAbeer, GreenTrust AI, and CyberAbeer Labs",
-    "introParagraph1": "Dr. Abeer Alshammari is a cybersecurity governance, risk, and compliance (GRC) practitioner with more than 20 years of experience building and maturing enterprise security programs.",
-    "introParagraph2": "Her work spans cybersecurity policy and control frameworks, risk assessment across application, infrastructure, cloud, data, and third-party domains, and coordinating internal and external audits. She founded CyberAbeer to bring that same practitioner discipline to AI governance, through GreenTrust AI, and to security education, through CyberAbeer Labs.",
-    "introParagraph3": "In parallel with her GRC leadership work, Dr. Abeer serves as a Chief Information Security Officer (CISO) and cybersecurity strategic consultant, advising organizations on security strategy, risk posture, and governance at the executive and board level. She works with leadership teams to turn cybersecurity risk into clear business decisions and practical maturity roadmaps.",
-    "credentialsHeading": "Credentials",
-    "credentials": [
-      "Doctorate in Cybersecurity and Information Assurance (GRC-focused dissertation)",
-      "CISM, Certified Information Security Manager",
-      "CISSP, Certified Information Systems Security Professional",
-      "ISO/IEC 27001:2022 Lead Auditor",
-      "GRCP and GRCA, Governance, Risk and Compliance Professional and Auditor",
-      "CompTIA Security+",
-      "Lean Six Sigma Black Belt",
-      "Certified Scrum Master"
-    ],
-    "experienceHeading": "Experience",
-    "experienceIntro": "Over 20 years leading cybersecurity governance, risk, and compliance programs across national government, technology, and energy-sector organizations.",
-    "experienceItems": [
-      {
-        "period": "2023 to present",
-        "title": "Cybersecurity GRC Consultant",
-        "summary": "Leads and matures enterprise cybersecurity governance, risk, and compliance (GRC) programs, develops security policies and control frameworks, conducts cybersecurity risk assessments across applications, infrastructure, cloud, data, and third-party services, and coordinates internal and external audits while supporting regulatory compliance and continual improvement."
-      },
-      {
-        "period": "2019 to 2022",
-        "title": "Cybersecurity GRC Program and Team Lead",
-        "summary": "Built an enterprise GRC program from the ground up, including governance frameworks, a full policy suite, and audit-ready processes, while leading and developing a risk and compliance team."
-      },
-      {
-        "period": "2003 to 2018",
-        "title": "Cybersecurity Engineer, Security, Risk and Compliance",
-        "summary": "Implemented security controls and supported risk assessments, audits, and remediation across mission-critical government systems."
-      }
-    ],
-    "educationHeading": "Education",
-    "educationItems": [
-      "Doctorate in Computer Science, concentration in Cybersecurity and Information Assurance",
-      "Master's degree in Computer Engineering",
-      "Bachelor's degree in Computer Engineering"
-    ],
-    "dissertationHeading": "Doctoral dissertation",
-    "dissertationTitle": "Designing Adaptive Cybersecurity Governance Architectures: A Layered GRC Framework for Resilient Digital Transformation",
-    "researchCta": "See research areas",
-    "membershipsHeading": "Professional activity",
-    "membershipsBody": "Member of ISACA, ISC2, IEEE, Women in Cybersecurity (WiCyS), the Australian Computer Society (ACS), Gartner, and Info-Tech Research Group, as well as the International Leadership Association (ILA), a global community of leaders, leadership scholars, educators, and development professionals who share a vision of leadership for a just and thriving future. Experience as a peer reviewer and recognized contributor in the field."
-  },
-  "greentrust": {
-    "kicker": "GreenTrust AI",
-    "heroTitle": "AI governance and risk, built for how organizations actually adopt AI",
-    "heroSubtitle": "Inventory every AI agent in use, assess risk across data, access, and third-party exposure, track quantum readiness, and produce evidence your auditors will accept.",
-    "cta": "Join the early access waitlist",
-    "whatHeading": "What GreenTrust AI does",
-    "whatBody": "GreenTrust AI gives governance, risk, and security teams one place to register AI agents, assess and score their risk, manage exceptions and approvals, and generate an audit-ready trail for every decision.",
-    "pillarsHeading": "Core capabilities",
-    "pillars": [
-      {
-        "title": "AI agent inventory and passports",
-        "body": "Register every AI agent in use, who owns it, what data it can access, and what systems it touches, in a single governed inventory."
-      },
-      {
-        "title": "Risk assessment and scoring",
-        "body": "Score AI agent risk across data sensitivity, access scope, and third-party exposure, with a documented, repeatable methodology."
-      },
-      {
-        "title": "Quantum readiness tracking",
-        "body": "Inventory cryptographic assets and algorithms in use, flag those vulnerable to future quantum attacks, and track migration progress over time."
-      },
-      {
-        "title": "Audit-ready evidence",
-        "body": "Every assessment, exception, approval, and control mapping is recorded as an append-only trail, ready to hand to an internal or external auditor."
-      }
-    ],
-    "whoHeading": "Who it's for",
-    "whoBody": "Governance, risk, compliance, and security teams at organizations that are adopting AI agents faster than their existing risk processes can track them.",
-    "formHeading": "Request early access",
-    "formBody": "GreenTrust AI is in early access. Tell us about your organization and we'll follow up.",
-    "waitlistNote": "GreenTrust AI is a new product from CyberAbeer. There are no customers or case studies to share yet; verified customer stories will be added here once they exist."
-  },
-  "forOrganizations": {
-    "kicker": "For Organizations",
-    "heroTitle": "Free learning for individuals. Governed AI risk management for organizations.",
-    "heroSubtitle": "CyberAbeer gives every visitor free cybersecurity learning, hands-on labs, and self-assessment tools. GreenTrust AI is where organizations turn that same governance thinking into an operational, audit-ready platform.",
-    "primaryCta": "Request an enterprise review",
-    "secondaryCta": "Try the GreenTrust free assessment",
-    "splitHeading": "Two audiences, two products",
-    "individualHeading": "For individuals: free, always",
-    "individualBody": "CyberAbeer Labs, Cyber Intelligence, Insights, the Learning Center, and every free tool on this site provide genuine value with no payment required. Registration is optional and only used to save your progress, XP, badges, and results.",
-    "individualCta": "Explore free tools",
-    "orgHeading": "For organizations: GreenTrust AI",
-    "orgBody": "GreenTrust AI is CyberAbeer's commercial platform for governance, risk, and security teams: an AI agent inventory, risk scoring, permission governance, non-human identity management, and an audit-ready evidence trail. Running the free public GreenTrust assessment costs nothing; operationalizing governance at organization scale is where GreenTrust becomes a paid engagement.",
-    "orgCta": "See GreenTrust AI",
-    "whatPaysHeading": "What organizations pay for",
-    "whatPaysBody": "Reading CyberAbeer content or running a basic assessment is always free. What organizations pay for is operational capability at scale: organization-wide AI agent inventory across multiple business units, multi-user governance, permission and non-human identity management, evidence and control mapping, remediation tracking, executive and board reporting, custom assessments, private or sovereign deployment, and consulting or training engagements. Requirements vary by organization, so CyberAbeer does not publish fixed enterprise pricing; every engagement starts with a scoping conversation.",
-    "formHeading": "Request an enterprise review",
-    "formBody": "Tell us about your organization and what you're trying to govern. Dr. Abeer or the CyberAbeer team will follow up directly.",
-    "formNote": "This starts a conversation, not a purchase. There is no obligation and no fee to discuss your organization's needs."
-  },
-  "labs": {
-    "kicker": "CyberAbeer Labs",
-    "heroTitle": "Learn cybersecurity by doing",
-    "heroSubtitle": "Hands-on, gamified labs and challenges that build real skills, not just certificates. Earn XP, track streaks, and climb the leaderboard as you learn.",
-    "cta": "Join the waitlist",
-    "whatHeading": "What CyberAbeer Labs is",
-    "whatBody": "A bilingual, hands-on cybersecurity learning platform built around scenario labs, capture-the-flag style challenges, and short quizzes, with XP, levels, and streaks that reward consistent practice over passive watching.",
-    "tracksHeading": "How learning is structured",
-    "tracks": [
-      {
-        "title": "Scenario labs",
-        "body": "Realistic situations, like triaging a suspicious email or reviewing a risky configuration, where you make decisions and get feedback."
-      },
-      {
-        "title": "Capture-the-flag challenges",
-        "body": "Hands-on technical challenges with a hidden flag to find, for learners who want to go deeper on specific skills."
-      },
-      {
-        "title": "Quick knowledge checks",
-        "body": "Short quizzes that reinforce core concepts and fit into a few minutes."
-      }
-    ],
-    "gamificationHeading": "Built to keep you coming back",
-    "gamificationBody": "Earn XP for every lab and challenge you complete, maintain a streak, unlock achievements, and see how you compare on the leaderboard.",
-    "formHeading": "Join the waitlist",
-    "formBody": "CyberAbeer Labs is in early access. Sign up to be notified when it opens.",
-    "waitlistNote": "CyberAbeer Labs is a new platform. There are no learner testimonials or results to share yet; verified learner stories will be added here once they exist."
-  },
-  "freeTools": {
-    "kicker": "Free tools",
-    "title": "Free self-assessments",
-    "intro": "Quick, no-signup tools to sanity-check where you stand. These are educational self-assessments, not a certified audit or a substitute for a formal risk assessment.",
-    "governanceTitle": "AI Governance Quick Check",
-    "governanceBody": "A short self-assessment covering AI agent inventory, risk assessment, and oversight practices.",
-    "quantumTitle": "Quantum Readiness Quick Check",
-    "quantumBody": "A short self-assessment covering cryptographic asset inventory and exposure to future quantum-capable attacks.",
-    "startCta": "Start",
-    "disclaimer": "Results are indicative only and based solely on the answers you provide. They do not constitute a certified audit, legal advice, or a guarantee of compliance."
-  },
-  "assessment": {
-    "governance": {
-      "title": "AI Governance Quick Check",
-      "intro": "Answer honestly for the most accurate result. This takes about two minutes.",
-      "questions": [
-        {
-          "prompt": "Does your organization maintain a complete inventory of AI agents in production?",
-          "options": [
-            "Yes, fully maintained",
-            "Partially, some agents are untracked",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Are AI agents formally risk-assessed before they go into production?",
-          "options": [
-            "Yes, every time",
-            "Sometimes",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Is there a named owner accountable for each AI agent?",
-          "options": [
-            "Yes, for all agents",
-            "For some agents",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Do you review third-party AI tools for data access and risk before adoption?",
-          "options": [
-            "Yes, always",
-            "Sometimes",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Can you produce an audit trail of AI-related risk decisions if asked today?",
-          "options": [
-            "Yes, readily",
-            "With significant effort",
-            "No"
-          ]
-        }
-      ],
-      "resultHeading": "Your result",
-      "resultLow": "Your AI governance practices appear to have significant gaps. Establishing an AI agent inventory is a strong first step.",
-      "resultMedium": "Your AI governance practices are developing. A few specific gaps are worth prioritizing.",
-      "resultHigh": "Your AI governance practices appear relatively mature. Formal audit-ready evidence is the natural next step.",
-      "ctaReport": "Request full guidance by email"
-    },
-    "quantum": {
-      "title": "Quantum Readiness Quick Check",
-      "intro": "Answer honestly for the most accurate result. This takes about two minutes.",
-      "questions": [
-        {
-          "prompt": "Do you maintain an inventory of cryptographic algorithms in use across your systems?",
-          "options": [
-            "Yes, fully maintained",
-            "Partially",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Have you identified which systems rely on algorithms considered vulnerable to future quantum attacks?",
-          "options": [
-            "Yes",
-            "In progress",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Do you have a migration plan toward post-quantum cryptographic algorithms?",
-          "options": [
-            "Yes, documented",
-            "Informally discussed",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Do you know which of your long-lived sensitive data could be at risk from harvest-now, decrypt-later attacks?",
-          "options": [
-            "Yes",
-            "Somewhat",
-            "No"
-          ]
-        },
-        {
-          "prompt": "Is a specific person or team accountable for quantum readiness?",
-          "options": [
-            "Yes",
-            "Informally",
-            "No"
-          ]
-        }
-      ],
-      "resultHeading": "Your result",
-      "resultLow": "Quantum readiness work has likely not started yet. Beginning with a cryptographic asset inventory is a practical first step.",
-      "resultMedium": "Quantum readiness work is underway. A documented migration plan is a reasonable next step.",
-      "resultHigh": "Quantum readiness practices appear relatively mature for this early stage of the industry.",
-      "ctaReport": "Request full guidance by email"
-    }
-  },
-  "greentrustAssessment": {
-    "kicker": "Free assessment",
-    "title": "GreenTrust AI Agent Governance Assessment",
-    "intro": "Sixteen quick questions across eight governance domains. No confidential company information is required, and this assessment does not use AI to score your answers: every result is calculated with a fixed, disclosed scoring method, not a language model.",
-    "estimatedTime": "About 5 minutes",
-    "startCta": "Start the assessment",
-    "progressLabel": "Question {current} of {total}",
-    "domains": {
-      "visibility": {
-        "name": "AI Agent Visibility",
-        "recommendation": "Start with a simple, living inventory of every AI agent, bot, and autonomous tool in use, including ones adopted informally by individual teams."
-      },
-      "accountability": {
-        "name": "Ownership & Accountability",
-        "recommendation": "Assign a named, accountable owner to every AI agent before it goes into production, not after something goes wrong."
-      },
-      "identity": {
-        "name": "Agent Identity",
-        "recommendation": "Give every agent its own scoped identity and credentials, separate from any human user's login, with a defined rotation schedule."
-      },
-      "permissions": {
-        "name": "Permissions",
-        "recommendation": "Move agents toward least-privilege access scoped to the specific task, and keep a reliable, current record of what each agent can reach."
-      },
-      "oversight": {
-        "name": "Human Oversight",
-        "recommendation": "Require human approval before high-impact actions, and make sure a tested override or kill-switch exists for every agent."
-      },
-      "monitoring": {
-        "name": "Logging & Monitoring",
-        "recommendation": "Centralize agent activity logging and put a regular, defined cadence in place for someone to actually review it."
-      },
-      "lifecycle": {
-        "name": "Lifecycle Governance",
-        "recommendation": "Document a decommissioning process, including access revocation, and put agents on a periodic review cycle as their role or data access changes."
-      },
-      "shadowAi": {
-        "name": "Shadow AI",
-        "recommendation": "Make the approved path to adopting an AI tool easy enough that teams use it, and build a no-blame process to bring existing shadow AI under governance."
-      }
-    },
-    "questions": [
-      {
-        "prompt": "Does your organization maintain an inventory of every AI agent, bot, or autonomous tool in use?",
-        "options": [
-          "Yes, a maintained and regularly updated inventory",
-          "We have a partial or outdated list",
-          "No inventory exists"
-        ]
-      },
-      {
-        "prompt": "When a team adopts a new AI tool or agent, how does your organization find out?",
-        "options": [
-          "A required registration or approval step before use",
-          "We usually hear about it eventually, informally",
-          "We typically don't find out until something goes wrong"
-        ]
-      },
-      {
-        "prompt": "Does each AI agent have a named, accountable human owner?",
-        "options": [
-          "Yes, every agent has a named owner",
-          "Some agents do, many don't",
-          "No owners are assigned"
-        ]
-      },
-      {
-        "prompt": "If an AI agent takes a harmful or incorrect action, is it clear who is accountable for the outcome?",
-        "options": [
-          "Yes, accountability is clearly defined in advance",
-          "It would take investigation to figure out",
-          "No, responsibility is unclear"
-        ]
-      },
-      {
-        "prompt": "Do AI agents use their own distinct credentials, separate from any human user's login?",
-        "options": [
-          "Yes, every agent has its own scoped identity",
-          "Some agents share credentials with humans or each other",
-          "Agents mostly reuse existing human or service accounts"
-        ]
-      },
-      {
-        "prompt": "Are agent credentials rotated, expired, or revoked on a defined schedule?",
-        "options": [
-          "Yes, on a defined lifecycle",
-          "Only when we remember or something breaks",
-          "Credentials are effectively permanent"
-        ]
-      },
-      {
-        "prompt": "Do AI agents operate under least-privilege access, scoped only to what each task requires?",
-        "options": [
-          "Yes, permissions are scoped per task and agent",
-          "Permissions are broader than necessary in places",
-          "Agents generally have broad, standing access"
-        ]
-      },
-      {
-        "prompt": "Can you produce, today, a list of every system and dataset a given AI agent can access?",
-        "options": [
-          "Yes, quickly and confidently",
-          "With some effort and uncertainty",
-          "No, not reliably"
-        ]
-      },
-      {
-        "prompt": "For high-impact actions (financial, customer-facing, irreversible), is a human required to approve before the agent proceeds?",
-        "options": [
-          "Yes, for all high-impact actions",
-          "For some, not consistently",
-          "No, agents act autonomously"
-        ]
-      },
-      {
-        "prompt": "If an agent behaves unexpectedly, is there a fast, well-understood way for a human to pause or override it?",
-        "options": [
-          "Yes, a tested override or kill-switch process",
-          "An informal, untested way",
-          "No reliable way"
-        ]
-      },
-      {
-        "prompt": "Are AI agent actions logged in a way that supports after-the-fact review?",
-        "options": [
-          "Yes, comprehensive and centralized logging",
-          "Partial logging, scattered across tools",
-          "Little to no logging"
-        ]
-      },
-      {
-        "prompt": "Does anyone regularly review agent activity logs for anomalies or policy violations?",
-        "options": [
-          "Yes, on a regular defined cadence",
-          "Occasionally, reactively",
-          "No one reviews them"
-        ]
-      },
-      {
-        "prompt": "Is there a defined process for retiring or updating an AI agent, including revoking its access?",
-        "options": [
-          "Yes, a documented decommissioning process",
-          "An informal, inconsistent process",
-          "No process; agents are abandoned in place"
-        ]
-      },
-      {
-        "prompt": "Are AI agents periodically reassessed as their role, data access, or capability changes?",
-        "options": [
-          "Yes, on a scheduled review cycle",
-          "Only when a problem forces a review",
-          "Agents are set up once and never revisited"
-        ]
-      },
-      {
-        "prompt": "Do employees or teams sometimes adopt AI tools or agents without an IT or security review?",
-        "options": [
-          "Rarely; there's a clear, easy approved path",
-          "Sometimes, and we know it happens",
-          "Frequently, and we don't have visibility into it"
-        ]
-      },
-      {
-        "prompt": "If shadow AI use is discovered, is there a defined process to bring it under governance rather than simply banning or ignoring it?",
-        "options": [
-          "Yes, a clear onboarding and remediation path",
-          "We handle it case by case",
-          "No defined process"
-        ]
-      }
-    ],
-    "results": {
-      "heading": "Your GreenTrust Agent Governance Score",
-      "overallLabel": "Overall score",
-      "domainScoresHeading": "Domain scores",
-      "recommendationsHeading": "Top recommendations",
-      "risk": {
-        "strong": "Strong governance",
-        "developing": "Developing governance",
-        "emerging_risk": "Emerging risk",
-        "high_risk": "High risk"
-      },
-      "riskSummary": {
-        "strong": "Your AI agent governance practices appear relatively mature across most domains. A formal enterprise review can help validate this and identify remaining edge cases.",
-        "developing": "Your AI agent governance practices are developing, with clear strengths and a few specific gaps worth prioritizing.",
-        "emerging_risk": "Several governance gaps put your organization at meaningful risk as AI agent use grows. The recommendations below are a reasonable starting point.",
-        "high_risk": "Your AI agent governance practices show significant gaps across multiple domains. We'd recommend treating this as a near-term priority."
-      },
-      "saveCta": "Save my assessment",
-      "saveLoginPrompt": "Create a free account or log in to save this result to your profile.",
-      "saveSuccess": "Saved to your account.",
-      "saveError": "We could not save your result. Please try again.",
-      "emailCta": "Email me my results",
-      "emailPlaceholder": "you@example.com",
-      "emailSuccess": "Your results have been saved and, if enterprise emailing is configured, are on their way to your inbox.",
-      "emailError": "We could not send your results. Please try again.",
-      "enterpriseCta": "Request an enterprise review",
-      "restartCta": "Retake the assessment",
-      "disclaimer": "This is an educational self-assessment using a fixed, disclosed scoring method. It is not a certified audit, does not require confidential company information, and does not use AI to interpret your answers."
-    }
-  },
-  "account": {
-    "title": "My account",
-    "memberSince": "Member since {date}",
-    "xpLabel": "Total XP",
-    "logoutCta": "Log out",
-    "badgesHeading": "Badges",
-    "noBadges": "No badges earned yet. Complete the First Defender challenge to earn your first one.",
-    "challengesHeading": "Challenge history",
-    "noChallenges": "You haven't completed a challenge yet.",
-    "challengeScoreLabel": "Score: {score}",
-    "startChallengeCta": "Start the Free Challenge",
-    "greentrustHeading": "GreenTrust assessments",
-    "noAssessments": "You haven't saved a GreenTrust assessment result yet.",
-    "greentrustScoreLabel": "Overall score: {score}",
-    "startAssessmentCta": "Start the GreenTrust Free Assessment",
-    "loadError": "We could not load part of your account data. Please refresh the page."
-  },
-  "research": {
-    "kicker": "Research",
-    "title": "Research",
-    "intro": "My research focuses on bridging academic theory with practical cybersecurity governance, enabling organizations to innovate securely while strengthening resilience, digital trust, and responsible adoption of emerging technologies.",
-    "areasHeading": "Research areas",
-    "areas": [
-      "Cybersecurity Governance",
-      "Governance, Risk and Compliance (GRC)",
-      "AI Governance",
-      "AI Security",
-      "AI Risk Management",
-      "Agent Governance",
-      "Digital Trust",
-      "Digital Transformation Governance",
-      "Information Security Governance",
-      "Data Governance",
-      "Data Classification and Information Protection",
-      "Privacy Engineering",
-      "Network Security",
-      "Security Architecture",
-      "Zero Trust Architecture",
-      "Cloud Security Governance",
-      "Identity and Access Management (IAM)",
-      "Encryption and Cryptography",
-      "Post-Quantum Cryptography",
-      "Cyber Resilience",
-      "Enterprise Risk Management",
-      "Security Metrics and Maturity Models",
-      "Regulatory Compliance",
-      "ISO/IEC 27001",
-      "ISO/IEC 42001",
-      "NIST Cybersecurity Framework",
-      "Secure Software Governance",
-      "Supply Chain Cybersecurity",
-      "Third-Party Risk Management",
-      "Operational Technology (OT) Security Governance",
-      "Cybersecurity Strategy",
-      "Innovation Governance",
-      "Emerging Technologies Governance",
-      "Responsible AI",
-      "Human-Centered Cybersecurity",
-      "Leadership in Cybersecurity",
-      "Women in STEM Leadership",
-      "Youth STEM Leadership",
-      "Cybersecurity Education",
-      "Professional Development in Cybersecurity"
-    ],
-    "dissertationHeading": "Doctoral dissertation",
-    "dissertationTitle": "Designing Adaptive Cybersecurity Governance Architectures: A Layered GRC Framework for Resilient Digital Transformation",
-    "dissertationNote": "Completed July 2026.",
-    "publicationsHeading": "Publications & preprints",
-    "orcidCta": "View full record on ORCID",
-    "contactCta": "Get in touch about research"
-  },
-  "insights": {
-    "kicker": "Insights",
-    "title": "Insights",
-    "intro": "Research notes and practical write-ups on governance, AI risk, and security, published as they're ready.",
-    "emptyTitle": "No insights published yet",
-    "emptyBody": "The first articles are in progress. Subscribe to the newsletter to be notified when they're published.",
-    "backLink": "Back to insights",
-    "publishedOn": "Published",
-    "updatedOn": "Updated",
-    "sourcesTitle": "Sources",
-    "accessedLabel": "Accessed",
-    "relatedTitle": "Related reading",
-    "difficulty": {
-      "beginner": "Beginner",
-      "intermediate": "Intermediate",
-      "advanced": "Advanced"
-    },
-    "audience": {
-      "students": "Students",
-      "professionals": "Professionals",
-      "executives": "Executives",
-      "ciso": "CISOs",
-      "general": "General audience"
-    },
-    "tryItTitle": "Try it yourself",
-    "tryItLiveDescription": "Put this into practice with a free, interactive CyberAbeer challenge.",
-    "tryItLiveLink": "Start the challenge",
-    "tryItComingSoonDescription": "An interactive CyberAbeer experience for this topic is in development.",
-    "tryItComingSoon": "Coming soon",
-    "featuredLabel": "Featured Insight",
-    "latestTitle": "Latest Insights",
-    "popularTopicsTitle": "Popular Topics",
-    "drAbeerTitle": "Dr. Abeer Insights",
-    "viewAllLabel": "View all",
-    "readingTimeMinutes": "{minutes} min read"
-  },
-  "topics": {
-    "kicker": "Topic hub",
-    "backLink": "Back to insights",
-    "hubsTitle": "Explore this pillar",
-    "articlesTitle": "Articles",
-    "emptyTitle": "No articles published in this topic yet",
-    "emptyBody": "New articles in this area are in progress. Subscribe to the newsletter to be notified when they're published."
-  },
-  "learn": {
-    "kicker": "Learning Center",
-    "title": "The CyberAbeer Learning Center",
-    "intro": "Certification study guides, career roadmaps, and hands-on practice, organized in one place instead of scattered across the blog.",
-    "comingSoon": "Coming soon",
-    "xpBadge": "Earn XP",
-    "certPathsTitle": "Certification Paths",
-    "certPathsIntro": "Structured study guides for the certifications that matter most for security careers, written to teach reasoning, not just definitions.",
-    "certCisspTitle": "CISSP",
-    "certCisspBody": "All 8 domains, a study plan, original scenario-based practice questions, and exam-day strategy.",
-    "certCismTitle": "CISM",
-    "certCismBody": "Governance-focused domains, how CISM differs from CISSP, and program-level risk and incident management.",
-    "certIsoTitle": "ISO/IEC 27001",
-    "certIsoBody": "The 2022 revision, clauses, Annex A controls, the Statement of Applicability, and the certification journey.",
-    "certCehTitle": "CEH",
-    "certCehBody": "An Ethical Hacker study guide is planned but not yet written.",
-    "careerPathsTitle": "Cybersecurity Career Paths",
-    "careerPathsIntro": "How to get in, and where each discipline actually leads, from entry level to leadership.",
-    "careerSocTitle": "SOC Analyst",
-    "careerSocBody": "Tier 1 alert triage through threat hunting and SOC leadership.",
-    "careerGrcTitle": "Governance, Risk & Compliance",
-    "careerGrcBody": "From GRC analyst to CISO, and the certifications that mark each stage.",
-    "careerEngineeringTitle": "Security Engineering",
-    "careerEngineeringBody": "The technical track: hands-on with systems, tools, and detection.",
-    "careerAuditTitle": "Cybersecurity Audit",
-    "careerAuditBody": "What auditors actually do, and the CISA certification path.",
-    "careerAiSecurityTitle": "AI Security",
-    "careerAiSecurityBody": "AI agent governance, identity, and permissions, for the newest branch of the field.",
-    "practiceTitle": "Practice",
-    "practiceIntro": "Read the theory, then put it to work. Only real, live experiences are linked here; everything still in development is marked Coming Soon rather than left as a dead link.",
-    "practiceDecisionLabsTitle": "Decision Labs",
-    "practiceDecisionLabsBody": "Scenario-driven judgment labs, like GRCL: Innovation Under Fire, are in development.",
-    "practiceQuickChallengesTitle": "Quick Challenges",
-    "practiceQuickChallengesBody": "Play Phishing Hunter now, free, no signup required. More quick challenges are in development.",
-    "practiceQuestionsTitle": "Practice Questions",
-    "practiceQuestionsBody": "Original CyberAbeer scenario questions embedded in the CISSP hub, with full reasoning for every answer."
-  },
-  "intelligence": {
-    "kicker": "Cyber Intelligence",
-    "title": "CyberAbeer Cyber Intelligence",
-    "intro": "Vulnerabilities, AI security, GRC, identity, and post-quantum developments, with CyberAbeer analysis added, not just headlines reproduced.",
-    "hubsTitle": "Browse by area",
-    "latestTitle": "Latest Intelligence",
-    "emptyTitle": "No intelligence items published yet",
-    "emptyBody": "New items are added only once facts are verified against primary sources -- check back soon.",
-    "backLink": "Back to Cyber Intelligence",
-    "publishedOn": "Published",
-    "updatedOn": "Updated",
-    "sourcesTitle": "Sources",
-    "sourcesCheckedLabel": "Sources checked",
-    "accessedLabel": "Accessed",
-    "relatedTitle": "Related intelligence",
-    "dailyBriefTitle": "Today's Cyber Brief",
-    "dailyBriefReadingTime": "3-5 min read",
-    "dailyBriefEmpty": "No new developments met CyberAbeer's bar for publication today.",
-    "executiveViewTitle": "Executive View",
-    "menaRelevanceLabel": "GCC/MENA relevance",
-    "notAVendorRating": "CyberAbeer's own guidance, not an official vendor or CISA rating.",
-    "severity": {
-      "critical": "Critical",
-      "high": "High",
-      "important": "Important",
-      "informational": "Informational"
-    },
-    "storyStatus": {
-      "developing": "Developing",
-      "confirmed": "Confirmed",
-      "updated": "Updated",
-      "resolved": "Resolved"
-    },
-    "vulnerabilityPanel": {
-      "title": "Vulnerability Intelligence",
-      "cve": "CVE",
-      "cvss": "CVSS",
-      "affectedProduct": "Affected product",
-      "exploitStatus": "Exploit status",
-      "kevListed": "CISA KEV listed",
-      "kevYes": "Yes",
-      "kevNo": "No",
-      "vendorAdvisory": "Vendor advisory",
-      "patchStatus": "Patch status",
-      "priority": "CyberAbeer priority",
-      "priorityDisclaimer": "CyberAbeer's own prioritization guidance, based on severity, known exploitation, and exposure -- not an official vendor or CISA rating.",
-      "lastChecked": "Sources last checked"
-    },
-    "exploitStatus": {
-      "actively_exploited": "Actively exploited",
-      "poc_available": "Proof-of-concept available",
-      "no_known_exploit": "No known exploit",
-      "unknown": "Unknown"
-    },
-    "priority": {
-      "immediate": "Immediate",
-      "urgent": "Urgent",
-      "planned": "Planned",
-      "monitor": "Monitor"
-    },
-    "homeSectionTitle": "Latest Cyber Intelligence",
-    "homeSectionIntro": "Vulnerabilities, AI security, and governance developments, with CyberAbeer analysis.",
-    "homeSectionCta": "View Cyber Intelligence",
-    "newsletterTitle": "CyberAbeer Cyber Brief",
-    "newsletterBody": "A weekly digest of the top threat, critical vulnerability, AI security watch, GRC update, and Dr. Abeer's takeaway. No spam, unsubscribe any time."
-  },
-  "contact": {
-    "kicker": "Contact",
-    "title": "Get in touch",
-    "intro": "For general questions, use the form below. Organizations interested in GreenTrust AI can use the enterprise enquiry form.",
-    "generalHeading": "General enquiry",
-    "generalSuccess": "Thank you, your message has been received.",
-    "enterpriseHeading": "Enterprise enquiry",
-    "enterpriseIntro": "Tell us about your organization's AI governance needs.",
-    "enterpriseSuccess": "Thank you, your enquiry has been received.",
-    "fields": {
-      "name": "Full name",
-      "email": "Email",
-      "organization": "Organization (optional)",
-      "companySize": "Organization size",
-      "message": "Message",
-      "interest": "What are you interested in?"
-    }
-  },
-  "auth": {
-    "login": {
-      "title": "Log in",
-      "subtitle": "Log in to your CyberAbeer account.",
-      "emailLabel": "Email",
-      "passwordLabel": "Password",
-      "submit": "Log in",
-      "noAccount": "Don't have an account?",
-      "registerLink": "Register",
-      "error": "We couldn't log you in with those details.",
-      "forgotPasswordLink": "Forgot your password?"
-    },
-    "forgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your account email and we'll send you a link to reset your password.",
-      "emailLabel": "Email",
-      "submit": "Send reset link",
-      "success": "If an account exists for that email, we've sent a password reset link. Check your inbox.",
-      "error": "We couldn't send a reset link. Please try again.",
-      "backToLogin": "Back to log in"
-    },
-    "resetPassword": {
-      "title": "Choose a new password",
-      "subtitle": "Enter a new password for your CyberAbeer account.",
-      "passwordLabel": "New password",
-      "confirmPasswordLabel": "Confirm new password",
-      "submit": "Update password",
-      "success": "Your password has been updated. You can now log in with your new password.",
-      "error": "We couldn't update your password. The reset link may have expired; request a new one.",
-      "passwordMismatch": "Passwords do not match",
-      "loginLink": "Go to log in"
-    },
-    "register": {
-      "title": "Register",
-      "subtitle": "Create your CyberAbeer account.",
-      "nameLabel": "Full name",
-      "emailLabel": "Email",
-      "organizationLabel": "Organization (optional)",
-      "passwordLabel": "Password",
-      "confirmPasswordLabel": "Confirm password",
-      "submit": "Create account",
-      "haveAccount": "Already have an account?",
-      "loginLink": "Log in",
-      "error": "We couldn't create your account with those details.",
-      "passwordMismatch": "Passwords do not match",
-      "success": "Account created. Check your email to confirm your address."
-    }
-  },
-  "seo": {
-    "siteName": "CyberAbeer",
-    "defaultTitle": "CyberAbeer, GreenTrust AI, and CyberAbeer Labs",
-    "defaultDescription": "CyberAbeer is the home of GreenTrust AI, an AI governance and risk platform for organizations, and CyberAbeer Labs, a bilingual hands-on cybersecurity learning platform.",
-    "homeTitle": "CyberAbeer, cybersecurity governance and practical security skills",
-    "homeDescription": "AI governance and risk for organizations with GreenTrust AI, and hands-on cybersecurity learning for individuals with CyberAbeer Labs.",
-    "aboutTitle": "About Dr. Abeer Alshammari",
-    "aboutDescription": "Cybersecurity governance, risk, and compliance practitioner with over 20 years of experience, founder of CyberAbeer, GreenTrust AI, and CyberAbeer Labs.",
-    "greentrustTitle": "GreenTrust AI, AI governance and risk platform",
-    "greentrustDescription": "Inventory AI agents, assess risk, track quantum readiness, and produce audit-ready evidence with GreenTrust AI.",
-    "forOrganizationsTitle": "For Organizations, GreenTrust AI governance for enterprises",
-    "forOrganizationsDescription": "CyberAbeer is free for individuals. GreenTrust AI is CyberAbeer's platform for organizations that need governed, audit-ready AI agent risk management.",
-    "labsTitle": "CyberAbeer Labs, learn cybersecurity by doing",
-    "labsDescription": "A bilingual, gamified, hands-on cybersecurity learning platform with scenario labs, challenges, XP, and leaderboards.",
-    "freeToolsTitle": "Free cybersecurity self-assessment tools",
-    "freeToolsDescription": "Free, no-signup self-assessments for AI governance and quantum readiness.",
-    "researchTitle": "Cybersecurity governance, GRC, and AI security research",
-    "researchDescription": "Doctoral and applied research spanning cybersecurity governance, GRC, AI governance and risk, cloud and data security, and regulatory frameworks including ISO/IEC 27001, ISO/IEC 42001, and the NIST Cybersecurity Framework.",
-    "insightsTitle": "Insights on governance, AI risk, and security",
-    "insightsDescription": "Research notes and practical write-ups on governance, AI risk, and security.",
-    "topicsTitleSuffix": "CyberAbeer Insights",
-    "learnTitle": "CyberAbeer Learning Center: CISSP, CISM, ISO 27001 study guides & career roadmaps",
-    "learnDescription": "Certification study guides for CISSP, CISM, and ISO/IEC 27001, plus cybersecurity career roadmaps for SOC, GRC, audit, and AI security.",
-    "intelligenceTitle": "CyberAbeer Cyber Intelligence: vulnerabilities, AI security, GRC, and post-quantum",
-    "intelligenceDescription": "Verified cybersecurity intelligence with CyberAbeer analysis: critical vulnerabilities, AI and agentic AI security, GRC and governance developments, identity and data security, and post-quantum readiness.",
-    "contactTitle": "Contact CyberAbeer",
-    "contactDescription": "Get in touch with CyberAbeer for general questions or enterprise enquiries about GreenTrust AI.",
-    "loginTitle": "Log in to CyberAbeer",
-    "registerTitle": "Register for CyberAbeer",
-    "challengeFirstDefenderTitle": "Free Cyber Challenge: First Defender, Spot the Phish",
-    "challengeFirstDefenderDescription": "Play a free, interactive phishing-detection scenario in Arabic or English. Inspect five realistic messages, earn XP, and unlock the CyberAbeer First Defender badge."
-  },
-  "challenge": {
-    "firstDefender": {
-      "badgeName": "CyberAbeer First Defender",
-      "badgeDescription": "Awarded for completing the First Defender: Spot the Phish challenge.",
-      "kicker": "Free Cyber Challenge",
-      "heroTitle": "First Defender: Spot the Phish",
-      "heroSubtitle": "Five realistic messages just landed. Inspect each one like a real analyst would, decide what to do, and earn your first badge, free, no signup required to start.",
-      "missionTitle": "Your mission",
-      "missionBody": "It is your first day on the security team at Nova Retail, a fictional company built just for this challenge. Five messages arrive today: emails and one text message. Tap to inspect each one, then choose what you would actually do.",
-      "startCta": "Start the challenge",
-      "estimatedTime": "About 5 minutes",
-      "progressLabel": "Message {current} of {total}",
-      "hintCta": "Show me a hint",
-      "hintUsedLabel": "Hint used",
-      "continueCta": "Continue",
-      "correctLabel": "Correct",
-      "incorrectLabel": "Not quite",
-      "phishedLabel": "In this simulation, that would have gotten you phished",
-      "restartCta": "Play again",
-      "actions": {
-        "report": "Report it",
-        "verify": "Verify through another channel",
-        "click": "Do what it asks",
-        "ignore": "Ignore it, no action needed"
-      },
-      "hotspots": {
-        "sender": "Inspect sender",
-        "link": "Inspect link",
-        "tone": "Inspect tone",
-        "attachment": "Inspect attachment"
-      },
-      "steps": {
-        "step1": {
-          "channelLabel": "Email",
-          "from": "IT Support",
-          "fromAddress": "it-support@nova-retai1.com",
-          "subject": "Your password expires in 2 hours, action required",
-          "preview": "Your account will be locked if you do not update your password immediately using the secure link below.",
-          "linkLabel": "Update password now",
-          "linkRevealed": "Real destination: http://nova-retai1-secure.com/reset, not nova-retail.com",
-          "senderRevealed": "it-support@nova-retai1.com, the domain replaces the letter L with the number 1",
-          "toneRevealed": "Urgency language: \"expires in 2 hours\", \"will be locked\", \"immediately\"",
-          "hint": "Check the sender's domain very carefully, letter by letter.",
-          "feedbackCorrect": "Correct. Reporting it protects your whole team, since attackers usually send the same message to many people at once.",
-          "feedbackIncorrect": "Not quite. Look again at the sender's domain name.",
-          "feedbackPhished": "Clicking would have sent your real password to an attacker. In this simulation, that is exactly what a lookalike domain like this one is built to do.",
-          "explanation": "The domain \"nova-retai1.com\" swaps the letter L for the number 1, a classic lookalike domain. Legitimate IT teams do not create true emergencies out of routine password resets. Urgency plus a lookalike domain is one of the most common phishing patterns there is."
-        },
-        "step2": {
-          "channelLabel": "Email",
-          "from": "Sara, Design Team",
-          "fromAddress": "sara.design@nova-retail.com",
-          "subject": "Shared file with you: Q3 budget.xlsx",
-          "preview": "Hi, I shared the Q3 budget file with you. Click below to view it.",
-          "linkLabel": "View shared file",
-          "linkRevealed": "Real destination: http://drive-nova-files.co/login, not your organization's real file-sharing domain",
-          "toneRevealed": "Casual, friendly tone, no urgency, which is exactly why the link deserves a closer look rather than instant trust",
-          "hint": "The sender looks real. Check where the link actually goes before deciding.",
-          "feedbackCorrect": "Correct. The sender's name looks legitimate, but names are easy to spoof or copy. Confirming with Sara directly, through a number or chat you already had, is the safer move before entering any credentials.",
-          "feedbackIncorrect": "Not quite. The sender's email looks fine, so look at where the link itself actually leads.",
-          "feedbackPhished": "The link leads to a fake login page designed to capture whatever you type into it. In this simulation, that would have handed over your real password.",
-          "explanation": "The sender's name and address look legitimate, but the link goes to \"drive-nova-files.co\", not your organization's real file-sharing domain. Attackers often impersonate a real colleague's name. Before entering credentials anywhere, verify through a channel you already trust, like a phone number you already had, not one supplied in the message itself."
-        },
-        "step3": {
-          "channelLabel": "Text message",
-          "from": "Ahmed, signed as CEO",
-          "fromAddress": "Unknown number, not saved in your contacts",
-          "subject": "",
-          "preview": "I'm in a meeting and can't talk. I need you to buy 5 gift cards for a client gift, $100 each. Send me the codes now, I'll pay you back. Please keep this between us for now.",
-          "senderRevealed": "This number has never contacted you before, and it does not match any saved number for your CEO.",
-          "toneRevealed": "Urgency (\"now\"), unusual request (personal gift cards), and secrecy (\"keep this between us\") together are a major warning sign",
-          "hint": "Real executives don't ask you to keep financial requests secret.",
-          "feedbackCorrect": "Correct. This is a textbook CEO fraud pattern, adapted to text messages. Reporting it and verifying separately protects you and anyone else who might receive the same message.",
-          "feedbackIncorrect": "Not quite. Look again at the number this came from, and how the message asks you to keep it quiet.",
-          "feedbackPhished": "In this simulation, buying and sending the gift card codes would have handed real money straight to an attacker, with no way to get it back.",
-          "explanation": "This is a classic CEO fraud, or business email compromise, adapted to text messages. Urgency, an unusual financial request, an unfamiliar number, and a request for secrecy together are major warning signs. Never send money or gift card codes based on a single message, no matter who it claims to be from."
-        },
-        "step4": {
-          "channelLabel": "Email",
-          "from": "Billing Dept",
-          "fromAddress": "billing@quickinvoice-pay.net",
-          "subject": "Invoice #88213 overdue, see attachment",
-          "preview": "Please find your overdue invoice attached. Open immediately to avoid service suspension.",
-          "attachmentName": "Invoice_88213.zip",
-          "senderRevealed": "billing@quickinvoice-pay.net has no connection to your organization or any vendor you recognize.",
-          "toneRevealed": "Urgency (\"avoid service suspension\") paired with an unfamiliar sender and an unexpected attachment",
-          "attachmentRevealed": "Invoice_88213.zip is a compressed file. Compressing an attachment is a common way to slip past basic antivirus scanning.",
-          "hint": "You don't recognize this sender or this invoice. Compressed attachments from strangers are risky.",
-          "feedbackCorrect": "Correct. You have no relationship with this sender or this invoice, and the attachment is a compressed file, a common way to hide malware from basic scanners.",
-          "feedbackIncorrect": "Not quite. You don't recognize this sender. Consider what opening an unexpected attachment from a stranger could do.",
-          "feedbackPhished": "In this simulation, opening that attachment would have installed malware on your device.",
-          "explanation": "You don't have an existing relationship with this sender or this invoice, and the attachment is a compressed .zip file, a common way to hide malware from basic email scanners. Unexpected attachments from unknown senders should be reported, not opened, even when the subject line creates urgency."
-        },
-        "step5": {
-          "channelLabel": "Email",
-          "from": "Nova Retail Newsletter",
-          "fromAddress": "newsletter@nova-retail.com",
-          "subject": "This month at Nova Retail: new parking policy and team updates",
-          "preview": "Read about the new parking arrangement starting next month and other team news.",
-          "senderRevealed": "newsletter@nova-retail.com, matches your organization's real domain",
-          "toneRevealed": "Calm, informational tone. No urgency, no request for money, credentials, or any action at all",
-          "hint": "Check whether anything here asks you to click, pay, or share information under pressure.",
-          "feedbackCorrect": "Correct. A matching company domain, no urgency, and no request for money, credentials, or sensitive action. Recognizing safe messages is just as important a skill as spotting dangerous ones.",
-          "feedbackIncorrect": "Not quite. Look again: does anything here actually ask you to click, pay, or share information?",
-          "feedbackPhished": "This message never asked you to do anything risky, so nothing happens in this simulation, but it's worth noticing that reporting or ignoring genuine mail as a reflex can create alert fatigue on a real team.",
-          "explanation": "This is a normal internal newsletter: a matching company domain, no urgency, and no request for money, credentials, or sensitive action. Reporting genuine messages as phishing creates alert fatigue and makes real reports harder for a security team to act on quickly."
-        }
-      },
-      "completion": {
-        "title": "Challenge complete",
-        "scoreLabel": "Your score",
-        "xpLabel": "XP earned",
-        "badgeUnlockedLabel": "Badge unlocked",
-        "skillsHeading": "Skills you practiced",
-        "skills": {
-          "verifyDomains": "Verifying sender domains for lookalikes",
-          "checkLinks": "Checking where links really go before clicking",
-          "recognizeBec": "Recognizing CEO fraud and urgency or secrecy pressure tactics",
-          "distrustAttachments": "Treating unexpected attachments from unknown senders with suspicion",
-          "avoidFalsePositives": "Recognizing legitimate messages to avoid false-positive reporting"
-        },
-        "nextStepHeading": "Recommended next step",
-        "nextStepBody": "Join the CyberAbeer Labs waitlist to be first in line for more scenario challenges like this one.",
-        "nextStepCta": "Continue Your Cyber Journey",
-        "shareCta": "Share your result",
-        "shareText": "I just earned the CyberAbeer First Defender badge by spotting 5 phishing attempts. Try the free challenge:",
-        "shareCopied": "Result copied. Paste it anywhere to share.",
-        "registerHeading": "Save this result to your profile",
-        "registerBody": "Create a free CyberAbeer account to keep your score and badge permanently. Your result is already saved on this device, so you won't lose anything by registering now or later.",
-        "registerCta": "Create free account",
-        "registerLater": "Maybe later",
-        "registeredConfirmation": "Saved to your CyberAbeer profile.",
-        "anonymousNote": "You're playing as a guest. This result is only saved on this device until you register.",
-        "shareCardHeading": "Share your achievement",
-        "shareCardTitle": "ACHIEVEMENT UNLOCKED",
-        "shareCardDownload": "Download image"
-      }
-    }
-  },
-  "achievements": {
-    "pageTitle": "My Achievements",
-    "pageDescription": "Earn badges. Grow your skills. Defend the digital world.",
-    "earned": "Earned",
-    "locked": "Locked",
-    "stats": {
-      "earned": "Achievements earned",
-      "totalXp": "Total XP",
-      "next": "Next achievement",
-      "allDone": "All achievements earned!",
-      "soundOn": "Sound on",
-      "soundOff": "Sound off"
-    },
-    "catalog": {
-      "phishingHunter": {
-        "name": "Phishing Hunter",
-        "description": "Detected and reported simulated phishing attempts across email and messaging."
-      },
-      "networkGuardian": {
-        "name": "Network Guardian",
-        "description": "Secured network traffic and spotted suspicious activity."
-      },
-      "socNightShift": {
-        "name": "SOC Night Shift",
-        "description": "Responded to live security incidents under time pressure."
-      },
-      "webDefender": {
-        "name": "Web Defender",
-        "description": "Found and fixed common web application vulnerabilities."
-      },
-      "identityGuardian": {
-        "name": "Identity Guardian",
-        "description": "Protected digital identities and access controls."
-      },
-      "incidentCommander": {
-        "name": "Incident Commander",
-        "description": "Led the response effort during a security incident."
-      },
-      "dataGuardian": {
-        "name": "Data Guardian",
-        "description": "Classified and protected sensitive data."
-      },
-      "cloudDefender": {
-        "name": "Cloud Defender",
-        "description": "Secured misconfigured cloud infrastructure."
-      },
-      "agentZero": {
-        "name": "Agent Zero",
-        "description": "Investigated a complex simulated breach end to end."
-      },
-      "grcStrategist": {
-        "name": "GRC Strategist",
-        "description": "Built a governance, risk, and compliance program."
-      },
-      "digitalInvestigator": {
-        "name": "Digital Investigator",
-        "description": "Analyzed digital evidence after an incident."
-      },
-      "quantumCountdown": {
-        "name": "Quantum Countdown",
-        "description": "Explored post-quantum cryptography risk and readiness."
-      }
-    },
-    "unlock": {
-      "unlockedLabel": "Achievement Unlocked",
-      "xpSuffix": "XP",
-      "skip": "Skip",
-      "soundOn": "Sound on",
-      "soundOff": "Sound off"
-    },
-    "academyHeading": "Academy Progress",
-    "academyProgressLabel": "{earned} of {total} complete",
-    "academies": {
-      "cyberDefense": {
-        "name": "Cyber Defense",
-        "description": "Detect, respond to, and contain live threats before they cause damage."
-      },
-      "governance": {
-        "name": "Governance, Risk & Compliance",
-        "description": "Build the frameworks and controls that keep an organization accountable."
-      },
-      "aiTrust": {
-        "name": "AI Trust",
-        "description": "Secure the AI agents and systems reshaping how organizations operate."
-      },
-      "dataTrust": {
-        "name": "Data Trust",
-        "description": "Classify, protect, and govern the data an organization can't afford to lose."
-      },
-      "futureTrust": {
-        "name": "Future Trust",
-        "description": "Get ahead of the threats and technologies still taking shape."
-      }
-    }
-  }
+"nav": {
+"home": "Home",
+"about": "About Dr. Abeer",
+"greentrust": "GreenTrust AI",
+"forOrganizations": "For Organizations",
+"labs": "CyberAbeer Labs",
+"freeTools": "Free Tools",
+"research": "Research",
+"insights": "Insights",
+"learn": "Learn",
+"intelligence": "Cyber Intelligence",
+"contact": "Contact",
+"login": "Log in",
+"register": "Register",
+"challenge": "Free Challenge",
+"account": "My account",
+"myLabs": "My Labs",
+"logout": "Log out"
+},
+"common": {
+"learnMore": "Learn more",
+"getStarted": "Get started",
+"readMore": "Read more",
+"submit": "Submit",
+"sending": "Sending...",
+"email": "Email",
+"fullName": "Full name",
+"organization": "Organization",
+"organizationOptional": "Organization (optional)",
+"message": "Message",
+"loading": "Loading...",
+"requiredField": "This field is required",
+"invalidEmail": "Enter a valid email address",
+"successGeneric": "Thank you. We received your submission.",
+"errorGeneric": "Something went wrong. Please try again.",
+"skipToContent": "Skip to content",
+"language": "Language",
+"backToHome": "Back to home",
+"comingSoon": "Coming soon"
+},
+"footer": {
+"tagline": "Cybersecurity governance, AI risk, and practical security education.",
+"rights": "All rights reserved.",
+"newsletterHeading": "Get occasional updates",
+"newsletterBody": "New research, free tools, and product updates. No spam, unsubscribe anytime.",
+"newsletterPlaceholder": "you@example.com",
+"newsletterSubmit": "Subscribe",
+"newsletterSuccess": "You're subscribed. Thank you.",
+"newsletterError": "Could not subscribe right now. Please try again.",
+"sitemapHeading": "Site",
+"connectHeading": "Connect",
+"dataNote": "By submitting this form, you agree to be contacted about your request."
+},
+"home": {
+"heroKicker": "CyberAbeer",
+"heroTitle": "Cybersecurity governance and practical security skills, in one place",
+"heroSubtitle": "CyberAbeer is the home of GreenTrust AI, an AI governance and risk platform for organizations, and CyberAbeer Labs, a bilingual hands-on cybersecurity learning platform for individuals.",
+"brandPromise": "Learn. Practice. Grow. Free with CyberAbeer.",
+"journeysHeading": "Choose your path",
+"orgTitle": "For organizations",
+"orgBody": "Govern AI agents, manage third-party and quantum risk, and produce audit-ready evidence with GreenTrust AI.",
+"orgCta": "Explore GreenTrust AI",
+"learnerTitle": "For learners",
+"learnerBody": "Build real cybersecurity skills through gamified, bilingual, hands-on labs and challenges with CyberAbeer Labs.",
+"learnerCta": "Explore CyberAbeer Labs",
+"founderHeading": "Built on real practitioner experience",
+"founderBody": "CyberAbeer is founded and led by Dr. Abeer Alshammari, a cybersecurity governance, risk, and compliance practitioner with over 20 years of experience.",
+"founderCta": "About Dr. Abeer",
+"toolsHeading": "Try a free self-assessment",
+"toolsBody": "Quick, no-signup tools to sanity-check your AI governance and quantum readiness posture.",
+"toolsCta": "See free tools",
+"insightsHeading": "Insights",
+"insightsBody": "Research notes and practical write-ups on governance, risk, and security, published as they're ready.",
+"insightsCta": "Read insights",
+"researchHeading": "Research",
+"researchBody": "Dr. Abeer's doctoral research and ongoing work on adaptive cybersecurity governance.",
+"researchCta": "See research",
+"latestInsightsHeading": "Latest CyberAbeer Insights",
+"latestInsightsIntro": "Fresh research notes and practical guides on AI security, governance, and data trust.",
+"exploreAllInsightsCta": "Explore All Insights"
+},
+"about": {
+"kicker": "About",
+"title": "Dr. Abeer Alshammari",
+"roleLine": "Founder of CyberAbeer, GreenTrust AI, and CyberAbeer Labs",
+"introParagraph1": "Dr. Abeer Alshammari is a cybersecurity governance, risk, and compliance (GRC) practitioner with more than 20 years of experience building and maturing enterprise security programs.",
+"introParagraph2": "Her work spans cybersecurity policy and control frameworks, risk assessment across application, infrastructure, cloud, data, and third-party domains, and coordinating internal and external audits. She founded CyberAbeer to bring that same practitioner discipline to AI governance, through GreenTrust AI, and to security education, through CyberAbeer Labs.",
+"introParagraph3": "In parallel with her GRC leadership work, Dr. Abeer serves as a Chief Information Security Officer (CISO) and cybersecurity strategic consultant, advising organizations on security strategy, risk posture, and governance at the executive and board level. She works with leadership teams to turn cybersecurity risk into clear business decisions and practical maturity roadmaps.",
+"credentialsHeading": "Credentials",
+"credentials": [
+"Doctorate in Cybersecurity and Information Assurance (GRC-focused dissertation)",
+"CISM, Certified Information Security Manager",
+"CISSP, Certified Information Systems Security Professional",
+"ISO/IEC 27001:2022 Lead Auditor",
+"GRCP and GRCA, Governance, Risk and Compliance Professional and Auditor",
+"CompTIA Security+",
+"Lean Six Sigma Black Belt",
+"Certified Scrum Master"
+],
+"experienceHeading": "Experience",
+"experienceIntro": "Over 20 years leading cybersecurity governance, risk, and compliance programs across national government, technology, and energy-sector organizations.",
+"experienceItems": [
+{
+"period": "2023 to present",
+"title": "Cybersecurity GRC Consultant",
+"summary": "Leads and matures enterprise cybersecurity governance, risk, and compliance (GRC) programs, develops security policies and control frameworks, conducts cybersecurity risk assessments across applications, infrastructure, cloud, data, and third-party services, and coordinates internal and external audits while supporting regulatory compliance and continual improvement."
+},
+{
+"period": "2019 to 2022",
+"title": "Cybersecurity GRC Program and Team Lead",
+"summary": "Built an enterprise GRC program from the ground up, including governance frameworks, a full policy suite, and audit-ready processes, while leading and developing a risk and compliance team."
+},
+{
+"period": "2003 to 2018",
+"title": "Cybersecurity Engineer, Security, Risk and Compliance",
+"summary": "Implemented security controls and supported risk assessments, audits, and remediation across mission-critical government systems."
+}
+],
+"educationHeading": "Education",
+"educationItems": [
+"Doctorate in Computer Science, concentration in Cybersecurity and Information Assurance",
+"Master's degree in Computer Engineering",
+"Bachelor's degree in Computer Engineering"
+],
+"dissertationHeading": "Doctoral dissertation",
+"dissertationTitle": "Designing Adaptive Cybersecurity Governance Architectures: A Layered GRC Framework for Resilient Digital Transformation",
+"researchCta": "See research areas",
+"membershipsHeading": "Professional activity",
+"membershipsBody": "Member of ISACA, ISC2, IEEE, Women in Cybersecurity (WiCyS), the Australian Computer Society (ACS), Gartner, and Info-Tech Research Group, as well as the International Leadership Association (ILA), a global community of leaders, leadership scholars, educators, and development professionals who share a vision of leadership for a just and thriving future. Experience as a peer reviewer and recognized contributor in the field."
+},
+"greentrust": {
+"kicker": "GreenTrust AI",
+"heroTitle": "AI governance and risk, built for how organizations actually adopt AI",
+"heroSubtitle": "Inventory every AI agent in use, assess risk across data, access, and third-party exposure, track quantum readiness, and produce evidence your auditors will accept.",
+"cta": "Join the early access waitlist",
+"whatHeading": "What GreenTrust AI does",
+"whatBody": "GreenTrust AI gives governance, risk, and security teams one place to register AI agents, assess and score their risk, manage exceptions and approvals, and generate an audit-ready trail for every decision.",
+"pillarsHeading": "Core capabilities",
+"pillars": [
+{
+"title": "AI agent inventory and passports",
+"body": "Register every AI agent in use, who owns it, what data it can access, and what systems it touches, in a single governed inventory."
+},
+{
+"title": "Risk assessment and scoring",
+"body": "Score AI agent risk across data sensitivity, access scope, and third-party exposure, with a documented, repeatable methodology."
+},
+{
+"title": "Quantum readiness tracking",
+"body": "Inventory cryptographic assets and algorithms in use, flag those vulnerable to future quantum attacks, and track migration progress over time."
+},
+{
+"title": "Audit-ready evidence",
+"body": "Every assessment, exception, approval, and control mapping is recorded as an append-only trail, ready to hand to an internal or external auditor."
+}
+],
+"whoHeading": "Who it's for",
+"whoBody": "Governance, risk, compliance, and security teams at organizations that are adopting AI agents faster than their existing risk processes can track them.",
+"formHeading": "Request early access",
+"formBody": "GreenTrust AI is in early access. Tell us about your organization and we'll follow up.",
+"waitlistNote": "GreenTrust AI is a new product from CyberAbeer. There are no customers or case studies to share yet; verified customer stories will be added here once they exist."
+},
+"forOrganizations": {
+"kicker": "For Organizations",
+"heroTitle": "Free learning for individuals. Governed AI risk management for organizations.",
+"heroSubtitle": "CyberAbeer gives every visitor free cybersecurity learning, hands-on labs, and self-assessment tools. GreenTrust AI is where organizations turn that same governance thinking into an operational, audit-ready platform.",
+"primaryCta": "Request an enterprise review",
+"secondaryCta": "Try the GreenTrust free assessment",
+"splitHeading": "Two audiences, two products",
+"individualHeading": "For individuals: free, always",
+"individualBody": "CyberAbeer Labs, Cyber Intelligence, Insights, the Learning Center, and every free tool on this site provide genuine value with no payment required. Registration is optional and only used to save your progress, XP, badges, and results.",
+"individualCta": "Explore free tools",
+"orgHeading": "For organizations: GreenTrust AI",
+"orgBody": "GreenTrust AI is CyberAbeer's commercial platform for governance, risk, and security teams: an AI agent inventory, risk scoring, permission governance, non-human identity management, and an audit-ready evidence trail. Running the free public GreenTrust assessment costs nothing; operationalizing governance at organization scale is where GreenTrust becomes a paid engagement.",
+"orgCta": "See GreenTrust AI",
+"whatPaysHeading": "What organizations pay for",
+"whatPaysBody": "Reading CyberAbeer content or running a basic assessment is always free. What organizations pay for is operational capability at scale: organization-wide AI agent inventory across multiple business units, multi-user governance, permission and non-human identity management, evidence and control mapping, remediation tracking, executive and board reporting, custom assessments, private or sovereign deployment, and consulting or training engagements. Requirements vary by organization, so CyberAbeer does not publish fixed enterprise pricing; every engagement starts with a scoping conversation.",
+"formHeading": "Request an enterprise review",
+"formBody": "Tell us about your organization and what you're trying to govern. Dr. Abeer or the CyberAbeer team will follow up directly.",
+"formNote": "This starts a conversation, not a purchase. There is no obligation and no fee to discuss your organization's needs."
+},
+"labs": {
+"kicker": "CyberAbeer Labs",
+"heroTitle": "Learn cybersecurity by doing",
+"heroSubtitle": "Hands-on, gamified labs and challenges that build real skills, not just certificates. Earn XP, track streaks, and climb the leaderboard as you learn.",
+"cta": "Join the waitlist",
+"whatHeading": "What CyberAbeer Labs is",
+"whatBody": "A bilingual, hands-on cybersecurity learning platform built around scenario labs, capture-the-flag style challenges, and short quizzes, with XP, levels, and streaks that reward consistent practice over passive watching.",
+"tracksHeading": "How learning is structured",
+"tracks": [
+{
+"title": "Scenario labs",
+"body": "Realistic situations, like triaging a suspicious email or reviewing a risky configuration, where you make decisions and get feedback."
+},
+{
+"title": "Capture-the-flag challenges",
+"body": "Hands-on technical challenges with a hidden flag to find, for learners who want to go deeper on specific skills."
+},
+{
+"title": "Quick knowledge checks",
+"body": "Short quizzes that reinforce core concepts and fit into a few minutes."
+}
+],
+"gamificationHeading": "Built to keep you coming back",
+"gamificationBody": "Earn XP for every lab and challenge you complete, maintain a streak, unlock achievements, and see how you compare on the leaderboard.",
+"formHeading": "Join the waitlist",
+"formBody": "CyberAbeer Labs is in early access. Sign up to be notified when it opens.",
+"waitlistNote": "CyberAbeer Labs is a new platform. There are no learner testimonials or results to share yet; verified learner stories will be added here once they exist."
+},
+"freeTools": {
+"kicker": "Free tools",
+"title": "Free self-assessments",
+"intro": "Quick, no-signup tools to sanity-check where you stand. These are educational self-assessments, not a certified audit or a substitute for a formal risk assessment.",
+"governanceTitle": "AI Governance Quick Check",
+"governanceBody": "A short self-assessment covering AI agent inventory, risk assessment, and oversight practices.",
+"quantumTitle": "Quantum Readiness Quick Check",
+"quantumBody": "A short self-assessment covering cryptographic asset inventory and exposure to future quantum-capable attacks.",
+"startCta": "Start",
+"disclaimer": "Results are indicative only and based solely on the answers you provide. They do not constitute a certified audit, legal advice, or a guarantee of compliance.",
+"downloadsKicker": "Free downloads",
+"downloadsTitle": "Free templates and tools",
+"downloadsIntro": "Practical GRC and cybersecurity resources you can download and start using today. No email required, no subscription, no watermark.",
+"riskRegisterTitle": "Risk Register and Heat Map",
+"riskRegisterBody": "Score risks by likelihood and impact, see them plotted on a heat map, and track treatment through to a residual score. Pre-filled with 10 example risks, ready to adapt.",
+"riskRegisterFormat": "Excel (.xlsx)",
+"isoSoaTitle": "ISO/IEC 27001:2022 Statement of Applicability Tracker",
+"isoSoaBody": "All 93 Annex A controls pre-loaded across the four 2022 themes, with an implementation dashboard that updates automatically as you fill it in.",
+"isoSoaFormat": "Excel (.xlsx)",
+"incidentLogTitle": "Incident Response Log and MTTR Tracker",
+"incidentLogBody": "Log incidents as they happen and get mean time to respond and resolve calculated automatically, split by severity.",
+"incidentLogFormat": "Excel (.xlsx)",
+"aegisGrcTitle": "Aegis GRC Platform",
+"aegisGrcBody": "A free, self-hosted GRC application with its own login, dashboard, and registers for policies, risks, audits, ISO controls, business continuity, and more. Yours to run and keep, no subscription.",
+"aegisGrcFormat": "Windows, macOS, Linux (Python)",
+"downloadCta": "Download"
+},
+"assessment": {
+"governance": {
+"title": "AI Governance Quick Check",
+"intro": "Answer honestly for the most accurate result. This takes about two minutes.",
+"questions": [
+{
+"prompt": "Does your organization maintain a complete inventory of AI agents in production?",
+"options": [
+"Yes, fully maintained",
+"Partially, some agents are untracked",
+"No"
+]
+},
+{
+"prompt": "Are AI agents formally risk-assessed before they go into production?",
+"options": [
+"Yes, every time",
+"Sometimes",
+"No"
+]
+},
+{
+"prompt": "Is there a named owner accountable for each AI agent?",
+"options": [
+"Yes, for all agents",
+"For some agents",
+"No"
+]
+},
+{
+"prompt": "Do you review third-party AI tools for data access and risk before adoption?",
+"options": [
+"Yes, always",
+"Sometimes",
+"No"
+]
+},
+{
+"prompt": "Can you produce an audit trail of AI-related risk decisions if asked today?",
+"options": [
+"Yes, readily",
+"With significant effort",
+"No"
+]
+}
+],
+"resultHeading": "Your result",
+"resultLow": "Your AI governance practices appear to have significant gaps. Establishing an AI agent inventory is a strong first step.",
+"resultMedium": "Your AI governance practices are developing. A few specific gaps are worth prioritizing.",
+"resultHigh": "Your AI governance practices appear relatively mature. Formal audit-ready evidence is the natural next step.",
+"ctaReport": "Request full guidance by email"
+},
+"quantum": {
+"title": "Quantum Readiness Quick Check",
+"intro": "Answer honestly for the most accurate result. This takes about two minutes.",
+"questions": [
+{
+"prompt": "Do you maintain an inventory of cryptographic algorithms in use across your systems?",
+"options": [
+"Yes, fully maintained",
+"Partially",
+"No"
+]
+},
+{
+"prompt": "Have you identified which systems rely on algorithms considered vulnerable to future quantum attacks?",
+"options": [
+"Yes",
+"In progress",
+"No"
+]
+},
+{
+"prompt": "Do you have a migration plan toward post-quantum cryptographic algorithms?",
+"options": [
+"Yes, documented",
+"Informally discussed",
+"No"
+]
+},
+{
+"prompt": "Do you know which of your long-lived sensitive data could be at risk from harvest-now, decrypt-later attacks?",
+"options": [
+"Yes",
+"Somewhat",
+"No"
+]
+},
+{
+"prompt": "Is a specific person or team accountable for quantum readiness?",
+"options": [
+"Yes",
+"Informally",
+"No"
+]
+}
+],
+"resultHeading": "Your result",
+"resultLow": "Quantum readiness work has likely not started yet. Beginning with a cryptographic asset inventory is a practical first step.",
+"resultMedium": "Quantum readiness work is underway. A documented migration plan is a reasonable next step.",
+"resultHigh": "Quantum readiness practices appear relatively mature for this early stage of the industry.",
+"ctaReport": "Request full guidance by email"
+}
+},
+"greentrustAssessment": {
+"kicker": "Free assessment",
+"title": "GreenTrust AI Agent Governance Assessment",
+"intro": "Sixteen quick questions across eight governance domains. No confidential company information is required, and this assessment does not use AI to score your answers: every result is calculated with a fixed, disclosed scoring method, not a language model.",
+"estimatedTime": "About 5 minutes",
+"startCta": "Start the assessment",
+"progressLabel": "Question {current} of {total}",
+"domains": {
+"visibility": {
+"name": "AI Agent Visibility",
+"recommendation": "Start with a simple, living inventory of every AI agent, bot, and autonomous tool in use, including ones adopted informally by individual teams."
+},
+"accountability": {
+"name": "Ownership & Accountability",
+"recommendation": "Assign a named, accountable owner to every AI agent before it goes into production, not after something goes wrong."
+},
+"identity": {
+"name": "Agent Identity",
+"recommendation": "Give every agent its own scoped identity and credentials, separate from any human user's login, with a defined rotation schedule."
+},
+"permissions": {
+"name": "Permissions",
+"recommendation": "Move agents toward least-privilege access scoped to the specific task, and keep a reliable, current record of what each agent can reach."
+},
+"oversight": {
+"name": "Human Oversight",
+"recommendation": "Require human approval before high-impact actions, and make sure a tested override or kill-switch exists for every agent."
+},
+"monitoring": {
+"name": "Logging & Monitoring",
+"recommendation": "Centralize agent activity logging and put a regular, defined cadence in place for someone to actually review it."
+},
+"lifecycle": {
+"name": "Lifecycle Governance",
+"recommendation": "Document a decommissioning process, including access revocation, and put agents on a periodic review cycle as their role or data access changes."
+},
+"shadowAi": {
+"name": "Shadow AI",
+"recommendation": "Make the approved path to adopting an AI tool easy enough that teams use it, and build a no-blame process to bring existing shadow AI under governance."
+}
+},
+"questions": [
+{
+"prompt": "Does your organization maintain an inventory of every AI agent, bot, or autonomous tool in use?",
+"options": [
+"Yes, a maintained and regularly updated inventory",
+"We have a partial or outdated list",
+"No inventory exists"
+]
+},
+{
+"prompt": "When a team adopts a new AI tool or agent, how does your organization find out?",
+"options": [
+"A required registration or approval step before use",
+"We usually hear about it eventually, informally",
+"We typically don't find out until something goes wrong"
+]
+},
+{
+"prompt": "Does each AI agent have a named, accountable human owner?",
+"options": [
+"Yes, every agent has a named owner",
+"Some agents do, many don't",
+"No owners are assigned"
+]
+},
+{
+"prompt": "If an AI agent takes a harmful or incorrect action, is it clear who is accountable for the outcome?",
+"options": [
+"Yes, accountability is clearly defined in advance",
+"It would take investigation to figure out",
+"No, responsibility is unclear"
+]
+},
+{
+"prompt": "Do AI agents use their own distinct credentials, separate from any human user's login?",
+"options": [
+"Yes, every agent has its own scoped identity",
+"Some agents share credentials with humans or each other",
+"Agents mostly reuse existing human or service accounts"
+]
+},
+{
+"prompt": "Are agent credentials rotated, expired, or revoked on a defined schedule?",
+"options": [
+"Yes, on a defined lifecycle",
+"Only when we remember or something breaks",
+"Credentials are effectively permanent"
+]
+},
+{
+"prompt": "Do AI agents operate under least-privilege access, scoped only to what each task requires?",
+"options": [
+"Yes, permissions are scoped per task and agent",
+"Permissions are broader than necessary in places",
+"Agents generally have broad, standing access"
+]
+},
+{
+"prompt": "Can you produce, today, a list of every system and dataset a given AI agent can access?",
+"options": [
+"Yes, quickly and confidently",
+"With some effort and uncertainty",
+"No, not reliably"
+]
+},
+{
+"prompt": "For high-impact actions (financial, customer-facing, irreversible), is a human required to approve before the agent proceeds?",
+"options": [
+"Yes, for all high-impact actions",
+"For some, not consistently",
+"No, agents act autonomously"
+]
+},
+{
+"prompt": "If an agent behaves unexpectedly, is there a fast, well-understood way for a human to pause or override it?",
+"options": [
+"Yes, a tested override or kill-switch process",
+"An informal, untested way",
+"No reliable way"
+]
+},
+{
+"prompt": "Are AI agent actions logged in a way that supports after-the-fact review?",
+"options": [
+"Yes, comprehensive and centralized logging",
+"Partial logging, scattered across tools",
+"Little to no logging"
+]
+},
+{
+"prompt": "Does anyone regularly review agent activity logs for anomalies or policy violations?",
+"options": [
+"Yes, on a regular defined cadence",
+"Occasionally, reactively",
+"No one reviews them"
+]
+},
+{
+"prompt": "Is there a defined process for retiring or updating an AI agent, including revoking its access?",
+"options": [
+"Yes, a documented decommissioning process",
+"An informal, inconsistent process",
+"No process; agents are abandoned in place"
+]
+},
+{
+"prompt": "Are AI agents periodically reassessed as their role, data access, or capability changes?",
+"options": [
+"Yes, on a scheduled review cycle",
+"Only when a problem forces a review",
+"Agents are set up once and never revisited"
+]
+},
+{
+"prompt": "Do employees or teams sometimes adopt AI tools or agents without an IT or security review?",
+"options": [
+"Rarely; there's a clear, easy approved path",
+"Sometimes, and we know it happens",
+"Frequently, and we don't have visibility into it"
+]
+},
+{
+"prompt": "If shadow AI use is discovered, is there a defined process to bring it under governance rather than simply banning or ignoring it?",
+"options": [
+"Yes, a clear onboarding and remediation path",
+"We handle it case by case",
+"No defined process"
+]
+}
+],
+"results": {
+"heading": "Your GreenTrust Agent Governance Score",
+"overallLabel": "Overall score",
+"domainScoresHeading": "Domain scores",
+"recommendationsHeading": "Top recommendations",
+"risk": {
+"strong": "Strong governance",
+"developing": "Developing governance",
+"emerging_risk": "Emerging risk",
+"high_risk": "High risk"
+},
+"riskSummary": {
+"strong": "Your AI agent governance practices appear relatively mature across most domains. A formal enterprise review can help validate this and identify remaining edge cases.",
+"developing": "Your AI agent governance practices are developing, with clear strengths and a few specific gaps worth prioritizing.",
+"emerging_risk": "Several governance gaps put your organization at meaningful risk as AI agent use grows. The recommendations below are a reasonable starting point.",
+"high_risk": "Your AI agent governance practices show significant gaps across multiple domains. We'd recommend treating this as a near-term priority."
+},
+"saveCta": "Save my assessment",
+"saveLoginPrompt": "Create a free account or log in to save this result to your profile.",
+"saveSuccess": "Saved to your account.",
+"saveError": "We could not save your result. Please try again.",
+"emailCta": "Email me my results",
+"emailPlaceholder": "you@example.com",
+"emailSuccess": "Your results have been saved and, if enterprise emailing is configured, are on their way to your inbox.",
+"emailError": "We could not send your results. Please try again.",
+"enterpriseCta": "Request an enterprise review",
+"restartCta": "Retake the assessment",
+"disclaimer": "This is an educational self-assessment using a fixed, disclosed scoring method. It is not a certified audit, does not require confidential company information, and does not use AI to interpret your answers."
+}
+},
+"account": {
+"title": "My account",
+"memberSince": "Member since {date}",
+"xpLabel": "Total XP",
+"logoutCta": "Log out",
+"badgesHeading": "Badges",
+"noBadges": "No badges earned yet. Complete the First Defender challenge to earn your first one.",
+"challengesHeading": "Challenge history",
+"noChallenges": "You haven't completed a challenge yet.",
+"challengeScoreLabel": "Score: {score}",
+"startChallengeCta": "Start the Free Challenge",
+"greentrustHeading": "GreenTrust assessments",
+"noAssessments": "You haven't saved a GreenTrust assessment result yet.",
+"greentrustScoreLabel": "Overall score: {score}",
+"startAssessmentCta": "Start the GreenTrust Free Assessment",
+"loadError": "We could not load part of your account data. Please refresh the page."
+},
+"research": {
+"kicker": "Research",
+"title": "Research",
+"intro": "My research focuses on bridging academic theory with practical cybersecurity governance, enabling organizations to innovate securely while strengthening resilience, digital trust, and responsible adoption of emerging technologies.",
+"areasHeading": "Research areas",
+"areas": [
+"Cybersecurity Governance",
+"Governance, Risk and Compliance (GRC)",
+"AI Governance",
+"AI Security",
+"AI Risk Management",
+"Agent Governance",
+"Digital Trust",
+"Digital Transformation Governance",
+"Information Security Governance",
+"Data Governance",
+"Data Classification and Information Protection",
+"Privacy Engineering",
+"Network Security",
+"Security Architecture",
+"Zero Trust Architecture",
+"Cloud Security Governance",
+"Identity and Access Management (IAM)",
+"Encryption and Cryptography",
+"Post-Quantum Cryptography",
+"Cyber Resilience",
+"Enterprise Risk Management",
+"Security Metrics and Maturity Models",
+"Regulatory Compliance",
+"ISO/IEC 27001",
+"ISO/IEC 42001",
+"NIST Cybersecurity Framework",
+"Secure Software Governance",
+"Supply Chain Cybersecurity",
+"Third-Party Risk Management",
+"Operational Technology (OT) Security Governance",
+"Cybersecurity Strategy",
+"Innovation Governance",
+"Emerging Technologies Governance",
+"Responsible AI",
+"Human-Centered Cybersecurity",
+"Leadership in Cybersecurity",
+"Women in STEM Leadership",
+"Youth STEM Leadership",
+"Cybersecurity Education",
+"Professional Development in Cybersecurity"
+],
+"dissertationHeading": "Doctoral dissertation",
+"dissertationTitle": "Designing Adaptive Cybersecurity Governance Architectures: A Layered GRC Framework for Resilient Digital Transformation",
+"dissertationNote": "Completed July 2026.",
+"publicationsHeading": "Publications & preprints",
+"orcidCta": "View full record on ORCID",
+"contactCta": "Get in touch about research"
+},
+"insights": {
+"kicker": "Insights",
+"title": "Insights",
+"intro": "Research notes and practical write-ups on governance, AI risk, and security, published as they're ready.",
+"emptyTitle": "No insights published yet",
+"emptyBody": "The first articles are in progress. Subscribe to the newsletter to be notified when they're published.",
+"backLink": "Back to insights",
+"publishedOn": "Published",
+"updatedOn": "Updated",
+"sourcesTitle": "Sources",
+"accessedLabel": "Accessed",
+"relatedTitle": "Related reading",
+"difficulty": {
+"beginner": "Beginner",
+"intermediate": "Intermediate",
+"advanced": "Advanced"
+},
+"audience": {
+"students": "Students",
+"professionals": "Professionals",
+"executives": "Executives",
+"ciso": "CISOs",
+"general": "General audience"
+},
+"tryItTitle": "Try it yourself",
+"tryItLiveDescription": "Put this into practice with a free, interactive CyberAbeer challenge.",
+"tryItLiveLink": "Start the challenge",
+"tryItComingSoonDescription": "An interactive CyberAbeer experience for this topic is in development.",
+"tryItComingSoon": "Coming soon",
+"featuredLabel": "Featured Insight",
+"latestTitle": "Latest Insights",
+"popularTopicsTitle": "Popular Topics",
+"drAbeerTitle": "Dr. Abeer Insights",
+"viewAllLabel": "View all",
+"readingTimeMinutes": "{minutes} min read"
+},
+"topics": {
+"kicker": "Topic hub",
+"backLink": "Back to insights",
+"hubsTitle": "Explore this pillar",
+"articlesTitle": "Articles",
+"emptyTitle": "No articles published in this topic yet",
+"emptyBody": "New articles in this area are in progress. Subscribe to the newsletter to be notified when they're published."
+},
+"learn": {
+"kicker": "Learning Center",
+"title": "The CyberAbeer Learning Center",
+"intro": "Certification study guides, career roadmaps, and hands-on practice, organized in one place instead of scattered across the blog.",
+"comingSoon": "Coming soon",
+"xpBadge": "Earn XP",
+"certPathsTitle": "Certification Paths",
+"certPathsIntro": "Structured study guides for the certifications that matter most for security careers, written to teach reasoning, not just definitions.",
+"certCisspTitle": "CISSP",
+"certCisspBody": "All 8 domains, a study plan, original scenario-based practice questions, and exam-day strategy.",
+"certCismTitle": "CISM",
+"certCismBody": "Governance-focused domains, how CISM differs from CISSP, and program-level risk and incident management.",
+"certIsoTitle": "ISO/IEC 27001",
+"certIsoBody": "The 2022 revision, clauses, Annex A controls, the Statement of Applicability, and the certification journey.",
+"certCehTitle": "CEH",
+"certCehBody": "An Ethical Hacker study guide is planned but not yet written.",
+"careerPathsTitle": "Cybersecurity Career Paths",
+"careerPathsIntro": "How to get in, and where each discipline actually leads, from entry level to leadership.",
+"careerSocTitle": "SOC Analyst",
+"careerSocBody": "Tier 1 alert triage through threat hunting and SOC leadership.",
+"careerGrcTitle": "Governance, Risk & Compliance",
+"careerGrcBody": "From GRC analyst to CISO, and the certifications that mark each stage.",
+"careerEngineeringTitle": "Security Engineering",
+"careerEngineeringBody": "The technical track: hands-on with systems, tools, and detection.",
+"careerAuditTitle": "Cybersecurity Audit",
+"careerAuditBody": "What auditors actually do, and the CISA certification path.",
+"careerAiSecurityTitle": "AI Security",
+"careerAiSecurityBody": "AI agent governance, identity, and permissions, for the newest branch of the field.",
+"practiceTitle": "Practice",
+"practiceIntro": "Read the theory, then put it to work. Only real, live experiences are linked here; everything still in development is marked Coming Soon rather than left as a dead link.",
+"practiceDecisionLabsTitle": "Decision Labs",
+"practiceDecisionLabsBody": "Scenario-driven judgment labs, like GRCL: Innovation Under Fire, are in development.",
+"practiceQuickChallengesTitle": "Quick Challenges",
+"practiceQuickChallengesBody": "Play Phishing Hunter now, free, no signup required. More quick challenges are in development.",
+"practiceQuestionsTitle": "Practice Questions",
+"practiceQuestionsBody": "Original CyberAbeer scenario questions embedded in the CISSP hub, with full reasoning for every answer."
+},
+"intelligence": {
+"kicker": "Cyber Intelligence",
+"title": "CyberAbeer Cyber Intelligence",
+"intro": "Vulnerabilities, AI security, GRC, identity, and post-quantum developments, with CyberAbeer analysis added, not just headlines reproduced.",
+"hubsTitle": "Browse by area",
+"latestTitle": "Latest Intelligence",
+"emptyTitle": "No intelligence items published yet",
+"emptyBody": "New items are added only once facts are verified against primary sources -- check back soon.",
+"backLink": "Back to Cyber Intelligence",
+"publishedOn": "Published",
+"updatedOn": "Updated",
+"sourcesTitle": "Sources",
+"sourcesCheckedLabel": "Sources checked",
+"accessedLabel": "Accessed",
+"relatedTitle": "Related intelligence",
+"dailyBriefTitle": "Today's Cyber Brief",
+"dailyBriefReadingTime": "3-5 min read",
+"dailyBriefEmpty": "No new developments met CyberAbeer's bar for publication today.",
+"executiveViewTitle": "Executive View",
+"menaRelevanceLabel": "GCC/MENA relevance",
+"notAVendorRating": "CyberAbeer's own guidance, not an official vendor or CISA rating.",
+"severity": {
+"critical": "Critical",
+"high": "High",
+"important": "Important",
+"informational": "Informational"
+},
+"storyStatus": {
+"developing": "Developing",
+"confirmed": "Confirmed",
+"updated": "Updated",
+"resolved": "Resolved"
+},
+"vulnerabilityPanel": {
+"title": "Vulnerability Intelligence",
+"cve": "CVE",
+"cvss": "CVSS",
+"affectedProduct": "Affected product",
+"exploitStatus": "Exploit status",
+"kevListed": "CISA KEV listed",
+"kevYes": "Yes",
+"kevNo": "No",
+"vendorAdvisory": "Vendor advisory",
+"patchStatus": "Patch status",
+"priority": "CyberAbeer priority",
+"priorityDisclaimer": "CyberAbeer's own prioritization guidance, based on severity, known exploitation, and exposure -- not an official vendor or CISA rating.",
+"lastChecked": "Sources last checked"
+},
+"exploitStatus": {
+"actively_exploited": "Actively exploited",
+"poc_available": "Proof-of-concept available",
+"no_known_exploit": "No known exploit",
+"unknown": "Unknown"
+},
+"priority": {
+"immediate": "Immediate",
+"urgent": "Urgent",
+"planned": "Planned",
+"monitor": "Monitor"
+},
+"homeSectionTitle": "Latest Cyber Intelligence",
+"homeSectionIntro": "Vulnerabilities, AI security, and governance developments, with CyberAbeer analysis.",
+"homeSectionCta": "View Cyber Intelligence",
+"newsletterTitle": "CyberAbeer Cyber Brief",
+"newsletterBody": "A weekly digest of the top threat, critical vulnerability, AI security watch, GRC update, and Dr. Abeer's takeaway. No spam, unsubscribe any time."
+},
+"contact": {
+"kicker": "Contact",
+"title": "Get in touch",
+"intro": "For general questions, use the form below. Organizations interested in GreenTrust AI can use the enterprise enquiry form.",
+"generalHeading": "General enquiry",
+"generalSuccess": "Thank you, your message has been received.",
+"enterpriseHeading": "Enterprise enquiry",
+"enterpriseIntro": "Tell us about your organization's AI governance needs.",
+"enterpriseSuccess": "Thank you, your enquiry has been received.",
+"fields": {
+"name": "Full name",
+"email": "Email",
+"organization": "Organization (optional)",
+"companySize": "Organization size",
+"message": "Message",
+"interest": "What are you interested in?"
+}
+},
+"auth": {
+"login": {
+"title": "Log in",
+"subtitle": "Log in to your CyberAbeer account.",
+"emailLabel": "Email",
+"passwordLabel": "Password",
+"submit": "Log in",
+"noAccount": "Don't have an account?",
+"registerLink": "Register",
+"error": "We couldn't log you in with those details.",
+"forgotPasswordLink": "Forgot your password?"
+},
+"forgotPassword": {
+"title": "Reset your password",
+"subtitle": "Enter your account email and we'll send you a link to reset your password.",
+"emailLabel": "Email",
+"submit": "Send reset link",
+"success": "If an account exists for that email, we've sent a password reset link. Check your inbox.",
+"error": "We couldn't send a reset link. Please try again.",
+"backToLogin": "Back to log in"
+},
+"resetPassword": {
+"title": "Choose a new password",
+"subtitle": "Enter a new password for your CyberAbeer account.",
+"passwordLabel": "New password",
+"confirmPasswordLabel": "Confirm new password",
+"submit": "Update password",
+"success": "Your password has been updated. You can now log in with your new password.",
+"error": "We couldn't update your password. The reset link may have expired; request a new one.",
+"passwordMismatch": "Passwords do not match",
+"loginLink": "Go to log in"
+},
+"register": {
+"title": "Register",
+"subtitle": "Create your CyberAbeer account.",
+"nameLabel": "Full name",
+"emailLabel": "Email",
+"organizationLabel": "Organization (optional)",
+"passwordLabel": "Password",
+"confirmPasswordLabel": "Confirm password",
+"submit": "Create account",
+"haveAccount": "Already have an account?",
+"loginLink": "Log in",
+"error": "We couldn't create your account with those details.",
+"passwordMismatch": "Passwords do not match",
+"success": "Account created. Check your email to confirm your address."
+}
+},
+"seo": {
+"siteName": "CyberAbeer",
+"defaultTitle": "CyberAbeer, GreenTrust AI, and CyberAbeer Labs",
+"defaultDescription": "CyberAbeer is the home of GreenTrust AI, an AI governance and risk platform for organizations, and CyberAbeer Labs, a bilingual hands-on cybersecurity learning platform.",
+"homeTitle": "CyberAbeer, cybersecurity governance and practical security skills",
+"homeDescription": "AI governance and risk for organizations with GreenTrust AI, and hands-on cybersecurity learning for individuals with CyberAbeer Labs.",
+"aboutTitle": "About Dr. Abeer Alshammari",
+"aboutDescription": "Cybersecurity governance, risk, and compliance practitioner with over 20 years of experience, founder of CyberAbeer, GreenTrust AI, and CyberAbeer Labs.",
+"greentrustTitle": "GreenTrust AI, AI governance and risk platform",
+"greentrustDescription": "Inventory AI agents, assess risk, track quantum readiness, and produce audit-ready evidence with GreenTrust AI.",
+"forOrganizationsTitle": "For Organizations, GreenTrust AI governance for enterprises",
+"forOrganizationsDescription": "CyberAbeer is free for individuals. GreenTrust AI is CyberAbeer's platform for organizations that need governed, audit-ready AI agent risk management.",
+"labsTitle": "CyberAbeer Labs, learn cybersecurity by doing",
+"labsDescription": "A bilingual, gamified, hands-on cybersecurity learning platform with scenario labs, challenges, XP, and leaderboards.",
+"freeToolsTitle": "Free cybersecurity self-assessment tools, templates, and GRC downloads",
+"freeToolsDescription": "Free, no-signup self-assessments for AI governance and quantum readiness, plus downloadable Excel templates for risk registers, ISO 27001:2022 compliance, and incident response, and a free self-hosted GRC platform.",
+"researchTitle": "Cybersecurity governance, GRC, and AI security research",
+"researchDescription": "Doctoral and applied research spanning cybersecurity governance, GRC, AI governance and risk, cloud and data security, and regulatory frameworks including ISO/IEC 27001, ISO/IEC 42001, and the NIST Cybersecurity Framework.",
+"insightsTitle": "Insights on governance, AI risk, and security",
+"insightsDescription": "Research notes and practical write-ups on governance, AI risk, and security.",
+"topicsTitleSuffix": "CyberAbeer Insights",
+"learnTitle": "CyberAbeer Learning Center: CISSP, CISM, ISO 27001 study guides & career roadmaps",
+"learnDescription": "Certification study guides for CISSP, CISM, and ISO/IEC 27001, plus cybersecurity career roadmaps for SOC, GRC, audit, and AI security.",
+"intelligenceTitle": "CyberAbeer Cyber Intelligence: vulnerabilities, AI security, GRC, and post-quantum",
+"intelligenceDescription": "Verified cybersecurity intelligence with CyberAbeer analysis: critical vulnerabilities, AI and agentic AI security, GRC and governance developments, identity and data security, and post-quantum readiness.",
+"contactTitle": "Contact CyberAbeer",
+"contactDescription": "Get in touch with CyberAbeer for general questions or enterprise enquiries about GreenTrust AI.",
+"loginTitle": "Log in to CyberAbeer",
+"registerTitle": "Register for CyberAbeer",
+"challengeFirstDefenderTitle": "Free Cyber Challenge: First Defender, Spot the Phish",
+"challengeFirstDefenderDescription": "Play a free, interactive phishing-detection scenario in Arabic or English. Inspect five realistic messages, earn XP, and unlock the CyberAbeer First Defender badge."
+},
+"challenge": {
+"firstDefender": {
+"badgeName": "CyberAbeer First Defender",
+"badgeDescription": "Awarded for completing the First Defender: Spot the Phish challenge.",
+"kicker": "Free Cyber Challenge",
+"heroTitle": "First Defender: Spot the Phish",
+"heroSubtitle": "Five realistic messages just landed. Inspect each one like a real analyst would, decide what to do, and earn your first badge, free, no signup required to start.",
+"missionTitle": "Your mission",
+"missionBody": "It is your first day on the security team at Nova Retail, a fictional company built just for this challenge. Five messages arrive today: emails and one text message. Tap to inspect each one, then choose what you would actually do.",
+"startCta": "Start the challenge",
+"estimatedTime": "About 5 minutes",
+"progressLabel": "Message {current} of {total}",
+"hintCta": "Show me a hint",
+"hintUsedLabel": "Hint used",
+"continueCta": "Continue",
+"correctLabel": "Correct",
+"incorrectLabel": "Not quite",
+"phishedLabel": "In this simulation, that would have gotten you phished",
+"restartCta": "Play again",
+"actions": {
+"report": "Report it",
+"verify": "Verify through another channel",
+"click": "Do what it asks",
+"ignore": "Ignore it, no action needed"
+},
+"hotspots": {
+"sender": "Inspect sender",
+"link": "Inspect link",
+"tone": "Inspect tone",
+"attachment": "Inspect attachment"
+},
+"steps": {
+"step1": {
+"channelLabel": "Email",
+"from": "IT Support",
+"fromAddress": "it-support@nova-retai1.com",
+"subject": "Your password expires in 2 hours, action required",
+"preview": "Your account will be locked if you do not update your password immediately using the secure link below.",
+"linkLabel": "Update password now",
+"linkRevealed": "Real destination: http://nova-retai1-secure.com/reset, not nova-retail.com",
+"senderRevealed": "it-support@nova-retai1.com, the domain replaces the letter L with the number 1",
+"toneRevealed": "Urgency language: \"expires in 2 hours\", \"will be locked\", \"immediately\"",
+"hint": "Check the sender's domain very carefully, letter by letter.",
+"feedbackCorrect": "Correct. Reporting it protects your whole team, since attackers usually send the same message to many people at once.",
+"feedbackIncorrect": "Not quite. Look again at the sender's domain name.",
+"feedbackPhished": "Clicking would have sent your real password to an attacker. In this simulation, that is exactly what a lookalike domain like this one is built to do.",
+"explanation": "The domain \"nova-retai1.com\" swaps the letter L for the number 1, a classic lookalike domain. Legitimate IT teams do not create true emergencies out of routine password resets. Urgency plus a lookalike domain is one of the most common phishing patterns there is."
+},
+"step2": {
+"channelLabel": "Email",
+"from": "Sara, Design Team",
+"fromAddress": "sara.design@nova-retail.com",
+"subject": "Shared file with you: Q3 budget.xlsx",
+"preview": "Hi, I shared the Q3 budget file with you. Click below to view it.",
+"linkLabel": "View shared file",
+"linkRevealed": "Real destination: http://drive-nova-files.co/login, not your organization's real file-sharing domain",
+"toneRevealed": "Casual, friendly tone, no urgency, which is exactly why the link deserves a closer look rather than instant trust",
+"hint": "The sender looks real. Check where the link actually goes before deciding.",
+"feedbackCorrect": "Correct. The sender's name looks legitimate, but names are easy to spoof or copy. Confirming with Sara directly, through a number or chat you already had, is the safer move before entering any credentials.",
+"feedbackIncorrect": "Not quite. The sender's email looks fine, so look at where the link itself actually leads.",
+"feedbackPhished": "The link leads to a fake login page designed to capture whatever you type into it. In this simulation, that would have handed over your real password.",
+"explanation": "The sender's name and address look legitimate, but the link goes to \"drive-nova-files.co\", not your organization's real file-sharing domain. Attackers often impersonate a real colleague's name. Before entering credentials anywhere, verify through a channel you already trust, like a phone number you already had, not one supplied in the message itself."
+},
+"step3": {
+"channelLabel": "Text message",
+"from": "Ahmed, signed as CEO",
+"fromAddress": "Unknown number, not saved in your contacts",
+"subject": "",
+"preview": "I'm in a meeting and can't talk. I need you to buy 5 gift cards for a client gift, $100 each. Send me the codes now, I'll pay you back. Please keep this between us for now.",
+"senderRevealed": "This number has never contacted you before, and it does not match any saved number for your CEO.",
+"toneRevealed": "Urgency (\"now\"), unusual request (personal gift cards), and secrecy (\"keep this between us\") together are a major warning sign",
+"hint": "Real executives don't ask you to keep financial requests secret.",
+"feedbackCorrect": "Correct. This is a textbook CEO fraud pattern, adapted to text messages. Reporting it and verifying separately protects you and anyone else who might receive the same message.",
+"feedbackIncorrect": "Not quite. Look again at the number this came from, and how the message asks you to keep it quiet.",
+"feedbackPhished": "In this simulation, buying and sending the gift card codes would have handed real money straight to an attacker, with no way to get it back.",
+"explanation": "This is a classic CEO fraud, or business email compromise, adapted to text messages. Urgency, an unusual financial request, an unfamiliar number, and a request for secrecy together are major warning signs. Never send money or gift card codes based on a single message, no matter who it claims to be from."
+},
+"step4": {
+"channelLabel": "Email",
+"from": "Billing Dept",
+"fromAddress": "billing@quickinvoice-pay.net",
+"subject": "Invoice #88213 overdue, see attachment",
+"preview": "Please find your overdue invoice attached. Open immediately to avoid service suspension.",
+"attachmentName": "Invoice_88213.zip",
+"senderRevealed": "billing@quickinvoice-pay.net has no connection to your organization or any vendor you recognize.",
+"toneRevealed": "Urgency (\"avoid service suspension\") paired with an unfamiliar sender and an unexpected attachment",
+"attachmentRevealed": "Invoice_88213.zip is a compressed file. Compressing an attachment is a common way to slip past basic antivirus scanning.",
+"hint": "You don't recognize this sender or this invoice. Compressed attachments from strangers are risky.",
+"feedbackCorrect": "Correct. You have no relationship with this sender or this invoice, and the attachment is a compressed file, a common way to hide malware from basic scanners.",
+"feedbackIncorrect": "Not quite. You don't recognize this sender. Consider what opening an unexpected attachment from a stranger could do.",
+"feedbackPhished": "In this simulation, opening that attachment would have installed malware on your device.",
+"explanation": "You don't have an existing relationship with this sender or this invoice, and the attachment is a compressed .zip file, a common way to hide malware from basic email scanners. Unexpected attachments from unknown senders should be reported, not opened, even when the subject line creates urgency."
+},
+"step5": {
+"channelLabel": "Email",
+"from": "Nova Retail Newsletter",
+"fromAddress": "newsletter@nova-retail.com",
+"subject": "This month at Nova Retail: new parking policy and team updates",
+"preview": "Read about the new parking arrangement starting next month and other team news.",
+"senderRevealed": "newsletter@nova-retail.com, matches your organization's real domain",
+"toneRevealed": "Calm, informational tone. No urgency, no request for money, credentials, or any action at all",
+"hint": "Check whether anything here asks you to click, pay, or share information under pressure.",
+"feedbackCorrect": "Correct. A matching company domain, no urgency, and no request for money, credentials, or sensitive action. Recognizing safe messages is just as important a skill as spotting dangerous ones.",
+"feedbackIncorrect": "Not quite. Look again: does anything here actually ask you to click, pay, or share information?",
+"feedbackPhished": "This message never asked you to do anything risky, so nothing happens in this simulation, but it's worth noticing that reporting or ignoring genuine mail as a reflex can create alert fatigue on a real team.",
+"explanation": "This is a normal internal newsletter: a matching company domain, no urgency, and no request for money, credentials, or sensitive action. Reporting genuine messages as phishing creates alert fatigue and makes real reports harder for a security team to act on quickly."
+}
+},
+"completion": {
+"title": "Challenge complete",
+"scoreLabel": "Your score",
+"xpLabel": "XP earned",
+"badgeUnlockedLabel": "Badge unlocked",
+"skillsHeading": "Skills you practiced",
+"skills": {
+"verifyDomains": "Verifying sender domains for lookalikes",
+"checkLinks": "Checking where links really go before clicking",
+"recognizeBec": "Recognizing CEO fraud and urgency or secrecy pressure tactics",
+"distrustAttachments": "Treating unexpected attachments from unknown senders with suspicion",
+"avoidFalsePositives": "Recognizing legitimate messages to avoid false-positive reporting"
+},
+"nextStepHeading": "Recommended next step",
+"nextStepBody": "Join the CyberAbeer Labs waitlist to be first in line for more scenario challenges like this one.",
+"nextStepCta": "Continue Your Cyber Journey",
+"shareCta": "Share your result",
+"shareText": "I just earned the CyberAbeer First Defender badge by spotting 5 phishing attempts. Try the free challenge:",
+"shareCopied": "Result copied. Paste it anywhere to share.",
+"registerHeading": "Save this result to your profile",
+"registerBody": "Create a free CyberAbeer account to keep your score and badge permanently. Your result is already saved on this device, so you won't lose anything by registering now or later.",
+"registerCta": "Create free account",
+"registerLater": "Maybe later",
+"registeredConfirmation": "Saved to your CyberAbeer profile.",
+"anonymousNote": "You're playing as a guest. This result is only saved on this device until you register.",
+"shareCardHeading": "Share your achievement",
+"shareCardTitle": "ACHIEVEMENT UNLOCKED",
+"shareCardDownload": "Download image"
+}
+}
+},
+"achievements": {
+"pageTitle": "My Achievements",
+"pageDescription": "Earn badges. Grow your skills. Defend the digital world.",
+"earned": "Earned",
+"locked": "Locked",
+"stats": {
+"earned": "Achievements earned",
+"totalXp": "Total XP",
+"next": "Next achievement",
+"allDone": "All achievements earned!",
+"soundOn": "Sound on",
+"soundOff": "Sound off"
+},
+"catalog": {
+"phishingHunter": {
+"name": "Phishing Hunter",
+"description": "Detected and reported simulated phishing attempts across email and messaging."
+},
+"networkGuardian": {
+"name": "Network Guardian",
+"description": "Secured network traffic and spotted suspicious activity."
+},
+"socNightShift": {
+"name": "SOC Night Shift",
+"description": "Responded to live security incidents under time pressure."
+},
+"webDefender": {
+"name": "Web Defender",
+"description": "Found and fixed common web application vulnerabilities."
+},
+"identityGuardian": {
+"name": "Identity Guardian",
+"description": "Protected digital identities and access controls."
+},
+"incidentCommander": {
+"name": "Incident Commander",
+"description": "Led the response effort during a security incident."
+},
+"dataGuardian": {
+"name": "Data Guardian",
+"description": "Classified and protected sensitive data."
+},
+"cloudDefender": {
+"name": "Cloud Defender",
+"description": "Secured misconfigured cloud infrastructure."
+},
+"agentZero": {
+"name": "Agent Zero",
+"description": "Investigated a complex simulated breach end to end."
+},
+"grcStrategist": {
+"name": "GRC Strategist",
+"description": "Built a governance, risk, and compliance program."
+},
+"digitalInvestigator": {
+"name": "Digital Investigator",
+"description": "Analyzed digital evidence after an incident."
+},
+"quantumCountdown": {
+"name": "Quantum Countdown",
+"description": "Explored post-quantum cryptography risk and readiness."
+}
+},
+"unlock": {
+"unlockedLabel": "Achievement Unlocked",
+"xpSuffix": "XP",
+"skip": "Skip",
+"soundOn": "Sound on",
+"soundOff": "Sound off"
+},
+"academyHeading": "Academy Progress",
+"academyProgressLabel": "{earned} of {total} complete",
+"academies": {
+"cyberDefense": {
+"name": "Cyber Defense",
+"description": "Detect, respond to, and contain live threats before they cause damage."
+},
+"governance": {
+"name": "Governance, Risk & Compliance",
+"description": "Build the frameworks and controls that keep an organization accountable."
+},
+"aiTrust": {
+"name": "AI Trust",
+"description": "Secure the AI agents and systems reshaping how organizations operate."
+},
+"dataTrust": {
+"name": "Data Trust",
+"description": "Classify, protect, and govern the data an organization can't afford to lose."
+},
+"futureTrust": {
+"name": "Future Trust",
+"description": "Get ahead of the threats and technologies still taking shape."
+}
+}
+}
 }
