@@ -56,7 +56,7 @@ export default async function FounderDashboardPage({
                                               <span className="font-display text-3xl font-bold text-primary">{stat.value}</span>
                                 </CardContent>
                     </Card>
-                  ))}
+                              ))}
               </div>
         </div>
       );
