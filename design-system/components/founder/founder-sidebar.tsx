@@ -29,7 +29,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "freeTools", label: "Free Tools" },
   { key: "media", label: "Media Library" },
   { key: "subscribers", label: "Subscribers", href: "/founder/subscribers" },
-  { key: "newsletter", label: "Newsletter" },
+  { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
   { key: "seo", label: "SEO" },
   { key: "analytics", label: "Analytics" },
   { key: "settings", label: "Settings" },
