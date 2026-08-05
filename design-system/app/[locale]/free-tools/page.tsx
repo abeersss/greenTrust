@@ -10,7 +10,8 @@ import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
-import { ShieldCheck, Atom, Award, Grid3x3, ListChecks, Siren, Download } from "lucide-react";
+import { ShieldCheck, Atom, Award, Grid3x3, ListChecks, Siren } from "lucide-react";
+import { FreeToolsDownloads, type FreeToolDownloadItem } from "@/components/site/free-tools-downloads";
 
 export async function generateMetadata({
 params,
@@ -37,36 +38,67 @@ const t = await getTranslations({ locale, namespace: "freeTools" });
 const tNav = await getTranslations({ locale, namespace: "nav" });
 const tChallenge = await getTranslations({ locale, namespace: "challenge.firstDefender" });
 
-const downloads = [
+const downloads: FreeToolDownloadItem[] = [
 {
-Icon: Grid3x3,
+icon: <Grid3x3 className="h-5 w-5" aria-hidden="true" />,
 title: t("riskRegisterTitle"),
 body: t("riskRegisterBody"),
 format: t("riskRegisterFormat"),
 file: "CyberAbeer_Risk_Register_Heat_Map.xlsx",
+why: t("riskRegisterWhy"),
+who: t("riskRegisterWho"),
+ease: t("riskRegisterEase"),
+signal: t("riskRegisterSignal"),
+steps: t.raw("riskRegisterSteps") as string[],
 },
 {
-Icon: ListChecks,
+icon: <ListChecks className="h-5 w-5" aria-hidden="true" />,
 title: t("isoSoaTitle"),
 body: t("isoSoaBody"),
 format: t("isoSoaFormat"),
 file: "CyberAbeer_ISO27001_2022_SoA_Tracker.xlsx",
+why: t("isoSoaWhy"),
+who: t("isoSoaWho"),
+ease: t("isoSoaEase"),
+signal: t("isoSoaSignal"),
+steps: t.raw("isoSoaSteps") as string[],
 },
 {
-Icon: Siren,
+icon: <Siren className="h-5 w-5" aria-hidden="true" />,
 title: t("incidentLogTitle"),
 body: t("incidentLogBody"),
 format: t("incidentLogFormat"),
 file: "CyberAbeer_Incident_Response_Log_MTTR.xlsx",
+why: t("incidentLogWhy"),
+who: t("incidentLogWho"),
+ease: t("incidentLogEase"),
+signal: t("incidentLogSignal"),
+steps: t.raw("incidentLogSteps") as string[],
 },
 {
-Icon: ShieldCheck,
+icon: <ShieldCheck className="h-5 w-5" aria-hidden="true" />,
 title: t("aegisGrcTitle"),
 body: t("aegisGrcBody"),
 format: t("aegisGrcFormat"),
 file: "CyberAbeer_Aegis_GRC_Platform.zip",
+why: t("aegisGrcWhy"),
+who: t("aegisGrcWho"),
+ease: t("aegisGrcEase"),
+signal: t("aegisGrcSignal"),
+steps: t.raw("aegisGrcSteps") as string[],
 },
 ];
+
+const downloadLabels = {
+why: t("whyLabel"),
+who: t("whoLabel"),
+ease: t("easeLabel"),
+signal: t("signalLabel"),
+quickStart: t("quickStartLabel"),
+expand: t("expandCta"),
+collapse: t("collapseCta"),
+download: t("downloadCta"),
+};
 
 return (
 <div className="mx-auto max-w-4xl px-4 py-12 tablet:px-6">
@@ -133,28 +165,7 @@ return (
 <h2 className="mt-3 font-display text-2xl font-bold text-text-primary tablet:text-3xl">{t("downloadsTitle")}</h2>
 <p className="mt-3 max-w-2xl text-text-secondary">{t("downloadsIntro")}</p>
 
-<div className="mt-8 grid gap-6 tablet:grid-cols-2">
-{downloads.map((d) => (
-<Card key={d.file} data-brand="greentrust">
-<CardHeader>
-<div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
-<d.Icon className="h-5 w-5" aria-hidden="true" />
-</div>
-<CardTitle>{d.title}</CardTitle>
-<CardDescription>{d.body}</CardDescription>
-</CardHeader>
-<CardFooter className="flex items-center justify-between gap-3">
-<span className="text-sm text-text-muted">{d.format}</span>
-<Button asChild>
-<a href={`/downloads/${d.file}`} download>
-<Download className="h-4 w-4" aria-hidden="true" />
-{t("downloadCta")}
-</a>
-</Button>
-</CardFooter>
-</Card>
-))}
-</div>
+<FreeToolsDownloads items={downloads} labels={downloadLabels} />
 </div>
 </div>
 );
