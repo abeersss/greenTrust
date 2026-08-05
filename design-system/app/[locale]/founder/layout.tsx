@@ -46,4 +46,3 @@ export default async function FounderLayout({
         </div>
       );
 }
-</div
