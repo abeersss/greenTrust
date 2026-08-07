@@ -160,6 +160,27 @@
   .content-decision-table tr:last-child td {
     @apply border-b-0;
   }
+
+  /* Homepage scrolling banner marquee (CyberAbeer Platform Phase II).
+     Duplicated content + translateX(-50%) makes the loop seamless;
+     reversed in RTL so the ticker still reads in the visitor's
+     natural direction. Already covered by the prefers-reduced-motion
+     rules above/below since it's a plain CSS animation. */
+  .ticker-track {
+    animation: ticker-scroll 22s linear infinite;
+  }
+  [dir="rtl"] .ticker-track {
+    animation-direction: reverse;
+  }
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* ---------- Motion accessibility safety net ----------
