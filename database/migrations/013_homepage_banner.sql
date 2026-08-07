@@ -10,7 +10,7 @@ create table if not exists public.homepage_banner_settings (
   id integer primary key default 1,
   enabled boolean not null default true,
   greeting_en text not null default 'Hello! Welcome to CyberAbeer.',
-  greeting_ar text not null default 'أهلاً بك في سايبر أبير!',
+  greeting_ar text not null default 'أهلاً بك في سايبر عبير!',
   updated_by uuid references auth.users(id) on delete set null,
   updated_at timestamptz not null default now(),
   constraint homepage_banner_settings_singleton check (id = 1)
