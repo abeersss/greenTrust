@@ -30,6 +30,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "media", label: "Media Library" },
   { key: "subscribers", label: "Subscribers", href: "/founder/subscribers" },
   { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
+  { key: "banner", label: "Homepage Banner", href: "/founder/banner" },
   { key: "seo", label: "SEO" },
   { key: "analytics", label: "Analytics" },
   { key: "settings", label: "Settings" },
