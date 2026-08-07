@@ -167,7 +167,7 @@
      natural direction. Already covered by the prefers-reduced-motion
      rules above/below since it's a plain CSS animation. */
   .ticker-track {
-    animation: ticker-scroll 22s linear infinite;
+    animation: ticker-scroll 60s linear infinite;
   }
   [dir="rtl"] .ticker-track {
     animation-direction: reverse;
