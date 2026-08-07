@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/site/json-ld";
 import { SiteIdentityAudio } from "@/components/site/site-identity-audio";
+import { HomepageTicker } from "@/components/site/homepage-ticker";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
@@ -13,6 +14,7 @@ import { Building2, GraduationCap, ArrowRight } from "lucide-react";
 import { ArticleCard } from "@/components/content/article-card";
 import { IntelligenceCard } from "@/components/content/intelligence-card";
 import { getPublishedArticles, getLatestIntelligenceArticles, type IntelSeverity, type IntelStoryStatus } from "@/lib/content/articles";
+import { getHomepageBanner } from "@/lib/content/banner";
 import { formatArticleDate } from "@/lib/content/format";
 
 export async function generateMetadata({
@@ -42,6 +44,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // dominate CyberAbeer's learning identity -- so this stays a single
   // row (4 items) below the fold, not a second hero.
   const latestIntel = await getLatestIntelligenceArticles(l, 4);
+  const banner = await getHomepageBanner(l);
   const intelSeverityLabels = {
     critical: tIntel("severity.critical"),
     high: tIntel("severity.high"),
@@ -57,6 +60,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <div className="flex flex-col">
+      {/* Scrolling homepage banner: founder-editable greeting
+          (/founder/banner) plus the visitor's current date, always
+          shown in their own language. Renders first so it's the
+          very top of the page. */}
+      {banner.enabled && <HomepageTicker locale={l} greeting={banner.greeting} />}
+
       {/* Site identity theme song (2026-08-03): muted-autoplay with a
           click-to-unmute control, homepage-only per the founder's
           explicit placement choice. */}
