@@ -27,7 +27,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "labs", label: "Labs", href: "/founder/labs" },
   { key: "orgTools", label: "Organization Tools" },
   { key: "freeTools", label: "Free Tools" },
-  { key: "media", label: "Media Library" },
+  { key: "media", label: "Media Library", href: "/founder/media" },
   { key: "subscribers", label: "Subscribers", href: "/founder/subscribers" },
   { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
   { key: "banner", label: "Homepage Banner", href: "/founder/banner" },
