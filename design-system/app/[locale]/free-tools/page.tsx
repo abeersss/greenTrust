@@ -10,163 +10,114 @@ import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
-import { ShieldCheck, Atom, Award, Grid3x3, ListChecks, Siren } from "lucide-react";
-import { FreeToolsDownloads, type FreeToolDownloadItem } from "@/components/site/free-tools-downloads";
+import { ShieldCheck, Atom, Award } from "lucide-react";
+import { getPublishedToolResources } from "@/lib/tools/tool-resources";
+import { ToolResourcesGrid } from "@/components/site/tool-resources-grid";
 
 export async function generateMetadata({
-params,
+  params,
 }: {
-params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-const { locale } = await params;
-if (!isAppLocale(locale)) notFound();
-const t = await getTranslations({ locale, namespace: "seo" });
-return buildMetadata({
-locale,
-path: "free-tools",
-title: t("freeToolsTitle"),
-description: t("freeToolsDescription"),
-});
+  const { locale } = await params;
+  if (!isAppLocale(locale)) notFound();
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildMetadata({
+    locale,
+    path: "free-tools",
+    title: t("freeToolsTitle"),
+    description: t("freeToolsDescription"),
+  });
 }
 
+/**
+ * Public Free Tools hub (CyberAbeer Platform). The "Downloads"
+ * section (migration 030) is now founder-managed via
+ * /founder/tool-resources -- bilingual name + description, plus
+ * either up to 4 gallery images (sliding carousel) or one
+ * downloadable file per tool. This replaced a hardcoded array that
+ * used to live in this file.
+ */
 export default async function FreeToolsPage({ params }: { params: Promise<{ locale: string }> }) {
-const { locale } = await params;
-if (!isAppLocale(locale)) notFound();
-const l = locale as AppLocale;
+  const { locale } = await params;
+  if (!isAppLocale(locale)) notFound();
+  const l = locale as AppLocale;
 
-const t = await getTranslations({ locale, namespace: "freeTools" });
-const tNav = await getTranslations({ locale, namespace: "nav" });
-const tChallenge = await getTranslations({ locale, namespace: "challenge.firstDefender" });
+  const t = await getTranslations({ locale, namespace: "freeTools" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
+  const tChallenge = await getTranslations({ locale, namespace: "challenge.firstDefender" });
 
-const downloads: FreeToolDownloadItem[] = [
-{
-icon: <Grid3x3 className="h-5 w-5" aria-hidden="true" />,
-title: t("riskRegisterTitle"),
-body: t("riskRegisterBody"),
-format: t("riskRegisterFormat"),
-file: "CyberAbeer_Risk_Register_Heat_Map.xlsx",
-why: t("riskRegisterWhy"),
-who: t("riskRegisterWho"),
-ease: t("riskRegisterEase"),
-signal: t("riskRegisterSignal"),
-steps: t.raw("riskRegisterSteps") as string[],
-},
-{
-icon: <ListChecks className="h-5 w-5" aria-hidden="true" />,
-title: t("isoSoaTitle"),
-body: t("isoSoaBody"),
-format: t("isoSoaFormat"),
-file: "CyberAbeer_ISO27001_2022_SoA_Tracker.xlsx",
-why: t("isoSoaWhy"),
-who: t("isoSoaWho"),
-ease: t("isoSoaEase"),
-signal: t("isoSoaSignal"),
-steps: t.raw("isoSoaSteps") as string[],
-},
-{
-icon: <Siren className="h-5 w-5" aria-hidden="true" />,
-title: t("incidentLogTitle"),
-body: t("incidentLogBody"),
-format: t("incidentLogFormat"),
-file: "CyberAbeer_Incident_Response_Log_MTTR.xlsx",
-why: t("incidentLogWhy"),
-who: t("incidentLogWho"),
-ease: t("incidentLogEase"),
-signal: t("incidentLogSignal"),
-steps: t.raw("incidentLogSteps") as string[],
-},
-{
-icon: <ShieldCheck className="h-5 w-5" aria-hidden="true" />,
-title: t("aegisGrcTitle"),
-body: t("aegisGrcBody"),
-format: t("aegisGrcFormat"),
-file: "CyberAbeer_Aegis_GRC_Platform.zip",
-why: t("aegisGrcWhy"),
-who: t("aegisGrcWho"),
-ease: t("aegisGrcEase"),
-signal: t("aegisGrcSignal"),
-steps: t.raw("aegisGrcSteps") as string[],
-},
-];
+  const toolResources = await getPublishedToolResources(l);
 
-const downloadLabels = {
-why: t("whyLabel"),
-who: t("whoLabel"),
-ease: t("easeLabel"),
-signal: t("signalLabel"),
-quickStart: t("quickStartLabel"),
-expand: t("expandCta"),
-collapse: t("collapseCta"),
-download: t("downloadCta"),
-};
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-12 tablet:px-6">
+      <JsonLd data={breadcrumbSchema(l, [{ name: tNav("freeTools"), path: "free-tools" }])} />
+      <SiteBreadcrumb items={[{ label: tNav("home"), href: "/" }, { label: tNav("freeTools") }]} />
 
-return (
-<div className="mx-auto max-w-4xl px-4 py-12 tablet:px-6">
-<JsonLd data={breadcrumbSchema(l, [{ name: tNav("freeTools"), path: "free-tools" }])} />
-<SiteBreadcrumb items={[{ label: tNav("home"), href: "/" }, { label: tNav("freeTools") }]} />
+      <Badge variant="primary" className="mt-6">
+        {t("kicker")}
+      </Badge>
+      <h1 className="mt-3 font-display text-3xl font-bold text-text-primary tablet:text-4xl">{t("title")}</h1>
+      <p className="mt-3 max-w-2xl text-text-secondary">{t("intro")}</p>
 
-<Badge variant="primary" className="mt-6">
-{t("kicker")}
-</Badge>
-<h1 className="mt-3 font-display text-3xl font-bold text-text-primary tablet:text-4xl">{t("title")}</h1>
-<p className="mt-3 max-w-2xl text-text-secondary">{t("intro")}</p>
+      <div className="mt-10 grid gap-6 tablet:grid-cols-2">
+        <Card data-brand="greentrust">
+          <CardHeader>
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <CardTitle>{t("governanceTitle")}</CardTitle>
+            <CardDescription>{t("governanceBody")}</CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button asChild>
+              <Link href="/free-tools/ai-governance-quick-check">{t("startCta")}</Link>
+            </Button>
+          </CardFooter>
+        </Card>
 
-<div className="mt-10 grid gap-6 tablet:grid-cols-2">
-<Card data-brand="greentrust">
-<CardHeader>
-<div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
-<ShieldCheck className="h-5 w-5" aria-hidden="true" />
-</div>
-<CardTitle>{t("governanceTitle")}</CardTitle>
-<CardDescription>{t("governanceBody")}</CardDescription>
-</CardHeader>
-<CardFooter>
-<Button asChild>
-<Link href="/free-tools/ai-governance-quick-check">{t("startCta")}</Link>
-</Button>
-</CardFooter>
-</Card>
+        <Card data-brand="greentrust">
+          <CardHeader>
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+              <Atom className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <CardTitle>{t("quantumTitle")}</CardTitle>
+            <CardDescription>{t("quantumBody")}</CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button asChild>
+              <Link href="/free-tools/quantum-readiness-quick-check">{t("startCta")}</Link>
+            </Button>
+          </CardFooter>
+        </Card>
 
-<Card data-brand="greentrust">
-<CardHeader>
-<div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
-<Atom className="h-5 w-5" aria-hidden="true" />
-</div>
-<CardTitle>{t("quantumTitle")}</CardTitle>
-<CardDescription>{t("quantumBody")}</CardDescription>
-</CardHeader>
-<CardFooter>
-<Button asChild>
-<Link href="/free-tools/quantum-readiness-quick-check">{t("startCta")}</Link>
-</Button>
-</CardFooter>
-</Card>
+        <Card data-brand="labs">
+          <CardHeader>
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+              <Award className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <CardTitle>{tChallenge("heroTitle")}</CardTitle>
+            <CardDescription>{tChallenge("heroSubtitle")}</CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button asChild>
+              <Link href="/challenge/first-defender">{tChallenge("startCta")}</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
 
-<Card data-brand="labs">
-<CardHeader>
-<div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
-<Award className="h-5 w-5" aria-hidden="true" />
-</div>
-<CardTitle>{tChallenge("heroTitle")}</CardTitle>
-<CardDescription>{tChallenge("heroSubtitle")}</CardDescription>
-</CardHeader>
-<CardFooter>
-<Button asChild>
-<Link href="/challenge/first-defender">{tChallenge("startCta")}</Link>
-</Button>
-</CardFooter>
-</Card>
-</div>
+      <p className="mt-8 text-sm text-text-muted">{t("disclaimer")}</p>
 
-<p className="mt-8 text-sm text-text-muted">{t("disclaimer")}</p>
+      <div className="mt-16">
+        <Badge variant="primary">{t("downloadsKicker")}</Badge>
+        <h2 className="mt-3 font-display text-2xl font-bold text-text-primary tablet:text-3xl">
+          {t("downloadsTitle")}
+        </h2>
+        <p className="mt-3 max-w-2xl text-text-secondary">{t("downloadsIntro")}</p>
 
-<div className="mt-16">
-<Badge variant="primary">{t("downloadsKicker")}</Badge>
-<h2 className="mt-3 font-display text-2xl font-bold text-text-primary tablet:text-3xl">{t("downloadsTitle")}</h2>
-<p className="mt-3 max-w-2xl text-text-secondary">{t("downloadsIntro")}</p>
-
-<FreeToolsDownloads items={downloads} labels={downloadLabels} />
-</div>
-</div>
-);
+        <ToolResourcesGrid items={toolResources} downloadLabel={t("downloadCta")} />
+      </div>
+    </div>
+  );
 }
