@@ -37,7 +37,7 @@ export default async function FounderToolResourcesPage({
     <div>
       <h1 className="font-display text-2xl font-bold text-text-primary tablet:text-3xl">Free Tools</h1>
       <p className="mt-1 text-sm text-text-muted">
-        Add and manage the tools shown in the "Downloads" section of the public Free Tools page. Give each one a
+        Add and manage the tools shown in the &quot;Downloads&quot; section of the public Free Tools page. Give each one a
         bilingual name and description, then either up to 4 images (shown as a sliding carousel) or one
         downloadable file.
       </p>
