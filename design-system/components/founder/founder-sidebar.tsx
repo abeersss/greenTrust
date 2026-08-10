@@ -26,7 +26,8 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "intelligence", label: "Cyber Intelligence", href: "/founder/content?group=intelligence" },
   { key: "labs", label: "Labs", href: "/founder/labs" },
   { key: "orgTools", label: "Organization Tools", href: "/founder/tools" },
-  { key: "freeTools", label: "Free Tools", href: "/founder/tools" },
+  { key: "freeTools", label: "Free Tools (submissions)", href: "/founder/tools" },
+  { key: "toolResources", label: "Free Tools (downloads)", href: "/founder/tool-resources" },
   { key: "media", label: "Media Library", href: "/founder/media" },
   { key: "subscribers", label: "Subscribers", href: "/founder/subscribers" },
   { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
@@ -71,4 +72,3 @@ export function FounderSidebar({ locale }: { locale: AppLocale }) {
     </nav>
   );
 }
- 
