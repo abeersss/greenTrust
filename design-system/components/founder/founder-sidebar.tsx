@@ -32,7 +32,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
   { key: "banner", label: "Homepage Banner", href: "/founder/banner" },
   { key: "seo", label: "SEO", href: "/founder/seo" },
-  { key: "analytics", label: "Analytics" },
+  { key: "analytics", label: "Analytics", href: "/founder/analytics" },
   { key: "settings", label: "Settings" },
 ];
 
