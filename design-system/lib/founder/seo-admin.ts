@@ -68,7 +68,7 @@ function getTags(html: string, tagName: string): string[] {
 function getAttr(tag: string, name: string): string | null {
   const re = new RegExp(name + "\\s*=\\s*\"([^\"]*)\"", "i");
   const m = tag.match(re);
-  return m ? m[1] : null;
+  return m ? (m[1] ?? null) : null;
 }
 
 async function checkPage(locale: "en" | "ar", path: string, label: string): Promise<PageSeoCheck> {
@@ -99,7 +99,7 @@ async function checkPage(locale: "en" | "ar", path: string, label: string): Prom
     const html = await res.text();
 
     const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-    const title = titleMatch ? titleMatch[1].trim() : null;
+    const title = titleMatch ? (titleMatch[1] ?? "").trim() : null;
 
     const metaTags = getTags(html, "meta");
     const descTag = metaTags.find(function (t) { return getAttr(t, "name") === "description"; });
@@ -170,7 +170,7 @@ async function getSitemapStats(): Promise<SitemapStats> {
       return { reachable: false, totalUrls: 0, enUrls: 0, arUrls: 0 };
     }
     const xml = await res.text();
-    const locs = Array.from(xml.matchAll(/<loc>([^<]*)<\/loc>/g)).map(function (m) { return m[1]; });
+    const locs = Array.from(xml.matchAll(/<loc>([^<]*)<\/loc>/g)).map(function (m) { return m[1] ?? ""; });
     const enUrls = locs.filter(function (u) { return u.indexOf("/en") !== -1; }).length;
     const arUrls = locs.filter(function (u) { return u.indexOf("/ar") !== -1; }).length;
     return { reachable: true, totalUrls: locs.length, enUrls: enUrls, arUrls: arUrls };
