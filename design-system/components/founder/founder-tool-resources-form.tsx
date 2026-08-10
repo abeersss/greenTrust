@@ -87,7 +87,7 @@ export function FounderToolResourcesForm({ locale }: { locale: AppLocale }) {
           <div className="mt-2">
             <Input id="images" name="images" type="file" accept="image/*" multiple />
             <p className="mt-1 text-xs text-text-muted">
-              Select up to {MAX_IMAGES} images. They'll appear as a sliding carousel on the public page.
+              Select up to {MAX_IMAGES} images. They&apos;ll appear as a sliding carousel on the public page.
             </p>
           </div>
         ) : (
