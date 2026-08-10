@@ -3,17 +3,21 @@
 import { revalidatePath } from "next/cache";
 import { requireFounder } from "@/lib/auth/founder";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { uploadMediaFile } from "@/lib/storage/upload-media";
 import type { AppLocale } from "@/lib/i18n/config";
 import { actionError, actionSuccess, type ActionResult } from "./types";
 
 /**
  * Founder CRUD for the books table (CyberAbeer Platform Phase II).
- * Three required fields per the spec: title, description, and the
- * Amazon purchase link. RLS's admin-all policy (migration 029) lets
- * the founder's own session write; requireFounder() mirrors that at
- * the application layer first, same pattern as founder-banner.ts and
+ * Title, description, and the Amazon purchase link stay required;
+ * migration 030 added an optional gallery of up to 4 founder-uploaded
+ * images, shown as a sliding carousel on the public /books page.
+ * RLS's admin-all policy (migration 029) lets the founder's own
+ * session write; requireFounder() mirrors that at the application
+ * layer first, same pattern as founder-banner.ts and
  * founder-settings.ts.
  */
+const MAX_IMAGES = 4;
 
 function isValidHttpUrl(value: string): boolean {
   try {
@@ -36,13 +40,23 @@ export async function createBook(locale: AppLocale, formData: FormData): Promise
   if (!amazonUrl) return actionError("Amazon link is required.");
   if (!isValidHttpUrl(amazonUrl)) return actionError("Amazon link must be a valid URL.");
 
+  const imageFiles = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
+  if (imageFiles.length > MAX_IMAGES) return actionError(`You can upload at most ${MAX_IMAGES} images.`);
+
   try {
     const supabase = await createSupabaseServerClient();
+
+    const imageUrls: string[] = [];
+    for (const img of imageFiles) {
+      imageUrls.push(await uploadMediaFile(supabase, "books", img));
+    }
+
     const { count } = await supabase.from("books").select("id", { count: "exact", head: true });
     const { error } = await supabase.from("books").insert({
       title,
       description,
       amazon_url: amazonUrl,
+      image_urls: imageUrls,
       display_order: count ?? 0,
     });
     if (error) throw error;
