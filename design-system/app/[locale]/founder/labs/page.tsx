@@ -43,12 +43,12 @@ function formatDate(value: string | null): string {
 
 function formatPercent(value: number | null): string {
   if (value === null) return "--";
-  return \`\${Math.round(value)}%\`;
+  return Math.round(value) + "%";
 }
 
 function formatScore(value: number | null): string {
   if (value === null) return "--";
-  return \`\${Math.round(value)}%\`;
+  return Math.round(value) + "%";
 }
 
 /**
