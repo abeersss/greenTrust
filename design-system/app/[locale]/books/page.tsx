@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ImageCarousel } from "@/components/site/image-carousel";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { getPublishedBooks } from "@/lib/books/books";
@@ -26,9 +27,9 @@ export async function generateMetadata({
 
 /**
  * Public Books page (CyberAbeer Platform). Reads only is_active rows
- * from the books table (migration 029) -- name, description, and the
- * Amazon purchase link, exactly the three fields the founder enters
- * from /founder/books.
+ * from the books table (migration 029) -- title, description, and
+ * the Amazon purchase link, plus an optional up-to-4-image gallery
+ * (migration 030) shown as a sliding carousel when present.
  */
 export default async function BooksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -47,7 +48,10 @@ export default async function BooksPage({ params }: { params: Promise<{ locale: 
 
       <div className="mt-8 space-y-6">
         {books.map((book) => (
-          <Card key={book.id}>
+          <Card key={book.id} className="overflow-hidden">
+            {book.imageUrls.length > 0 && (
+              <ImageCarousel images={book.imageUrls} alt={book.title} heightClassName="h-64" />
+            )}
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary">
