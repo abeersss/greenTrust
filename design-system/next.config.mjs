@@ -5,6 +5,15 @@ const withNextIntl = createNextIntlPlugin("./i18n.ts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Server Actions default body-size cap is too small for the
+  // founder's image/PDF uploads (tool resources + book galleries,
+  // migration 030) -- raised to accommodate up to 4 images or one
+  // PDF/zip per submission.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "15mb",
+    },
+  },
   // Security baseline (Phase 2, hardened Phase 7): a conservative
   // header set applied to every response. CSP is intentionally
   // permissive on `img-src`/`connect-src` for Supabase Storage/API and
