@@ -7,6 +7,7 @@
 "labs": "CyberAbeer Labs",
 "freeTools": "Free Tools",
 "research": "Research",
+    "books": "Books",
 "insights": "Insights",
 "learn": "Learn",
 "intelligence": "Cyber Intelligence",
@@ -612,7 +613,14 @@
 "startAssessmentCta": "Start the GreenTrust Free Assessment",
 "loadError": "We could not load part of your account data. Please refresh the page."
 },
-"research": {
+"books": {
+    "kicker": "Books",
+    "title": "Books",
+    "intro": "Books on cybersecurity governance, GRC, and AI security, written to make complex frameworks practical for security professionals and organizations.",
+    "buyButton": "Buy on Amazon",
+    "empty": "No books are available yet. Check back soon."
+  },
+  "research": {
 "kicker": "Research",
 "title": "Research",
 "intro": "My research focuses on bridging academic theory with practical cybersecurity governance, enabling organizations to innovate securely while strengthening resilience, digital trust, and responsible adoption of emerging technologies.",
@@ -897,6 +905,8 @@
 "freeToolsDescription": "Free, no-signup self-assessments for AI governance and quantum readiness, plus downloadable Excel templates for risk registers, ISO 27001:2022 compliance, and incident response, and a free self-hosted GRC platform.",
 "researchTitle": "Cybersecurity governance, GRC, and AI security research",
 "researchDescription": "Doctoral and applied research spanning cybersecurity governance, GRC, AI governance and risk, cloud and data security, and regulatory frameworks including ISO/IEC 27001, ISO/IEC 42001, and the NIST Cybersecurity Framework.",
+    "booksTitle": "Books by Dr. Abeer",
+    "booksDescription": "Cybersecurity, GRC, and AI governance books by Dr. Abeer, available to buy on Amazon.",
 "insightsTitle": "Insights on governance, AI risk, and security",
 "insightsDescription": "Research notes and practical write-ups on governance, AI risk, and security.",
 "topicsTitleSuffix": "CyberAbeer Insights",
