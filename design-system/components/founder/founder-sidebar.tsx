@@ -21,7 +21,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/founder" },
   { key: "content", label: "Content", href: "/founder/content" },
   { key: "research", label: "Research" },
-  { key: "books", label: "Books" },
+  { key: "books", label: "Books", href: "/founder/books" },
   { key: "insights", label: "Insights", href: "/founder/content?group=insights" },
   { key: "intelligence", label: "Cyber Intelligence", href: "/founder/content?group=intelligence" },
   { key: "labs", label: "Labs", href: "/founder/labs" },
