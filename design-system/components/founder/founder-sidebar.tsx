@@ -5,13 +5,13 @@ import type { AppLocale } from "@/lib/i18n/config";
  * Founder Dashboard nav shell (CyberAbeer Platform Phase II). Batch 1
  * wired Content, Insights, and Cyber Intelligence to the real /founder
  * /content admin screen (all three are the same underlying `articles`
- * table, filtered by `?group=`); Batch 2 wired Subscribers to the real
- * /founder/subscribers list. Everything else is still the founder's
- * planned Phase II section list, shown so the eventual structure is
- * visible without pretending it already works. Each becomes a real
- * Link href as its own batch ships; until then it renders as a
- * disabled row with a "Coming soon" tag rather than a link that would
- * just 404.
+ * table, filtered by `?group=`); Batch 2 wired Subscribers, Newsletter,
+ * and the homepage Banner to their real admin screens. Everything else
+ * is still the founder's planned Phase II section list, shown so the
+ * eventual structure is visible without pretending it already works.
+ * Each becomes a real Link href as its own batch ships; until then it
+ * renders as a disabled row with a "Coming soon" tag rather than a
+ * link that would just 404.
  *
  * English-only for now (Arabic labels deferred to a follow-up pass);
  * locale is still threaded through and used for text direction so
