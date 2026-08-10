@@ -85,7 +85,7 @@ export function FounderBooksForm({ locale }: { locale: AppLocale }) {
         <Label htmlFor="images">Cover images (optional, up to {MAX_IMAGES})</Label>
         <Input id="images" name="images" type="file" accept="image/*" multiple />
         <p className="mt-1 text-xs text-text-muted">
-          Select up to {MAX_IMAGES} images. They'll appear as a sliding carousel next to the book on the public page.
+          Select up to {MAX_IMAGES} images. They&apos;ll appear as a sliding carousel next to the book on the public page.
         </p>
       </div>
 
