@@ -9,17 +9,22 @@ import { createBook } from "@/lib/actions/founder-books";
 import type { AppLocale } from "@/lib/i18n/config";
 
 /**
- * Founder "add a book" form (CyberAbeer Platform Phase II). Exactly
- * the three fields the public page needs: title, description, and
- * the Amazon purchase link. New books start active/visible -- the
- * founder can hide one later from the list below without deleting it.
+ * Founder "add a book" form (CyberAbeer Platform Phase II). Title,
+ * description, and the Amazon purchase link stay required; migration
+ * 030 added an optional gallery of up to 4 images, shown as a sliding
+ * carousel on the public Books page. New books start active/visible
+ * -- the founder can hide one later from the list below without
+ * deleting it.
  */
+const MAX_IMAGES = 4;
+
 export function FounderBooksForm({ locale }: { locale: AppLocale }) {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [amazonUrl, setAmazonUrl] = React.useState("");
   const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = React.useState<string | null>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   async function handleSubmit(formData: FormData) {
     setStatus("loading");
@@ -31,6 +36,7 @@ export function FounderBooksForm({ locale }: { locale: AppLocale }) {
       setTitle("");
       setDescription("");
       setAmazonUrl("");
+      formRef.current?.reset();
     } else {
       setStatus("error");
       setMessage(result.message);
@@ -38,7 +44,7 @@ export function FounderBooksForm({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form ref={formRef} action={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="title">Title</Label>
         <Input
@@ -73,6 +79,14 @@ export function FounderBooksForm({ locale }: { locale: AppLocale }) {
           onChange={(e) => setAmazonUrl(e.target.value)}
           required
         />
+      </div>
+
+      <div>
+        <Label htmlFor="images">Cover images (optional, up to {MAX_IMAGES})</Label>
+        <Input id="images" name="images" type="file" accept="image/*" multiple />
+        <p className="mt-1 text-xs text-text-muted">
+          Select up to {MAX_IMAGES} images. They'll appear as a sliding carousel next to the book on the public page.
+        </p>
       </div>
 
       <div className="flex items-center gap-3">
