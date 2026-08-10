@@ -24,7 +24,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "books", label: "Books" },
   { key: "insights", label: "Insights", href: "/founder/content?group=insights" },
   { key: "intelligence", label: "Cyber Intelligence", href: "/founder/content?group=intelligence" },
-  { key: "labs", label: "Labs" },
+  { key: "labs", label: "Labs", href: "/founder/labs" },
   { key: "orgTools", label: "Organization Tools" },
   { key: "freeTools", label: "Free Tools" },
   { key: "media", label: "Media Library" },
