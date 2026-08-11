@@ -289,7 +289,13 @@
 "quickStartLabel": "Fast-track setup",
 "expandCta": "See full details",
 "collapseCta": "Show less",
-"downloadCta": "Download"
+"downloadCta": "Download",
+    "shareCta": "Share",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "shareOnLinkedIn": "Share on LinkedIn",
+    "shareOnX": "Share on X",
+    "backToFreeTools": "Back to Free Tools"
 },
 "assessment": {
 "governance": {
