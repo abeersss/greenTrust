@@ -13,6 +13,19 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
  * image opens a full-size lightbox (Dialog) with the same prev/next
  * controls, since the inline card view is too small to read fine
  * detail like a dashboard screenshot.
+ *
+ * The inline (card/hero) view applies a mild zoom (scale-110) on top
+ * of object-cover. Founder-uploaded screenshots are typically square
+ * captures with a browser/device-frame mockup centered inside a
+ * lighter canvas, while display boxes here are wide-and-short
+ * (h-48/h-56/h-72). object-cover alone only crops the *vertical*
+ * excess in that situation -- it never touches the horizontal axis
+ * because the box is already wider than the image needs -- so the
+ * mockup's own side padding stayed fully visible as an ugly built-in
+ * border. Zooming in slightly crops that border away on all sides
+ * without materially cutting into the screenshot's real content. The
+ * full-size lightbox intentionally keeps object-contain + no zoom,
+ * since that view exists precisely to show the whole, uncropped image.
  */
 export function ImageCarousel({
   images,
@@ -53,7 +66,11 @@ export function ImageCarousel({
               aria-label={`Zoom in on ${alt} ${i + 1}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt={`${alt} ${i + 1}`} className={`w-full object-cover ${heightClassName}`} />
+              <img
+                src={src}
+                alt={`${alt} ${i + 1}`}
+                className={`w-full scale-110 object-cover ${heightClassName}`}
+              />
               <span className="absolute inset-0 flex items-center justify-center bg-neutral-950/0 transition-colors group-hover:bg-neutral-950/20">
                 <Expand
                   className="h-6 w-6 text-white opacity-0 drop-shadow transition-opacity group-hover:opacity-100"
