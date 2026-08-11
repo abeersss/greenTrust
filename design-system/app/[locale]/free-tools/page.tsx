@@ -39,7 +39,9 @@ export async function generateMetadata({
  * visually first; the assessments heading drops to <h2> to keep one
  * meaningful H1 per page for SEO. Each download card can carry an
  * image gallery AND a file together, with long descriptions capped
- * and expandable via a "More" popup (ToolResourcesGrid).
+ * and expandable via a "More" popup (ToolResourcesGrid). Each card
+ * also carries a Share control (shareLabels) pointing at that
+ * tool's own /free-tools/downloads/[id] page for LinkedIn/X sharing.
  */
 export default async function FreeToolsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -51,7 +53,14 @@ export default async function FreeToolsPage({ params }: { params: Promise<{ loca
   const tChallenge = await getTranslations({ locale, namespace: "challenge.firstDefender" });
 
   const toolResources = await getPublishedToolResources(l);
-  const moreLabel = l === "ar" ? "\u0627\u0644\u0645\u0632\u064a\u062f" : "More";
+  const moreLabel = l === "ar" ? "المزيد" : "More";
+  const shareLabels = {
+    share: t("shareCta"),
+    copyLink: t("copyLink"),
+    linkCopied: t("linkCopied"),
+    linkedIn: t("shareOnLinkedIn"),
+    x: t("shareOnX"),
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 tablet:px-6">
@@ -66,7 +75,13 @@ export default async function FreeToolsPage({ params }: { params: Promise<{ loca
       </h1>
       <p className="mt-3 max-w-2xl text-text-secondary">{t("downloadsIntro")}</p>
 
-      <ToolResourcesGrid items={toolResources} downloadLabel={t("downloadCta")} moreLabel={moreLabel} />
+      <ToolResourcesGrid
+        items={toolResources}
+        locale={l}
+        downloadLabel={t("downloadCta")}
+        moreLabel={moreLabel}
+        shareLabels={shareLabels}
+      />
 
       <div className="mt-16">
         <Badge variant="primary">{t("kicker")}</Badge>
