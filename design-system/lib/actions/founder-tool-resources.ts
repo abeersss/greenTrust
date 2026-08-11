@@ -9,11 +9,12 @@ import { actionError, actionSuccess, type ActionResult } from "./types";
 
 /**
  * Founder CRUD for tool_resources (CyberAbeer Platform, migration
- * 030). Bilingual name + description, plus either up to 4 gallery
- * images (shown as a sliding carousel on /free-tools) or one
- * downloadable file (PDF/xlsx/zip) -- not both, so the public card
- * always renders one clear call to action. Same requireFounder() +
- * cookie-session Supabase client pattern as founder-books.ts.
+ * 030). Bilingual name + description, plus up to 4 gallery images
+ * (shown as a sliding carousel on /free-tools) AND/OR one
+ * downloadable file (PDF/xlsx/zip) -- a tool can have both a gallery
+ * and a download at once, so adding one never wipes out the other.
+ * Same requireFounder() + cookie-session Supabase client pattern as
+ * founder-books.ts.
  */
 const MAX_IMAGES = 4;
 
@@ -43,7 +44,6 @@ export async function createToolResource(locale: AppLocale, formData: FormData):
   const fileEntry = extractSingleFile(formData, "file");
 
   if (imageFiles.length > MAX_IMAGES) return actionError(`You can upload at most ${MAX_IMAGES} images.`);
-  if (imageFiles.length > 0 && fileEntry) return actionError("Add either images or a downloadable file, not both.");
 
   try {
     const supabase = await createSupabaseServerClient();
@@ -84,10 +84,12 @@ export async function createToolResource(locale: AppLocale, formData: FormData):
 
 /**
  * Edits an existing tool_resources row in place. Name/description are
- * always updated; media is only replaced if the founder attaches new
- * images or a new file in this submission -- an empty media picker
- * means "keep what's already there", so fixing a typo never requires
- * re-uploading the carousel or the download.
+ * always updated; images and file are each only replaced if the
+ * founder attaches a new one in this submission -- leaving a picker
+ * empty means "keep what's already there" for THAT media type only,
+ * so uploading a new image gallery never deletes an existing file
+ * (and vice versa). To remove a media type entirely, delete the tool
+ * and re-add it, or add an explicit "remove" control later.
  */
 export async function updateToolResource(
   locale: AppLocale,
@@ -110,7 +112,6 @@ export async function updateToolResource(
   const fileEntry = extractSingleFile(formData, "file");
 
   if (imageFiles.length > MAX_IMAGES) return actionError(`You can upload at most ${MAX_IMAGES} images.`);
-  if (imageFiles.length > 0 && fileEntry) return actionError("Add either images or a downloadable file, not both.");
 
   try {
     const supabase = await createSupabaseServerClient();
@@ -121,8 +122,8 @@ export async function updateToolResource(
       description_en: string;
       description_ar: string;
       image_urls?: string[];
-      file_url?: string | null;
-      file_name?: string | null;
+      file_url?: string;
+      file_name?: string;
     } = {
       name_en: nameEn,
       name_ar: nameAr,
@@ -136,12 +137,11 @@ export async function updateToolResource(
         imageUrls.push(await uploadMediaFile(supabase, "tool-resources", img));
       }
       update.image_urls = imageUrls;
-      update.file_url = null;
-      update.file_name = null;
-    } else if (fileEntry) {
+    }
+
+    if (fileEntry) {
       update.file_url = await uploadMediaFile(supabase, "tool-resources", fileEntry);
       update.file_name = fileEntry.name;
-      update.image_urls = [];
     }
 
     const { error } = await supabase.from("tool_resources").update(update).eq("id", id);
