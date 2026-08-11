@@ -45,3 +45,32 @@ export async function getPublishedToolResources(locale: AppLocale): Promise<Tool
     return [];
   }
 }
+
+
+  export async function getToolResourceById(locale: AppLocale, id: string): Promise<ToolResource | null> {
+    try {
+      const supabase = await createSupabaseServerClient();
+      const { data, error } = await supabase
+      .from("tool_resources")
+      .select("id, name_en, name_ar, description_en, description_ar, file_url, file_name, image_urls")
+      .eq("id", id)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error) throw error;
+      if (!data) return null;
+
+    const isAr = locale === "ar";
+      return {
+        id: data.id as string,
+        name: (isAr ? data.name_ar : data.name_en) as string,
+        description: (isAr ? data.description_ar : data.description_en) as string,
+        fileUrl: (data.file_url as string | null) ?? null,
+        fileName: (data.file_name as string | null) ?? null,
+        imageUrls: (data.image_urls as string[] | null) ?? [],
+      };
+    } catch (err) {
+      console.error("getToolResourceById failed", err);
+      return null;
+    }
+  }
