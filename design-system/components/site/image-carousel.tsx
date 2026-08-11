@@ -14,18 +14,25 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
  * controls, since the inline card view is too small to read fine
  * detail like a dashboard screenshot.
  *
- * The inline (card/hero) view applies a mild zoom (scale-110) on top
- * of object-cover. Founder-uploaded screenshots are typically square
- * captures with a browser/device-frame mockup centered inside a
- * lighter canvas, while display boxes here are wide-and-short
- * (h-48/h-56/h-72). object-cover alone only crops the *vertical*
- * excess in that situation -- it never touches the horizontal axis
- * because the box is already wider than the image needs -- so the
- * mockup's own side padding stayed fully visible as an ugly built-in
- * border. Zooming in slightly crops that border away on all sides
- * without materially cutting into the screenshot's real content. The
- * full-size lightbox intentionally keeps object-contain + no zoom,
- * since that view exists precisely to show the whole, uncropped image.
+ * The inline (card/hero) view applies a mild *horizontal-only* zoom
+ * (scale-x-110) on top of object-cover. Founder-uploaded screenshots
+ * are typically square captures with a browser/device-frame mockup
+ * centered inside a lighter canvas, while display boxes here are
+ * wide-and-short (h-48/h-56/h-72). Because the box is proportionally
+ * much wider than the square source, object-cover's own math already
+ * scales the image up until its width fills the box, which crops the
+ * *vertical* excess automatically -- often more than enough to clear
+ * the mockup's built-in top/bottom canvas padding on its own. It never
+ * touches the horizontal axis, though, since width is already exactly
+ * matched, so the mockup's left/right canvas padding stayed fully
+ * visible as an ugly built-in border. A uniform scale() zoom (crops
+ * all four edges equally) fixed the sides but also zoomed vertically
+ * on top of cover's already-generous vertical crop, clipping into the
+ * screenshot's real content along the top and bottom edges. Using
+ * scale-x-110 instead crops only the axis that actually needs it,
+ * leaving object-cover's vertical fit untouched. The full-size
+ * lightbox intentionally keeps object-contain + no zoom, since that
+ * view exists precisely to show the whole, uncropped image.
  */
 export function ImageCarousel({
   images,
@@ -69,7 +76,7 @@ export function ImageCarousel({
               <img
                 src={src}
                 alt={`${alt} ${i + 1}`}
-                className={`w-full scale-110 object-cover ${heightClassName}`}
+                className={`w-full scale-x-110 object-cover ${heightClassName}`}
               />
               <span className="absolute inset-0 flex items-center justify-center bg-neutral-950/0 transition-colors group-hover:bg-neutral-950/20">
                 <Expand
