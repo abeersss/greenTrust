@@ -6,7 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ImageCarousel } from "@/components/site/image-carousel";
+import { ShareToolButton } from "@/components/site/share-tool-button";
 import type { ToolResource } from "@/lib/tools/tool-resources";
+import type { AppLocale } from "@/lib/i18n/config";
 
 /**
  * Founder-managed Free Tools "Downloads" grid (CyberAbeer Platform,
@@ -16,7 +18,9 @@ import type { ToolResource } from "@/lib/tools/tool-resources";
  * 6th, etc. Descriptions longer than MAX_DESCRIPTION_CHARS are
  * truncated with a "More" control that opens the full text in a
  * popup, so one long write-up can't blow out a card's height and
- * break the grid's row alignment.
+ * break the grid's row alignment. Each card also carries a Share
+ * control pointing at that tool's own /free-tools/downloads/[id]
+ * page so a pasted link shows that tool's picture on LinkedIn/X.
  */
 const MAX_DESCRIPTION_CHARS = 140;
 
@@ -72,12 +76,22 @@ function ToolDescription({
 
 export function ToolResourcesGrid({
   items,
+  locale,
   downloadLabel,
   moreLabel = "More",
+  shareLabels,
 }: {
   items: ToolResource[];
+  locale: AppLocale;
   downloadLabel: string;
   moreLabel?: string;
+  shareLabels: {
+    share: string;
+    copyLink: string;
+    linkCopied: string;
+    linkedIn: string;
+    x: string;
+  };
 }) {
   if (items.length === 0) return null;
 
@@ -89,7 +103,18 @@ export function ToolResourcesGrid({
             <ImageCarousel images={item.imageUrls} alt={item.name} heightClassName="h-48" />
           )}
           <CardContent className="flex flex-1 flex-col p-5">
-            <h3 className="font-display text-lg font-bold text-text-primary">{item.name}</h3>
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="font-display text-lg font-bold text-text-primary">{item.name}</h3>
+              <ShareToolButton
+                path={`/${locale}/free-tools/downloads/${item.id}`}
+                title={item.name}
+                shareLabel={shareLabels.share}
+                copyLabel={shareLabels.copyLink}
+                copiedLabel={shareLabels.linkCopied}
+                linkedInLabel={shareLabels.linkedIn}
+                xLabel={shareLabels.x}
+              />
+            </div>
             <ToolDescription name={item.name} description={item.description} moreLabel={moreLabel} />
             {item.fileUrl && (
               <Button asChild className="mt-4 self-start">
