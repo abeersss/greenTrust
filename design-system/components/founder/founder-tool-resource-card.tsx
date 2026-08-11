@@ -24,9 +24,10 @@ const MAX_IMAGES = 4;
  * migration 030). Combines the read-only display + Hide/Delete
  * controls with an inline "Edit" mode so the founder can fix a name,
  * description, or swap the media on an existing tool without
- * deleting and re-adding it. Media is only replaced if a new image
- * set or file is attached -- leaving the picker empty keeps whatever
- * is already live.
+ * deleting and re-adding it. Images and the downloadable file are
+ * independent -- a tool can carry both at once, and each picker only
+ * replaces its own media type when a new one is attached; leaving a
+ * picker empty keeps whatever is already live for that type.
  */
 export function FounderToolResourceCard({
   locale,
@@ -38,7 +39,6 @@ export function FounderToolResourceCard({
   const router = useRouter();
   const [editing, setEditing] = React.useState(false);
   const [pending, setPending] = React.useState(false);
-  const [mode, setMode] = React.useState<"images" | "file">(tool.fileUrl ? "file" : "images");
   const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = React.useState<string | null>(null);
 
@@ -111,45 +111,26 @@ export function FounderToolResourceCard({
               </div>
             </div>
 
-            <div>
-              <Label>Media</Label>
-              <p className="mt-1 text-xs text-text-muted">
-                Leave this blank to keep the current media. Uploading a new image set or file replaces it.
-              </p>
-              <div className="mt-1 flex gap-2">
-                <Button
-                  type="button"
-                  variant={mode === "images" ? "primary" : "outline"}
-                  size="sm"
-                  onClick={() => setMode("images")}
-                >
-                  Up to {MAX_IMAGES} images (carousel)
-                </Button>
-                <Button
-                  type="button"
-                  variant={mode === "file" ? "primary" : "outline"}
-                  size="sm"
-                  onClick={() => setMode("file")}
-                >
-                  One downloadable file
-                </Button>
+            <div className="grid gap-4 tablet:grid-cols-2">
+              <div>
+                <Label htmlFor={`images-${tool.id}`}>
+                  Images {tool.imageUrls.length > 0 ? `(currently ${tool.imageUrls.length})` : "(none yet)"}
+                </Label>
+                <Input id={`images-${tool.id}`} name="images" type="file" accept="image/*" multiple />
+                <p className="mt-1 text-xs text-text-muted">
+                  Leave blank to keep the current {tool.imageUrls.length > 0 ? "images" : "gallery"}. Selecting new
+                  ones (up to {MAX_IMAGES}) replaces the whole set.
+                </p>
               </div>
-
-              {mode === "images" ? (
-                <div className="mt-2">
-                  <Input name="images" type="file" accept="image/*" multiple />
-                  <p className="mt-1 text-xs text-text-muted">
-                    Select up to {MAX_IMAGES} images to replace the current ones.
-                  </p>
-                </div>
-              ) : (
-                <div className="mt-2">
-                  <Input name="file" type="file" accept=".pdf,.xlsx,.xls,.zip,.doc,.docx" />
-                  <p className="mt-1 text-xs text-text-muted">
-                    PDF, Excel, Word, or zip. Replaces the current file or images.
-                  </p>
-                </div>
-              )}
+              <div>
+                <Label htmlFor={`file-${tool.id}`}>
+                  File {tool.fileUrl ? `(currently ${tool.fileName ?? "set"})` : "(none yet)"}
+                </Label>
+                <Input id={`file-${tool.id}`} name="file" type="file" accept=".pdf,.xlsx,.xls,.zip,.doc,.docx" />
+                <p className="mt-1 text-xs text-text-muted">
+                  Leave blank to keep the current file. PDF, Excel, Word, or zip -- replaces it if attached.
+                </p>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -181,23 +162,25 @@ export function FounderToolResourceCard({
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <p className="font-medium text-text-primary">{tool.nameEn}</p>
               <span className="text-text-muted" dir="rtl">
                 {tool.nameAr}
               </span>
               <Badge variant={tool.isActive ? "success" : "danger"}>{tool.isActive ? "Live" : "Hidden"}</Badge>
-              {tool.imageUrls.length > 0 ? (
+              {tool.imageUrls.length > 0 && (
                 <Badge variant="primary">
                   <ImageIcon className="me-1 inline h-3 w-3" aria-hidden="true" />
                   {tool.imageUrls.length} image{tool.imageUrls.length > 1 ? "s" : ""}
                 </Badge>
-              ) : tool.fileUrl ? (
+              )}
+              {tool.fileUrl && (
                 <Badge variant="primary">
                   <FileIcon className="me-1 inline h-3 w-3" aria-hidden="true" />
                   {tool.fileName ?? "File"}
                 </Badge>
-              ) : null}
+              )}
+              {tool.imageUrls.length === 0 && !tool.fileUrl && <Badge variant="danger">No media yet</Badge>}
             </div>
             <p className="mt-1 text-sm text-text-muted">{tool.descriptionEn}</p>
           </div>
@@ -217,4 +200,3 @@ export function FounderToolResourceCard({
     </Card>
   );
 }
-
