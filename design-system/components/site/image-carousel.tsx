@@ -15,24 +15,33 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
  * detail like a dashboard screenshot.
  *
  * The inline (card/hero) view applies a mild *horizontal-only* zoom
- * (scale-x-110) on top of object-cover. Founder-uploaded screenshots
- * are typically square captures with a browser/device-frame mockup
- * centered inside a lighter canvas, while display boxes here are
- * wide-and-short (h-48/h-56/h-72). Because the box is proportionally
- * much wider than the square source, object-cover's own math already
- * scales the image up until its width fills the box, which crops the
- * *vertical* excess automatically -- often more than enough to clear
- * the mockup's built-in top/bottom canvas padding on its own. It never
- * touches the horizontal axis, though, since width is already exactly
- * matched, so the mockup's left/right canvas padding stayed fully
- * visible as an ugly built-in border. A uniform scale() zoom (crops
- * all four edges equally) fixed the sides but also zoomed vertically
- * on top of cover's already-generous vertical crop, clipping into the
- * screenshot's real content along the top and bottom edges. Using
- * scale-x-110 instead crops only the axis that actually needs it,
- * leaving object-cover's vertical fit untouched. The full-size
- * lightbox intentionally keeps object-contain + no zoom, since that
- * view exists precisely to show the whole, uncropped image.
+ * (scale-x-110) plus a top-biased object-position on top of
+ * object-cover. Two founder-upload conventions drive this:
+ *
+ * 1. Square screenshots with side canvas padding -- object-cover's
+ *    own math already scales the image up until its width fills the
+ *    wide-and-short display box (h-48/h-56/h-72), which crops the
+ *    vertical excess for free but never touches the horizontal axis,
+ *    so the screenshot's built-in left/right padding stayed visible
+ *    as a border. scale-x-110 crops that away without an equivalent
+ *    vertical zoom, which would otherwise clip real content off the
+ *    top/bottom edge on top of cover's already-generous vertical crop.
+ * 2. Laptop/device-mockup screenshots (bezel + screen + keyboard deck
+ *    baked into one image) put the only content that matters -- the
+ *    actual app screen -- in the upper portion of the canvas, with a
+ *    tall mostly-empty bezel/keyboard area below it. A dead-center
+ *    crop lands half the visible window on that empty lower area
+ *    instead of the screen, and worse, can clip the very top of the
+ *    screen (header/nav) off entirely. object-[center_41%] biases the
+ *    crop window upward to line up with where the screen starts,
+ *    keeping the header/nav intact for every upload; it can't fully
+ *    eliminate empty space below sparse-content screenshots (a short
+ *    page inside a tall mockup still leaves room), but it removes the
+ *    top clipping and meaningfully trims the leftover dead space.
+ *
+ * The full-size lightbox intentionally keeps object-contain + no
+ * zoom/position bias, since that view exists precisely to show the
+ * whole, uncropped image.
  */
 export function ImageCarousel({
   images,
@@ -76,7 +85,7 @@ export function ImageCarousel({
               <img
                 src={src}
                 alt={`${alt} ${i + 1}`}
-                className={`w-full scale-x-110 object-cover ${heightClassName}`}
+                className={`w-full scale-x-110 object-cover object-[center_41%] ${heightClassName}`}
               />
               <span className="absolute inset-0 flex items-center justify-center bg-neutral-950/0 transition-colors group-hover:bg-neutral-950/20">
                 <Expand
