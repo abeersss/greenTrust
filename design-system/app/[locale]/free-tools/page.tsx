@@ -37,7 +37,9 @@ export async function generateMetadata({
  * highest-intent content, with the self-assessment cards following.
  * The Downloads heading is now the page's single <h1> since it's
  * visually first; the assessments heading drops to <h2> to keep one
- * meaningful H1 per page for SEO.
+ * meaningful H1 per page for SEO. Each download card can carry an
+ * image gallery AND a file together, with long descriptions capped
+ * and expandable via a "More" popup (ToolResourcesGrid).
  */
 export default async function FreeToolsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -49,6 +51,7 @@ export default async function FreeToolsPage({ params }: { params: Promise<{ loca
   const tChallenge = await getTranslations({ locale, namespace: "challenge.firstDefender" });
 
   const toolResources = await getPublishedToolResources(l);
+  const moreLabel = l === "ar" ? "\u0627\u0644\u0645\u0632\u064a\u062f" : "More";
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 tablet:px-6">
@@ -63,7 +66,7 @@ export default async function FreeToolsPage({ params }: { params: Promise<{ loca
       </h1>
       <p className="mt-3 max-w-2xl text-text-secondary">{t("downloadsIntro")}</p>
 
-      <ToolResourcesGrid items={toolResources} downloadLabel={t("downloadCta")} />
+      <ToolResourcesGrid items={toolResources} downloadLabel={t("downloadCta")} moreLabel={moreLabel} />
 
       <div className="mt-16">
         <Badge variant="primary">{t("kicker")}</Badge>
