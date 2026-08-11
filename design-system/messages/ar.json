@@ -289,7 +289,13 @@
     "quickStartLabel": "إعداد سريع",
     "expandCta": "عرض التفاصيل الكاملة",
     "collapseCta": "عرض أقل",
-    "downloadCta": "تنزيل"
+    "downloadCta": "تنزيل",
+    "shareCta": "مشاركة",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط",
+    "shareOnLinkedIn": "مشاركة على LinkedIn",
+    "shareOnX": "مشاركة على X",
+    "backToFreeTools": "العودة إلى الأدوات المجانية"
   },
   "assessment": {
     "governance": {
