@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site";
 import { getPublishedArticles, getLatestIntelligenceArticles, getTopLevelPillars, getCategoryBySlug } from "@/lib/content/articles";
+import { getPublishedToolResources } from "@/lib/tools/tool-resources";
 
 // getPublishedArticles goes through the cookie-aware Supabase server
 // client, which makes this route use a dynamic API (`cookies`) and
@@ -164,6 +165,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           priority: 0.6,
         });
       }
+    }
+
+    // Founder-managed Free Tools downloads (migration 030): each
+    // published tool_resources row gets its own shareable
+    // /free-tools/downloads/[id] URL so the per-tool OpenGraph-image
+    // page built for LinkedIn/X sharing is also independently
+    // indexable, not just reachable via the /free-tools hub grid.
+    const toolResources = await getPublishedToolResources(locale);
+    for (const tool of toolResources) {
+      entries.push({
+        url: `${siteUrl}/${locale}/free-tools/downloads/${tool.id}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly",
+        priority: 0.55,
+      });
     }
   }
 
