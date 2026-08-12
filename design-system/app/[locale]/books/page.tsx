@@ -27,16 +27,19 @@ export async function generateMetadata({
 
 /**
  * Public Books page (CyberAbeer Platform). Reads only is_active rows
- * from the books table (migration 029) -- title, description, and
- * the Amazon purchase link, plus an optional up-to-4-image gallery
- * (migration 030) shown as a sliding carousel when present.
+ * from the books table (migration 029) and, per migration 032, each
+ * book carries a full English and a full Arabic edition -- title,
+ * description, and Amazon link -- so this resolves the row to the
+ * caller's locale before rendering, plus an optional up-to-4-image
+ * gallery per edition (migration 032) shown as a sliding carousel
+ * when present.
  */
 export default async function BooksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
 
   const t = await getTranslations({ locale, namespace: "books" });
-  const books = await getPublishedBooks();
+  const books = await getPublishedBooks(locale as AppLocale);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 tablet:px-6">
