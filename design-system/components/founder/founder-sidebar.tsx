@@ -5,9 +5,10 @@ import type { AppLocale } from "@/lib/i18n/config";
  * Founder Dashboard nav shell (CyberAbeer Platform Phase II). Batch 1
  * wired Content, Insights, and Cyber Intelligence to the real /founder
  * /content admin screen (all three are the same underlying `articles`
- * table, filtered by `?group=`); Batch 2 wired Subscribers, Newsletter,
- * and the homepage Banner to their real admin screens. Everything else
- * is still the founder's planned Phase II section list, shown so the
+ * table, filtered by `?group=`); Batch 2 wired Subscribers to the real
+ * /founder/subscribers list. Batch 3 wired Research to the real
+ * /founder/research admin screen (migration 031). Everything else is
+ * still the founder's planned Phase II section list, shown so the
  * eventual structure is visible without pretending it already works.
  * Each becomes a real Link href as its own batch ships; until then it
  * renders as a disabled row with a "Coming soon" tag rather than a
@@ -20,21 +21,19 @@ import type { AppLocale } from "@/lib/i18n/config";
 const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/founder" },
   { key: "content", label: "Content", href: "/founder/content" },
-  { key: "research", label: "Research" },
-  { key: "books", label: "Books", href: "/founder/books" },
+  { key: "research", label: "Research", href: "/founder/research" },
+  { key: "books", label: "Books" },
   { key: "insights", label: "Insights", href: "/founder/content?group=insights" },
   { key: "intelligence", label: "Cyber Intelligence", href: "/founder/content?group=intelligence" },
-  { key: "labs", label: "Labs", href: "/founder/labs" },
-  { key: "orgTools", label: "Organization Tools", href: "/founder/tools" },
-  { key: "freeTools", label: "Free Tools (submissions)", href: "/founder/tools" },
-  { key: "toolResources", label: "Free Tools (downloads)", href: "/founder/tool-resources" },
-  { key: "media", label: "Media Library", href: "/founder/media" },
+  { key: "labs", label: "Labs" },
+  { key: "orgTools", label: "Organization Tools" },
+  { key: "freeTools", label: "Free Tools" },
+  { key: "media", label: "Media Library" },
   { key: "subscribers", label: "Subscribers", href: "/founder/subscribers" },
-  { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
-  { key: "banner", label: "Homepage Banner", href: "/founder/banner" },
-  { key: "seo", label: "SEO", href: "/founder/seo" },
-  { key: "analytics", label: "Analytics", href: "/founder/analytics" },
-  { key: "settings", label: "Settings", href: "/founder/settings" },
+  { key: "newsletter", label: "Newsletter" },
+  { key: "seo", label: "SEO" },
+  { key: "analytics", label: "Analytics" },
+  { key: "settings", label: "Settings" },
 ];
 
 export function FounderSidebar({ locale }: { locale: AppLocale }) {
