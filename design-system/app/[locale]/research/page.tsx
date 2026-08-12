@@ -10,7 +10,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { BookOpen } from "lucide-react";
-import { PUBLICATIONS } from "@/lib/research/publications";
+import { getResearchIntro, getResearchAreas, getResearchPublications } from "@/lib/research/content";
 
 export async function generateMetadata({
   params,
@@ -35,7 +35,19 @@ export default async function ResearchPage({ params }: { params: Promise<{ local
 
   const t = await getTranslations({ locale, namespace: "research" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
-  const areas = t.raw("areas") as string[];
+
+  // Migration 031 moved the intro paragraph, research areas, and
+  // publications into founder-editable tables (see /founder/research);
+  // headings, CTAs, and the dissertation blurb stay in next-intl since
+  // they're UI chrome, not content the founder edits day to day. The
+  // intro falls back to the static translation if the DB read ever
+  // comes back empty, so the page never renders with a blank intro.
+  const [dbIntro, areas, publications] = await Promise.all([
+    getResearchIntro(l),
+    getResearchAreas(l),
+    getResearchPublications(),
+  ]);
+  const intro = dbIntro ?? t("intro");
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 tablet:px-6">
@@ -46,15 +58,15 @@ export default async function ResearchPage({ params }: { params: Promise<{ local
         {t("kicker")}
       </Badge>
       <h1 className="mt-3 font-display text-3xl font-bold text-text-primary tablet:text-4xl">{t("title")}</h1>
-      <p className="mt-3 text-text-secondary">{t("intro")}</p>
+      <p className="mt-3 text-text-secondary">{intro}</p>
 
       <section className="mt-10">
         <h2 className="font-display text-xl font-semibold text-text-primary">{t("areasHeading")}</h2>
         <ul className="mt-4 space-y-3">
           {areas.map((area) => (
-            <li key={area} className="flex items-start gap-2.5 text-text-secondary">
+            <li key={area.id} className="flex items-start gap-2.5 text-text-secondary">
               <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              {area}
+              {area.text}
             </li>
           ))}
         </ul>
@@ -69,8 +81,8 @@ export default async function ResearchPage({ params }: { params: Promise<{ local
       <section className="mt-10">
         <h2 className="font-display text-xl font-semibold text-text-primary">{t("publicationsHeading")}</h2>
         <ul className="mt-4 space-y-4">
-          {PUBLICATIONS.map((pub) => (
-            <li key={pub.doiUrl} className="rounded-card border border-border p-4">
+          {publications.map((pub) => (
+            <li key={pub.id} className="rounded-card border border-border p-4">
               <a
                 href={pub.doiUrl}
                 target="_blank"
