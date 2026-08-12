@@ -21,92 +21,91 @@ import type { AppLocale } from "@/lib/i18n/config";
 const MAX_IMAGES = 4;
 
 export function FounderBooksForm({ locale }: { locale: AppLocale }) {
-    const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
-    const [message, setMessage] = React.useState<string | null>(null);
-    const formRef = React.useRef<HTMLFormElement>(null);
+  const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = React.useState<string | null>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   async function handleSubmit(formData: FormData) {
-        setStatus("loading");
-        setMessage(null);
-        const result = await createBook(locale, formData);
-        if (result.status === "success") {
-                setStatus("success");
-                setMessage("Saved. Both editions are live on the public Books page.");
-                formRef.current?.reset();
-        } else {
-                setStatus("error");
-                setMessage(result.message);
-        }
+    setStatus("loading");
+    setMessage(null);
+    const result = await createBook(locale, formData);
+    if (result.status === "success") {
+      setStatus("success");
+      setMessage("Saved. Both editions are live on the public Books page.");
+      formRef.current?.reset();
+    } else {
+      setStatus("error");
+      setMessage(result.message);
+    }
   }
 
   return (
-        <form ref={formRef} action={handleSubmit} className="space-y-6">
-              <div className="grid gap-6 tablet:grid-cols-2">
-                      <div className="space-y-4 rounded-control border border-border p-4">
-                                <p className="text-sm font-semibold text-text-primary">English edition</p>p>
-                                <div>
-                                            <Label htmlFor="titleEn">Title</Label>Label>
-                                            <Input id="titleEn" name="titleEn" required />
-                                </div>div>
-                                <div>
-                                            <Label htmlFor="descriptionEn">Description</Label>Label>
-                                            <Textarea id="descriptionEn" name="descriptionEn" rows={4} required />
-                                </div>div>
-                                <div>
-                                            <Label htmlFor="amazonUrlEn">Amazon link</Label>Label>
-                                            <Input
-                                                            id="amazonUrlEn"
-                                                            name="amazonUrlEn"
-                                                            type="url"
-                                                            placeholder="https://www.amazon.com/dp/..."
-                                                            required
-                                                          />
-                                </div>div>
-                                <div>
-                                            <Label htmlFor="imagesEn">Cover images (optional, up to {MAX_IMAGES})</Label>Label>
-                                            <Input id="imagesEn" name="imagesEn" type="file" accept="image/*" multiple />
-                                </div>div>
-                      </div>div>
-              
-                      <div className="space-y-4 rounded-control border border-border p-4" dir="rtl">
-                                <p className="text-sm font-semibold text-text-primary">النسخة العربية</p>p>
-                                <div>
-                                            <Label htmlFor="titleAr">العنوان</Label>Label>
-                                            <Input id="titleAr" name="titleAr" required dir="rtl" />
-                                </div>div>
-                                <div>
-                                            <Label htmlFor="descriptionAr">الوصف</Label>Label>
-                                            <Textarea id="descriptionAr" name="descriptionAr" rows={4} required dir="rtl" />
-                                </div>div>
-                                <div>
-                                            <Label htmlFor="amazonUrlAr">رابط أمازون</Label>Label>
-                                            <Input
-                                                            id="amazonUrlAr"
-                                                            name="amazonUrlAr"
-                                                            type="url"
-                                                            placeholder="https://www.amazon.sa/dp/..."
-                                                            required
-                                                            dir="ltr"
-                                                          />
-                                </div>div>
-                                <div>
-                                            <Label htmlFor="imagesAr">صور الغلاف (اختياري، حتى {MAX_IMAGES})</Label>Label>
-                                            <Input id="imagesAr" name="imagesAr" type="file" accept="image/*" multiple />
-                                </div>div>
-                      </div>div>
-              </div>div>
-        
-              <div className="flex items-center gap-3">
-                      <Button type="submit" loading={status === "loading"}>
-                                Add book
-                      </Button>Button>
-                {message && (
-                    <p className={`text-sm ${status === "error" ? "text-danger-600" : "text-text-secondary"}`}>
-                      {message}
-                    </p>p>
-                      )}
-              </div>div>
-        </form>form>
-      );
+    <form ref={formRef} action={handleSubmit} className="space-y-6">
+      <div className="grid gap-6 tablet:grid-cols-2">
+        <div className="space-y-4 rounded-control border border-border p-4">
+          <p className="text-sm font-semibold text-text-primary">English edition</p>
+          <div>
+            <Label htmlFor="titleEn">Title</Label>
+            <Input id="titleEn" name="titleEn" required />
+          </div>
+          <div>
+            <Label htmlFor="descriptionEn">Description</Label>
+            <Textarea id="descriptionEn" name="descriptionEn" rows={4} required />
+          </div>
+          <div>
+            <Label htmlFor="amazonUrlEn">Amazon link</Label>
+            <Input
+              id="amazonUrlEn"
+              name="amazonUrlEn"
+              type="url"
+              placeholder="https://www.amazon.com/dp/..."
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="imagesEn">Cover images (optional, up to {MAX_IMAGES})</Label>
+            <Input id="imagesEn" name="imagesEn" type="file" accept="image/*" multiple />
+          </div>
+        </div>
+
+        <div className="space-y-4 rounded-control border border-border p-4" dir="rtl">
+          <p className="text-sm font-semibold text-text-primary">النسخة العربية</p>
+          <div>
+            <Label htmlFor="titleAr">العنوان</Label>
+            <Input id="titleAr" name="titleAr" required dir="rtl" />
+          </div>
+          <div>
+            <Label htmlFor="descriptionAr">الوصف</Label>
+            <Textarea id="descriptionAr" name="descriptionAr" rows={4} required dir="rtl" />
+          </div>
+          <div>
+            <Label htmlFor="amazonUrlAr">رابط أمازون</Label>
+            <Input
+              id="amazonUrlAr"
+              name="amazonUrlAr"
+              type="url"
+              placeholder="https://www.amazon.sa/dp/..."
+              required
+              dir="ltr"
+            />
+          </div>
+          <div>
+            <Label htmlFor="imagesAr">صور الغلاف (اختياري، حتى {MAX_IMAGES})</Label>
+            <Input id="imagesAr" name="imagesAr" type="file" accept="image/*" multiple />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Button type="submit" loading={status === "loading"}>
+          Add book
+        </Button>
+        {message && (
+          <p className={`text-sm ${status === "error" ? "text-danger-600" : "text-text-secondary"}`}>
+            {message}
+          </p>
+        )}
+      </div>
+    </form>
+  );
 }
-</form>
