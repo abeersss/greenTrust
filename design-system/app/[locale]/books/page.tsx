@@ -33,6 +33,19 @@ export async function generateMetadata({
  * caller's locale before rendering, plus an optional up-to-4-image
  * gallery per edition (migration 032) shown as a sliding carousel
  * when present.
+ *
+ * The cover renders as a CSS-only 3D book mockup (ImageCarousel's
+ * variant="book") instead of the flat cropped-rectangle treatment
+ * used for tool-resource screenshots elsewhere -- a book cover is
+ * portrait, text-heavy, and meant to be read whole, not cropped to
+ * fill a wide box. Each card is laid out as a fixed-width mockup
+ * beside the title/description/CTA rather than stacked full-width
+ * above them, both because that reads as a more natural "book
+ * listing" than a hero-image card, and because flexbox's `row` axis
+ * is direction-aware: in the Arabic (rtl) tree the same markup
+ * places the mockup on the reader's right without any extra
+ * language-specific layout code, matching how a shelved book's
+ * spine sits toward the near hand in each reading direction.
  */
 export default async function BooksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -52,11 +65,16 @@ export default async function BooksPage({ params }: { params: Promise<{ locale: 
       <div className="mt-8 space-y-6">
         {books.map((book) => (
           <Card key={book.id} className="overflow-hidden">
-            {book.imageUrls.length > 0 && (
-              <ImageCarousel images={book.imageUrls} alt={book.title} heightClassName="h-64" />
-            )}
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
+            <CardContent className="flex flex-col gap-6 p-6 tablet:flex-row tablet:items-start">
+              {book.imageUrls.length > 0 && (
+                <ImageCarousel
+                  images={book.imageUrls}
+                  alt={book.title}
+                  variant="book"
+                  className="w-36 shrink-0 tablet:w-40"
+                />
+              )}
+              <div className="flex min-w-0 flex-1 items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary">
                   <BookOpen className="h-6 w-6" aria-hidden="true" />
                 </div>
@@ -78,3 +96,4 @@ export default async function BooksPage({ params }: { params: Promise<{ locale: 
     </div>
   );
 }
+
