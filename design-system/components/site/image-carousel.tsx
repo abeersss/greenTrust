@@ -14,6 +14,14 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
  * controls, since the inline card view is too small to read fine
  * detail like a dashboard screenshot.
  *
+ * The inline (card/hero) view navigates by dots only -- large
+ * chevron buttons floating over a small card image read as heavy,
+ * app-chrome-like controls that fight the card's own visual weight.
+ * The dots stay lightweight and make the "tap the image to zoom"
+ * affordance the primary interaction. The full-size lightbox keeps
+ * chevron arrows too, since that view is a dedicated image browser
+ * where larger click targets are actually useful.
+ *
  * The inline (card/hero) view applies a mild *horizontal-only* zoom
  * (scale-x-110) plus a top-biased object-position on top of
  * object-cover. Two founder-upload conventions drive this:
@@ -98,37 +106,19 @@ export function ImageCarousel({
         </div>
 
         {images.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() => goTo(index - 1)}
-              aria-label="Previous image"
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/85 p-1.5 text-text-primary shadow hover:bg-white"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo(index + 1)}
-              aria-label="Next image"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/85 p-1.5 text-text-primary shadow hover:bg-white"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  aria-label={`Go to image ${i + 1}`}
-                  onClick={() => goTo(i)}
-                  className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                    i === index ? "bg-primary" : "bg-white/70"
-                  }`}
-                />
-              ))}
-            </div>
-          </>
+          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to image ${i + 1}`}
+                onClick={() => goTo(i)}
+                className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                  i === index ? "bg-primary" : "bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
         )}
       </div>
 
