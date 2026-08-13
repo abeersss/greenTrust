@@ -50,17 +50,34 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
  * The full-size lightbox intentionally keeps object-contain + no
  * zoom/position bias, since that view exists precisely to show the
  * whole, uncropped image.
+ *
+ * variant="book" (Books page only) swaps the flat cropped-rectangle
+ * inline view for a CSS-only 3D book mockup: a tilted cover with a
+ * simulated page edge and spine shadow, sitting on a soft ground
+ * shadow, instead of a horizontally-stretched crop -- book covers
+ * are portrait, text-heavy, and designed to be seen whole, none of
+ * which suits the crop-to-fill treatment the default variant uses
+ * for dashboard screenshots. The tilt direction mirrors with reading
+ * direction (rtl: flips rotateY's sign and swaps which edge shows
+ * the page stack vs. the spine shadow) so the book "leans" toward
+ * the start of the line in both languages, the way a shelved book's
+ * spine sits toward the reader's near hand. Only the tilt and the
+ * decorative page/spine strips mirror -- the cover <img> itself is
+ * never flipped, since that would mirror its title text. Clicking
+ * the cover opens the same shared lightbox as the default variant.
  */
 export function ImageCarousel({
   images,
   alt,
   className = "",
   heightClassName = "h-56",
+  variant = "default",
 }: {
   images: string[];
   alt: string;
   className?: string;
   heightClassName?: string;
+  variant?: "default" | "book";
 }) {
   const [index, setIndex] = React.useState(0);
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
@@ -73,54 +90,122 @@ export function ImageCarousel({
 
   return (
     <>
-      <div className={`relative overflow-hidden rounded-control bg-surface-muted ${className}`}>
-        <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${index * 100}%)` }}
-        >
-          {images.map((src, i) => (
-            <button
-              key={src + i}
-              type="button"
-              onClick={() => {
-                setIndex(i);
-                setLightboxOpen(true);
-              }}
-              className="group relative w-full shrink-0 cursor-zoom-in"
-              aria-label={`Zoom in on ${alt} ${i + 1}`}
+      {variant === "book" ? (
+        <div className={`mx-auto ${className}`}>
+          <div className="[perspective:1400px]">
+            <div
+              className="relative aspect-[2195/2600] w-full [transform-style:preserve-3d] transition-transform duration-500 [transform:rotateY(-18deg)_rotateX(2deg)] rtl:[transform:rotateY(18deg)_rotateX(2deg)]"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={src}
-                alt={`${alt} ${i + 1}`}
-                className={`w-full scale-x-110 object-cover object-[center_41%] ${heightClassName}`}
-              />
-              <span className="absolute inset-0 flex items-center justify-center bg-neutral-950/0 transition-colors group-hover:bg-neutral-950/20">
-                <Expand
-                  className="h-6 w-6 text-white opacity-0 drop-shadow transition-opacity group-hover:opacity-100"
+              <button
+                type="button"
+                onClick={() => setLightboxOpen(true)}
+                aria-label={`Zoom in on ${alt}`}
+                className="group absolute inset-0 block overflow-hidden rounded-[3px_8px_8px_3px] shadow-[0_22px_30px_-12px_rgba(15,23,42,0.45),0_2px_4px_rgba(15,23,42,0.25)] rtl:rounded-[8px_3px_3px_8px]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={images[index]}
+                  alt={`${alt} ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+                <span
+                  className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_30%,rgba(255,255,255,0)_70%,rgba(0,0,0,0.12)_100%)]"
                   aria-hidden="true"
                 />
-              </span>
-            </button>
-          ))}
-        </div>
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-950/0 transition-colors group-hover:bg-neutral-950/15">
+                  <Expand
+                    className="h-6 w-6 text-white opacity-0 drop-shadow transition-opacity group-hover:opacity-100"
+                    aria-hidden="true"
+                  />
+                </span>
+              </button>
 
-        {images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Go to image ${i + 1}`}
-                onClick={() => goTo(i)}
-                className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                  i === index ? "bg-primary" : "bg-white/70"
-                }`}
+              {/* Simulated page edge -- fore-edge of the book, opposite the spine. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-[-7px] top-[1.5%] bottom-[1.5%] w-[9px] rounded-[0_3px_3px_0] bg-[repeating-linear-gradient(180deg,#f4f3ee_0px,#ffffff_2px,#e4e2da_3px,#ffffff_5px)] shadow-[2px_0_3px_rgba(15,23,42,0.25)] [transform-origin:left_center] [transform:rotateY(90deg)_translateZ(4.5px)] rtl:right-auto rtl:left-[-7px] rtl:rounded-[3px_0_0_3px] rtl:shadow-[-2px_0_3px_rgba(15,23,42,0.25)] rtl:[transform-origin:right_center] rtl:[transform:rotateY(-90deg)_translateZ(4.5px)]"
               />
+
+              {/* Spine shading -- bound edge, opposite the page edge. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 left-0 w-[12%] bg-[linear-gradient(90deg,rgba(0,0,0,0.35),rgba(0,0,0,0))] rtl:left-auto rtl:right-0 rtl:bg-[linear-gradient(270deg,rgba(0,0,0,0.35),rgba(0,0,0,0))]"
+              />
+            </div>
+
+            {/* Ground shadow */}
+            <div
+              aria-hidden="true"
+              className="mx-auto mt-3 h-3 w-[65%] rounded-[100%] bg-[radial-gradient(ellipse_at_center,rgba(15,23,42,0.32)_0%,rgba(15,23,42,0)_70%)]"
+            />
+          </div>
+
+          {images.length > 1 && (
+            <div className="mt-2 flex justify-center gap-1.5">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Go to image ${i + 1}`}
+                  onClick={() => goTo(i)}
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                    i === index ? "bg-primary" : "bg-border"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={`relative overflow-hidden rounded-control bg-surface-muted ${className}`}>
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${index * 100}%)` }}
+          >
+            {images.map((src, i) => (
+              <button
+                key={src + i}
+                type="button"
+                onClick={() => {
+                  setIndex(i);
+                  setLightboxOpen(true);
+                }}
+                className="group relative w-full shrink-0 cursor-zoom-in"
+                aria-label={`Zoom in on ${alt} ${i + 1}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={`${alt} ${i + 1}`}
+                  className={`w-full scale-x-110 object-cover object-[center_41%] ${heightClassName}`}
+                />
+                <span className="absolute inset-0 flex items-center justify-center bg-neutral-950/0 transition-colors group-hover:bg-neutral-950/20">
+                  <Expand
+                    className="h-6 w-6 text-white opacity-0 drop-shadow transition-opacity group-hover:opacity-100"
+                    aria-hidden="true"
+                  />
+                </span>
+              </button>
             ))}
           </div>
-        )}
-      </div>
+
+          {images.length > 1 && (
+            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Go to image ${i + 1}`}
+                  onClick={() => goTo(i)}
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                    i === index ? "bg-primary" : "bg-white/70"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-3xl border-none bg-transparent p-2 shadow-none">
