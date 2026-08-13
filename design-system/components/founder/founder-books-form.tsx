@@ -17,8 +17,60 @@ import type { AppLocale } from "@/lib/i18n/config";
  * translated label. New books start active/visible on both locales;
  * the founder can hide one later from the list below without
  * deleting it.
+ *
+ * Image uploads are compressed client-side (downscaled + re-encoded
+ * as JPEG) before the form ever submits. Server Actions still travel
+ * through the platform's request pipeline like a normal POST, which
+ * caps payload size well below what next.config's own
+ * serverActions.bodySizeLimit allows -- an uncompressed phone photo
+ * or two pushes past that cap and the platform rejects the request
+ * with a 413 before our action code ever runs. handleSubmit also
+ * guards every step in try/catch: a failed submission (413, dropped
+ * connection, anything) now surfaces as an inline error message
+ * instead of throwing on an undefined result and crashing the whole
+ * page to Next's generic error screen.
  */
 const MAX_IMAGES = 4;
+const MAX_DIMENSION = 1600;
+const JPEG_QUALITY = 0.82;
+
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/") || file.type === "image/svg+xml") return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY)
+    );
+    if (!blob || blob.size >= file.size) return file;
+
+    return new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" });
+  } catch {
+    return file;
+  }
+}
+
+async function compressFormImages(formData: FormData, fieldNames: string[]): Promise<FormData> {
+  const compressed = new FormData();
+  for (const [key, value] of formData.entries()) {
+    if (fieldNames.includes(key) && value instanceof File && value.size > 0) {
+      compressed.append(key, await compressImage(value));
+    } else {
+      compressed.append(key, value);
+    }
+  }
+  return compressed;
+}
 
 export function FounderBooksForm({ locale }: { locale: AppLocale }) {
   const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
@@ -28,14 +80,23 @@ export function FounderBooksForm({ locale }: { locale: AppLocale }) {
   async function handleSubmit(formData: FormData) {
     setStatus("loading");
     setMessage(null);
-    const result = await createBook(locale, formData);
-    if (result.status === "success") {
-      setStatus("success");
-      setMessage("Saved. Both editions are live on the public Books page.");
-      formRef.current?.reset();
-    } else {
+    try {
+      const compact = await compressFormImages(formData, ["imagesEn", "imagesAr"]);
+      const result = await createBook(locale, compact);
+      if (result?.status === "success") {
+        setStatus("success");
+        setMessage("Saved. Both editions are live on the public Books page.");
+        formRef.current?.reset();
+      } else {
+        setStatus("error");
+        setMessage(result?.message ?? "Could not save the book. Please try again.");
+      }
+    } catch (err) {
+      console.error("createBook submit failed", err);
       setStatus("error");
-      setMessage(result.message);
+      setMessage(
+        "Could not save the book. If you attached cover images, try fewer images or smaller files and try again."
+      );
     }
   }
 
