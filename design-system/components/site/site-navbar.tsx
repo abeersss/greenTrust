@@ -35,6 +35,14 @@ import type { AppLocale } from "@/lib/i18n/config";
  * account" + "Log out" is the only auth-specific state that belongs
  * here, since Labs already has its permanent home in the main nav for
  * every visitor, logged in or not.
+ *
+ * Mobile-nav fix (2026-08-14): the shared Navbar previously had no
+ * mobile counterpart at all (the whole <nav> was `hidden` below the
+ * desktop breakpoint), so no nav item -- including Books, which was
+ * additionally buried in a hover-only "Insights" flyout with no touch
+ * equivalent -- was reachable on phones/tablets. `renderMobileLink`
+ * below flattens every item (and its children) into a tappable list
+ * for the new hamburger-triggered mobile panel in Navbar.
  */
 export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isAuthenticated: boolean }) {
   const t = useTranslations("nav");
@@ -83,6 +91,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
     <Navbar
       logo={<Link href="/">CyberAbeer</Link>}
       items={items}
+      mobileMenuLabel={locale === "ar" ? "القائمة" : "Menu"}
       renderLink={(item) => {
         const children = item.children;
         const linkClassName =
@@ -117,6 +126,33 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
                 </Link>
               ))}
             </div>
+          </div>
+        );
+      }}
+      renderMobileLink={(item) => {
+        const children = item.children;
+        const mobileLinkClassName =
+          "block w-full rounded-md px-3 py-3 text-base font-medium text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary" +
+          (item.active ? " bg-neutral-100 text-text-primary" : "");
+
+        return (
+          <div key={item.href} className="w-full">
+            <Link href={item.href} aria-current={item.active ? "page" : undefined} className={mobileLinkClassName}>
+              {item.label}
+            </Link>
+            {children && children.length > 0 && (
+              <div className="ms-3 flex flex-col gap-0.5 border-s border-border ps-3">
+                {children.map((child) => (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                  >
+                    {child.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         );
       }}
