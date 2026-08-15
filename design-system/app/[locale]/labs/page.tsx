@@ -74,6 +74,25 @@ const journeyCopy = {
   secondaryCta: { en: "Try a Free Mission", ar: "جرّب مهمة مجانية" },
 } as const;
 
+/**
+ * Book promo (2026-08-15): locale-matched infographic linking out to the
+ * corresponding Amazon edition of Dr. Abeer's book. English readers see
+ * the English infographic linking to the English edition; Arabic readers
+ * see the Arabic infographic linking to the Arabic edition. Images live
+ * in design-system/public/images (en-book.webp / ar-book.webp).
+ */
+const bookPromoCopy = {
+  src: { en: "/images/en-book.webp", ar: "/images/ar-book.webp" },
+  href: {
+    en: "https://www.amazon.co.uk/dp/B0HDMJZ8PV",
+    ar: "https://www.amazon.co.uk/dp/B0HDM96XVT",
+  },
+  alt: {
+    en: "Think Like a Defender: CyberAbeer's Method for Security Decision-Making — available on Amazon",
+    ar: "بعقلية المُدافع: منهج سايبر عبير لاتخاذ القرار الأمني — متوفر على أمازون",
+  },
+} as const;
+
 export async function generateMetadata({
   params,
 }: {
@@ -202,6 +221,24 @@ export default async function LabsPage({ params }: { params: Promise<{ locale: s
             <Link href="/challenge/first-defender">{journeyCopy.secondaryCta[l]}</Link>
           </Button>
         </div>
+      </section>
+
+      {/* Book promo: locale-matched infographic linking to the
+          corresponding Amazon book edition (2026-08-15). */}
+      <section className="mx-auto max-w-3xl px-4 pb-16 text-center tablet:px-6">
+        <a
+          href={bookPromoCopy.href[l]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block"
+        >
+          <img
+            src={bookPromoCopy.src[l]}
+            alt={bookPromoCopy.alt[l]}
+            className="mx-auto w-full max-w-md rounded-lg shadow-md transition-transform hover:scale-[1.02]"
+            loading="lazy"
+          />
+        </a>
       </section>
     </div>
   );
