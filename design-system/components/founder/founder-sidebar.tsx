@@ -2,16 +2,14 @@ import { Link } from "@/lib/i18n/navigation";
 import type { AppLocale } from "@/lib/i18n/config";
 
 /**
- * Founder Dashboard nav shell (CyberAbeer Platform Phase II). Batch 1
- * wired Content, Insights, and Cyber Intelligence to the real /founder
- * /content admin screen (all three are the same underlying `articles`
- * table, filtered by `?group=`); Batch 2 wired Subscribers to the real
- * /founder/subscribers list. Everything else is still the founder's
- * planned Phase II section list, shown so the eventual structure is
- * visible without pretending it already works. Each becomes a real
- * Link href as its own batch ships; until then it renders as a
- * disabled row with a "Coming soon" tag rather than a link that would
- * just 404.
+ * Founder Dashboard nav shell (CyberAbeer Platform Phase II). Every
+ * section below now has a real /founder page and a real Link href --
+ * Content, Insights, and Cyber Intelligence share the /founder/content
+ * screen (same underlying `articles` table, filtered by `?group=`);
+ * Organization Tools reads live tool_submissions at /founder/tools;
+ * Free Tools manages the Downloads section at /founder/tool-resources.
+ * Nothing here renders as a disabled "Coming soon" row anymore --
+ * every batch that was built got wired up here too.
  *
  * Accounts (added 2026-08-15): every registered account, sourced from
  * Supabase Auth via lib/founder/accounts-admin.ts -- distinct from
@@ -27,19 +25,20 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/founder" },
   { key: "accounts", label: "Accounts", href: "/founder/accounts" },
   { key: "content", label: "Content", href: "/founder/content" },
-  { key: "research", label: "Research" },
-  { key: "books", label: "Books" },
+  { key: "research", label: "Research", href: "/founder/research" },
+  { key: "books", label: "Books", href: "/founder/books" },
   { key: "insights", label: "Insights", href: "/founder/content?group=insights" },
   { key: "intelligence", label: "Cyber Intelligence", href: "/founder/content?group=intelligence" },
-  { key: "labs", label: "Labs" },
-  { key: "orgTools", label: "Organization Tools" },
-  { key: "freeTools", label: "Free Tools" },
-  { key: "media", label: "Media Library" },
+  { key: "labs", label: "Labs", href: "/founder/labs" },
+  { key: "orgTools", label: "Organization Tools", href: "/founder/tools" },
+  { key: "freeTools", label: "Free Tools", href: "/founder/tool-resources" },
+  { key: "media", label: "Media Library", href: "/founder/media" },
   { key: "subscribers", label: "Subscribers", href: "/founder/subscribers" },
-  { key: "newsletter", label: "Newsletter" },
-  { key: "seo", label: "SEO" },
-  { key: "analytics", label: "Analytics" },
-  { key: "settings", label: "Settings" },
+  { key: "newsletter", label: "Newsletter", href: "/founder/newsletter" },
+  { key: "banner", label: "Homepage Banner", href: "/founder/banner" },
+  { key: "seo", label: "SEO", href: "/founder/seo" },
+  { key: "analytics", label: "Analytics", href: "/founder/analytics" },
+  { key: "settings", label: "Settings", href: "/founder/settings" },
 ];
 
 export function FounderSidebar({ locale }: { locale: AppLocale }) {
