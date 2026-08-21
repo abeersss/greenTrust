@@ -16,9 +16,23 @@ export function LoginForm({ locale }: { locale: AppLocale }) {
   const [status, setStatus] = React.useState<"idle" | "loading" | "error">("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-  async function handleSubmit(formData: FormData) {
+  // Using a plain onSubmit handler (rather than React 19's <form
+  // action={fn}> shorthand) is deliberate: action={fn} wraps the whole
+  // submission -- including the setStatus("loading") call below -- in a
+  // low-priority transition, which can delay the loading spinner long
+  // enough after a click that the button feels heavy/unresponsive. A
+  // regular onSubmit handler runs setStatus in the normal, high-priority
+  // render lane, so the spinner appears immediately. The status ===
+  // "loading" guard also stops a second submission firing while the
+  // first is still in flight, e.g. from an impatient double-click.
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (status === "loading") return;
+
     setStatus("loading");
     setErrorMessage(null);
+
+    const formData = new FormData(event.currentTarget);
 
     try {
       const result = await loginUser({
@@ -52,7 +66,7 @@ export function LoginForm({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <FormField id="login-email" label={t("emailLabel")} required>
         <Input type="email" name="email" required autoComplete="email" />
       </FormField>
