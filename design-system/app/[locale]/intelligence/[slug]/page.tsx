@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Globe2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import { Link } from "@/lib/i18n/navigation";
 import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, articleSchema } from "@/lib/seo/schema";
-import { getArticleBySlug, getArticleLocaleSlugs } from "@/lib/content/articles";
+import { getArticleBySlug, getArticleLocaleSlugs, findCanonicalSlugByTokenPermutation } from "@/lib/content/articles";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { SourcesList } from "@/components/content/sources-list";
 import { RelatedArticles } from "@/components/content/related-articles";
@@ -49,10 +49,13 @@ export async function generateMetadata({
  * severity + developing-story status at the top, an Executive View
  * callout before the full analysis, a structured Vulnerability
  * Intelligence panel for CVE-bearing items, and NewsArticle schema
- * (Section 27) instead of Article. A regular Insights article routed
- * here would 404 via getArticleBySlug returning null for any slug
- * that doesn't exist -- this route only ever resolves real published
- * articles, intelligence or not, same as /insights/[slug].
+ * (Section 27) instead of Article. If the exact slug isn't found, a
+ * word-order-tolerant fallback (findCanonicalSlugByTokenPermutation)
+ * checks whether this is a renamed/reordered slug for a still-live
+ * article (e.g. after an Arabic route-repair pass) before giving up --
+ * old shared/bookmarked/indexed links redirect to the current URL
+ * instead of hard-404ing. A slug that matches nothing, even after that
+ * fallback, still 404s via notFound() same as before.
  */
 export default async function IntelligenceArticlePage({
   params,
@@ -64,7 +67,13 @@ export default async function IntelligenceArticlePage({
   const l = locale as AppLocale;
 
   const article = await getArticleBySlug(l, slug);
-  if (!article) notFound();
+  if (!article) {
+    const canonicalSlug = await findCanonicalSlugByTokenPermutation(l, slug);
+    if (canonicalSlug) {
+      redirect(`/${locale}/intelligence/${canonicalSlug}`);
+    }
+    notFound();
+  }
 
   const t = await getTranslations({ locale, namespace: "intelligence" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
