@@ -639,3 +639,42 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
     return null;
   }
 }
+
+/**
+ * Word-order-tolerant slug fallback. Article slugs are hyphen-joined
+ * token sequences; when a slug is renamed (e.g. an Arabic word-order
+ * repair pass) after being shared, bookmarked, or indexed elsewhere,
+ * the old URL's tokens are identical but in a different order and
+ * will never byte-match a direct getArticleBySlug lookup, producing a
+ * hard 404 even though the article is still published under a new
+ * slug. This scans this locale's published slugs and returns the
+ * canonical slug whose token set (order-independent) matches the
+ * requested slug, so callers can redirect to the real article instead
+ * of 404ing. Only meant to be called as a fallback after
+ * getArticleBySlug(locale, slug) has already returned null for the
+ * exact slug -- it is not a substitute for the primary lookup.
+ */
+export async function findCanonicalSlugByTokenPermutation(locale: AppLocale, slug: string): Promise<string | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("article_translations")
+      .select("slug, articles!inner(status)")
+      .eq("locale", locale)
+      .eq("articles.status", "published");
+
+    if (error) throw error;
+
+    const normalize = (s) => s.split("-").sort().join(" ");
+    const requestedTokens = normalize(slug);
+
+    for (const row of (data ?? [])) {
+      if (row.slug === slug) continue;
+      if (normalize(row.slug) === requestedTokens) return row.slug;
+    }
+    return null;
+  } catch (err) {
+    console.error("findCanonicalSlugByTokenPermutation failed, returning null", err);
+    return null;
+  }
+}
