@@ -20,20 +20,32 @@ export function LoginForm({ locale }: { locale: AppLocale }) {
     setStatus("loading");
     setErrorMessage(null);
 
-    const result = await loginUser({
-      email: String(formData.get("email") ?? ""),
-      password: String(formData.get("password") ?? ""),
-      locale,
-    });
+    try {
+      const result = await loginUser({
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+        locale,
+      });
 
-    if (result.status === "success") {
-      trackEvent("login_submit", { locale });
-      // Phase 8: a real account page now exists (XP, badges, challenge
-      // history, saved GreenTrust results), so a signed-in visitor lands
-      // there instead of the marketing home page.
-      router.push("/account");
-      router.refresh();
-    } else {
+      if (result.status === "success") {
+        trackEvent("login_submit", { locale });
+        // Phase 8: a real account page now exists (XP, badges, challenge
+        // history, saved GreenTrust results), so a signed-in visitor lands
+        // there instead of the marketing home page.
+        router.push("/account");
+        router.refresh();
+      } else {
+        setStatus("error");
+        setErrorMessage(t("error"));
+      }
+    } catch (err) {
+      // 2026-08-21 fix: previously an unhandled throw here (from loginUser
+      // itself, or from router.push/router.refresh after a successful
+      // login) left status stuck at "loading" forever -- the submit
+      // button stayed disabled with no visible error, matching student
+      // reports of a "frozen" login button. Catching it restores the
+      // button and shows a real error instead of hanging silently.
+      console.error("Login failed unexpectedly", err);
       setStatus("error");
       setErrorMessage(t("error"));
     }
