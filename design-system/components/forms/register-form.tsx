@@ -14,11 +14,36 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
   const t = useTranslations("auth.register");
   const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [retryAfter, setRetryAfter] = React.useState(0);
 
-  async function handleSubmit(formData: FormData) {
+  // Counts a rate-limit cooldown down to 0 once a second, so the submit
+  // button re-enables itself automatically instead of staying disabled
+  // forever or leaving the visitor to guess when they can try again.
+  React.useEffect(() => {
+    if (retryAfter <= 0) return;
+    const id = setInterval(() => {
+      setRetryAfter((seconds) => (seconds <= 1 ? 0 : seconds - 1));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [retryAfter]);
+
+  // Using a plain onSubmit handler (rather than React 19's <form
+  // action={fn}> shorthand) is deliberate: action={fn} wraps the whole
+  // submission -- including the setStatus("loading") call below -- in a
+  // low-priority transition, which can delay the loading spinner long
+  // enough that a click feels unresponsive ("heavy"). A regular onSubmit
+  // handler runs setStatus in the normal, high-priority render lane, so
+  // the spinner appears immediately. The status === "loading" guard below
+  // also stops a second submission firing while the first is still in
+  // flight, e.g. from an impatient double-click.
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (status === "loading" || retryAfter > 0) return;
+
     setStatus("loading");
     setErrorMessage(null);
 
+    const formData = new FormData(event.currentTarget);
     const password = String(formData.get("password") ?? "");
     const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
@@ -28,22 +53,31 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
       return;
     }
 
-    const result = await registerUser({
-      name: String(formData.get("name") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      organization: String(formData.get("organization") ?? ""),
-      password,
-      confirmPassword,
-      locale,
-      website: String(formData.get("website") ?? ""),
-    });
+    try {
+      const result = await registerUser({
+        name: String(formData.get("name") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        organization: String(formData.get("organization") ?? ""),
+        password,
+        confirmPassword,
+        locale,
+        website: String(formData.get("website") ?? ""),
+      });
 
-    if (result.status === "success") {
-      setStatus("success");
-      trackEvent("register_submit", { locale });
-    } else {
+      if (result.status === "success") {
+        setStatus("success");
+        trackEvent("register_submit", { locale });
+      } else {
+        setStatus("error");
+        setErrorMessage(result.message || t("error"));
+        if (result.retryAfterSeconds) setRetryAfter(result.retryAfterSeconds);
+      }
+    } catch (err) {
+      // Never leave the button stuck on "loading" forever if registerUser
+      // throws instead of returning an ActionResult (e.g. a network drop).
+      console.error("registerUser threw", err);
       setStatus("error");
-      setErrorMessage(result.message || t("error"));
+      setErrorMessage(t("error"));
     }
   }
 
@@ -52,7 +86,7 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <input
         type="text"
         name="website"
@@ -78,8 +112,8 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
         <Input type="password" name="confirmPassword" required minLength={8} autoComplete="new-password" />
       </FormField>
 
-      <Button type="submit" loading={status === "loading"} className="w-full">
-        {t("submit")}
+      <Button type="submit" loading={status === "loading"} disabled={retryAfter > 0} className="w-full">
+        {retryAfter > 0 ? `${t("submit")} (${retryAfter}s)` : t("submit")}
       </Button>
       {status === "error" && <p className="text-sm text-danger-600">{errorMessage}</p>}
 
