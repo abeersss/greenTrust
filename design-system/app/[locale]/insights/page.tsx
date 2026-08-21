@@ -14,6 +14,18 @@ import { formatArticleDate } from "@/lib/content/format";
 import { getPillarIcon } from "@/lib/content/pillar-icons";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 
+// ISR: without this, Next.js treats /insights as a fully static page
+// (no dynamic API calls are made in this component), cached once at
+// build time and never revalidated until the next deploy. That meant
+// newly auto-published articles (see the cyberabeer-insights-refresh
+// scheduled task, which publishes directly to the DB) never appeared
+// in Featured/Latest here even though they were live and correct at
+// their own /insights/{slug} URL -- that page self-revalidates
+// because it's a dynamic param rendered fresh on first request.
+// Revalidating this index periodically closes that gap without a
+// full redeploy for every new article.
+export const revalidate = 1800;
+
 export async function generateMetadata({
   params,
 }: {
