@@ -665,7 +665,7 @@ export async function findCanonicalSlugByTokenPermutation(locale: AppLocale, slu
 
     if (error) throw error;
 
-    const normalize = (s) => s.split("-").sort().join(" ");
+    const normalize = (s: string) => s.split("-").sort().join(" ");
     const requestedTokens = normalize(slug);
 
     for (const row of (data ?? [])) {
