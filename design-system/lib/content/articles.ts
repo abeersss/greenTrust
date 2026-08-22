@@ -274,6 +274,22 @@ const ARTICLE_JOIN_SELECT = `
 `;
 
 /**
+ * Full detail select for a single article (getArticleBySlug), factored
+ * out to a constant so the Unicode-normalization retry path below can
+ * reuse the exact same shape without drifting from the primary query.
+ */
+const ARTICLE_DETAIL_SELECT = `
+  slug, title, excerpt, body, meta_title, meta_description, og_image_url, executive_summary, reading_time_minutes,
+  articles!inner (
+    id, status, published_at, updated_at, difficulty, audience, reviewed_at, related_lab_key,
+    intel_severity, intel_story_status, cve_ids, cvss_score, affected_product, exploit_status,
+    kev_listed, vendor_advisory_url, patch_status, cyberabeer_priority, mena_relevance, sources_checked_at,
+    categories ( id, parent_id, key, category_translations ( name, slug, locale ), categories ( key, category_translations ( name, slug, locale ) ) ),
+    authors ( display_name )
+  )
+`;
+
+/**
  * The Insights and Research pages both read from the same
  * article-publishing pipeline (Phase 3 CONTENT domain:
  * articles + article_translations + categories). This is the "content
@@ -429,7 +445,7 @@ export async function getCategoryBySlug(locale: AppLocale, slug: string): Promis
         `
         name, slug, description, meta_title, meta_description,
         categories!inner ( id, key, is_pillar, deleted_at )
-      `
+        `
       )
       .eq("locale", locale)
       .eq("slug", slug)
@@ -552,23 +568,48 @@ export async function getCategoryLocaleSlugs(categoryId: string): Promise<Partia
   }
 }
 
+/**
+ * Unicode-normalization-tolerant slug lookup, used as a fallback inside
+ * `getArticleBySlug` when the exact byte match fails. Non-Latin slugs
+ * (Arabic in particular) can be composed of visually-identical but
+ * byte-different codepoint sequences -- e.g. a precomposed vs.
+ * decomposed form, or a presentation-form letter standing in for its
+ * standard-block equivalent. A URL that *looks* correct in the browser
+ * and even survives a manual percent-decode can still fail a raw
+ * `.eq("slug", slug)` match. This scans this locale's published slugs
+ * and returns the one whose NFC-normalized form matches the requested
+ * slug's NFC-normalized form, so a byte-mismatched-but-visually-identical
+ * request still resolves to the real article instead of 404ing.
+ */
+async function findCanonicalSlugByNormalizedMatch(locale: AppLocale, slug: string): Promise<string | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("article_translations")
+      .select("slug, articles!inner(status)")
+      .eq("locale", locale)
+      .eq("articles.status", "published");
+
+    if (error) throw error;
+
+    const target = slug.normalize("NFC");
+    for (const row of (data ?? []) as { slug: string }[]) {
+      if (row.slug === slug) continue;
+      if (row.slug.normalize("NFC") === target) return row.slug;
+    }
+    return null;
+  } catch (err) {
+    console.error("findCanonicalSlugByNormalizedMatch failed, returning null", err);
+    return null;
+  }
+}
+
 export async function getArticleBySlug(locale: AppLocale, slug: string): Promise<ArticleDetail | null> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase
       .from("article_translations")
-      .select(
-        `
-        slug, title, excerpt, body, meta_title, meta_description, og_image_url, executive_summary, reading_time_minutes,
-        articles!inner (
-          id, status, published_at, updated_at, difficulty, audience, reviewed_at, related_lab_key,
-          intel_severity, intel_story_status, cve_ids, cvss_score, affected_product, exploit_status,
-          kev_listed, vendor_advisory_url, patch_status, cyberabeer_priority, mena_relevance, sources_checked_at,
-          categories ( id, parent_id, key, category_translations ( name, slug, locale ), categories ( key, category_translations ( name, slug, locale ) ) ),
-          authors ( display_name )
-        )
-      `
-      )
+      .select(ARTICLE_DETAIL_SELECT)
       .eq("locale", locale)
       .eq("slug", slug)
       .eq("articles.status", "published")
@@ -576,13 +617,36 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
       .maybeSingle();
 
     if (error) throw error;
-    if (!data) return null;
+
+    let matchedRow = data;
+
+    // Unicode-normalization fallback: retry once against the canonical
+    // slug if the exact byte match above found nothing. See
+    // findCanonicalSlugByNormalizedMatch for why this is necessary for
+    // non-Latin (e.g. Arabic) slugs.
+    if (!matchedRow) {
+      const canonicalSlug = await findCanonicalSlugByNormalizedMatch(locale, slug);
+      if (canonicalSlug) {
+        const { data: retryData, error: retryError } = await supabase
+          .from("article_translations")
+          .select(ARTICLE_DETAIL_SELECT)
+          .eq("locale", locale)
+          .eq("slug", canonicalSlug)
+          .eq("articles.status", "published")
+          .lte("articles.published_at", new Date().toISOString())
+          .maybeSingle();
+        if (retryError) throw retryError;
+        matchedRow = retryData;
+      }
+    }
+
+    if (!matchedRow) return null;
 
     // Same `unknown` double-cast as getPublishedArticles above, and for
     // the same reason: no generated `Database` types, so supabase-js's
     // inferred shape for the embedded `articles` relation doesn't
     // structurally overlap with the single-object `ArticleJoinRow` type.
-    const row = data as unknown as ArticleTranslationRow;
+    const row = matchedRow as unknown as ArticleTranslationRow;
     const summary = mapArticleRow(row, locale);
 
     const [{ data: sourceRows }, { data: relationRows }] = await Promise.all([
@@ -648,11 +712,14 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
  * will never byte-match a direct getArticleBySlug lookup, producing a
  * hard 404 even though the article is still published under a new
  * slug. This scans this locale's published slugs and returns the
- * canonical slug whose token set (order-independent) matches the
- * requested slug, so callers can redirect to the real article instead
- * of 404ing. Only meant to be called as a fallback after
- * getArticleBySlug(locale, slug) has already returned null for the
- * exact slug -- it is not a substitute for the primary lookup.
+ * canonical slug whose token set (order-independent, and each token
+ * NFC-normalized so visually-identical-but-byte-different Arabic
+ * tokens still match) matches the requested slug, so callers can
+ * redirect to the real article instead of 404ing. Only meant to be
+ * called as a fallback after getArticleBySlug(locale, slug) has
+ * already returned null for the exact slug -- it is not a substitute
+ * for the primary lookup (which now has its own NFC-normalized retry
+ * for the more common non-reordered case).
  */
 export async function findCanonicalSlugByTokenPermutation(locale: AppLocale, slug: string): Promise<string | null> {
   try {
@@ -665,7 +732,12 @@ export async function findCanonicalSlugByTokenPermutation(locale: AppLocale, slu
 
     if (error) throw error;
 
-    const normalize = (s: string) => s.split("-").sort().join(" ");
+    const normalize = (s: string) =>
+      s
+        .normalize("NFC")
+        .split("-")
+        .sort()
+        .join(" ");
     const requestedTokens = normalize(slug);
 
     for (const row of (data ?? [])) {
