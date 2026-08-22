@@ -115,7 +115,8 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
       <Button type="submit" loading={status === "loading"} disabled={retryAfter > 0} className="w-full">
         {retryAfter > 0 ? `${t("submit")} (${retryAfter}s)` : t("submit")}
       </Button>
-      {status === "error" && <p className="text-sm text-danger-600">{errorMessage}</p>}
+      {status === "error" && retryAfter === 0 && <p className="text-sm text-danger-600">{errorMessage}</p>}
+      {status === "error" && retryAfter > 0 && <p className="text-sm text-success-600">{errorMessage}</p>}
 
       <p className="text-center text-sm text-text-secondary">
         {t("haveAccount")}{" "}
