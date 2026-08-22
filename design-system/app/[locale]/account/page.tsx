@@ -19,8 +19,7 @@ import { getCtfBadgeName } from "@/lib/ctf/challenges";
 import BadgeTile from "@/components/account/badge-tile";
 import { siteUrl } from "@/lib/seo/site";
 import { getCtfCompletionStatus } from "@/lib/actions/certificate";
-import { User, Award } from "lucide-react";
-
+import { User, Award, ChevronRight } from "lucide-react";
 /**
  * Mirrors BadgeTile's own slug map so the share URL points at the
  * live challenge page (public, real OG content) rather than the
@@ -49,6 +48,24 @@ const BADGE_KEY_TO_ACHIEVEMENT: Record<string, string> = {
   data_guardian: "dataGuardian",
   grc_strategist: "grcStrategist",
   agent_zero: "agentZero",
+};
+
+/**
+ * Maps an ACHIEVEMENT_CATALOG entry's `challengeKey` to its live
+  * `/challenge/[slug]` route, so the Academy Progress cards below can
+   * link a learner straight to the next lab in that academy instead of
+    * only reporting a count (founder instruction: "let these all green
+     * linked to exercises to enforce achievements and guide users to
+      * where to go"). Mirrors the routes in
+       * app/[locale]/labs/decision-labs/page.tsx's LABS array.
+        */
+const CHALLENGE_HREF: Record<string, string> = {
+  "phishing-hunter": "/challenge/first-defender",
+  "network-guardian": "/challenge/network-guardian",
+  "soc-night-shift": "/challenge/soc-night-shift",
+  "data-guardian": "/challenge/data-guardian",
+  "grcl-innovation": "/challenge/grcl-innovation",
+  "agent-zero": "/challenge/agent-zero",
 };
 
 function achievementForBadgeKey(badgeKey: string | undefined) {
@@ -193,7 +210,10 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const academyProgress = academyOrder.map((academy) => {
     const entries = ACHIEVEMENT_CATALOG.filter((entry) => entry.academy === academy);
     const earned = entries.filter((entry) => earnedAchievementKeys.has(entry.key)).length;
-    return { academy, total: entries.length, earned };
+    const nextEntry = entries.find((entry) => entry.challengeKey && !earnedAchievementKeys.has(entry.key));
+    const href = (nextEntry?.challengeKey && CHALLENGE_HREF[nextEntry.challengeKey]) || "/labs/decision-labs";
+    const isComplete = entries.length > 0 && earned === entries.length;
+    return { academy, total: entries.length, earned, href, isComplete };
   });
   const attempts = (attemptRows ?? []) as unknown as AttemptRow[];
   const assessments = (assessmentRows ?? []) as unknown as AssessmentRow[];
@@ -235,6 +255,12 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
         </div>
         <LogoutButton label={t("logoutCta")} />
       </div>
+
+      {labsBadges.length === 0 && ctfBadges.length === 0 && attempts.length === 0 && assessments.length === 0 && (
+      <Link href="/labs" className="mt-6 flex items-center gap-3 rounded-lg border border-green-500/40 bg-green-50 px-4 py-3 text-sm font-semibold text-green-800 hover:bg-green-100">
+      <Award className="h-5 w-5 shrink-0" aria-hidden="true" />
+        {locale === "ar" ? "أحسنت! أنت الآن عضو في CyberAbeer — ابدأ من المعامل (Labs) للتعلم بالممارسة، أو من الأدوات المجانية ←" : "Great job joining CyberAbeer! Start with Labs to learn by doing, or explore free Tools →"}</Link>
+      )}
 
       {ctfCertStatus.allComplete && (
         <Link
@@ -371,24 +397,24 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-text-primary">{tAch("academyHeading")}</h2>
         <div className="mt-3 space-y-3">
-          {academyProgress.map(({ academy, earned, total }) => (
-            <div key={academy} className="rounded-lg border border-border p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-text-primary">{tAch(`academies.${academy}.name`)}</span>
+          {academyProgress.map(({ academy, earned, total, href }) => (
+
+      <Link key={academy} href={href} className="group block rounded-lg border border-green-500/40 bg-green-50 p-3 transition-colors hover:border-green-500 hover:bg-green-100">
+      <div className="flex items-center justify-between">
+      <span className="text-sm font-medium text-text-primary">{tAch(`academies.${academy}.name`)}</span>
                 <span className="text-xs text-text-muted">{tAch("academyProgressLabel", { earned, total })}</span>
               </div>
               <p className="mt-1 text-xs text-text-muted">{tAch(`academies.${academy}.description`)}</p>
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-raised">
                 <div
-                  className="h-full rounded-full bg-primary"
+                  className="h-full rounded-full bg-green-600"
                   style={{ width: `${total > 0 ? Math.round((earned / total) * 100) : 0}%` }}
-                />
+                  />
               </div>
-            </div>
+      </Link>
           ))}
         </div>
       </section>
-
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-text-primary">{t("challengesHeading")}</h2>
         {attempts.length === 0 ? (
