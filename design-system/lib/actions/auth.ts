@@ -96,7 +96,7 @@ export async function registerUser(input: RegisterInput): Promise<ActionResult> 
       const retryMatch = signUpError?.message?.match(/after (\d+) seconds?/i);
         const isEmailRateLimit = signUpError?.code === "over_email_send_rate_limit" || Boolean(retryMatch);
         if (isEmailRateLimit) {
-                const seconds = retryMatch ? parseInt(retryMatch[1], 10) : 60;
+                const seconds = retryMatch ? parseInt(retryMatch[1] ?? "60", 10) : 60;
                 return actionError(rateLimitRetryMessage(parsed.data.locale, seconds), undefined, seconds);
         }
 
