@@ -18,13 +18,11 @@ import { ExecutiveView } from "@/components/content/executive-view";
 import { VulnerabilityPanel } from "@/components/content/vulnerability-panel";
 import type { ExploitStatus, CyberAbeerPriority } from "@/lib/content/articles";
 
-// ISR: without this, Next.js caches the first render of a given
-// slug indefinitely (revalidate defaults to false for routes that
-// don't declare one), so an early 404 for a slug -- e.g. requested
-// before its DB row existed or during a broken deploy -- can stay
-// cached as a 404 forever even after the data is fixed. Matching the
-// hub pages' interval lets a bad cached result self-heal.
-export const revalidate = 1800;
+// Always render fresh: DB/RLS were audited and confirmed clean, so
+// a lingering 404 here was ISR (revalidate) caching an early/bad
+// render of a slug. force-dynamic removes that caching layer
+// entirely for this route so every request re-checks the DB.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
