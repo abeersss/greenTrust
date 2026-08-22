@@ -616,6 +616,20 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
       .lte("articles.published_at", new Date().toISOString())
       .maybeSingle();
 
+    console.log(
+      "[getArticleBySlug:debug]",
+      JSON.stringify({
+        locale,
+        slug,
+        slugLen: slug.length,
+        hasData: !!data,
+        errMessage: error ? (error).message ?? null : null,
+        errCode: error ? (error).code ?? null : null,
+        errDetails: error ? (error).details ?? null : null,
+        errHint: error ? (error).hint ?? null : null,
+      })
+    );
+
     if (error) throw error;
 
     let matchedRow = data;
@@ -699,7 +713,15 @@ export async function getArticleBySlug(locale: AppLocale, slug: string): Promise
       relatedArticles,
     };
   } catch (err) {
-    console.error("getArticleBySlug failed, returning null", err);
+    console.error(
+      "getArticleBySlug failed, returning null",
+      JSON.stringify({
+        message: (err && err.message) ?? String(err),
+        code: (err && err.code) ?? null,
+        details: (err && err.details) ?? null,
+        hint: (err && err.hint) ?? null,
+      })
+    );
     return null;
   }
 }
