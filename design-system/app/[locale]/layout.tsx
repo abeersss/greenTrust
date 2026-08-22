@@ -20,6 +20,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { isAppLocale, localeDir, type AppLocale } from "@/lib/i18n/config";
 import { getTranslations } from "next-intl/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getPublishedBooks } from "@/lib/books/books";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-latin-body", display: "swap" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-labs-display", display: "swap" });
@@ -86,6 +87,14 @@ export async function generateMetadata({
  * across all of Labs/CTF, with no per-page wiring needed as more labs
  * or challenges are added later.
  *
+ * 2026-08-22 (founder request: "the mascot show the lab book first to
+ * direct user to buy"): this layout now also fetches the founder's
+ * published lab book (getPublishedBooks) server-side and passes it
+ * into <LabsMascot>, so the mascot can show a one-time "get the book"
+ * promo on first visit. Fetched here rather than inside the client
+ * component because getPublishedBooks is server-only (direct Supabase
+ * read) -- same reasoning as resolving auth state below.
+ *
  * `<MascotHintProvider>` (2026-08-04) wraps everything so any page
  * further down the tree can register a stage-specific explanation for
  * the mascot's tap-to-explain bubble via useMascotHint(), without
@@ -124,6 +133,13 @@ export default async function LocaleLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
+  // 2026-08-22: fetch the founder's lab book here (server-only read)
+  // so the mascot can promote it. getPublishedBooks already fails soft
+  // (returns []) on any Supabase error, so a hiccup here degrades to
+  // "no promo" rather than breaking every route under this layout.
+  const books = await getPublishedBooks(locale as AppLocale);
+  const promoBook = books[0] ?? null;
+
   return (
     <html
       lang={locale}
@@ -149,7 +165,7 @@ export default async function LocaleLayout({
                   </main>
                   <SiteFooter locale={locale as AppLocale} />
                   <Toaster />
-                  <LabsMascot />
+                  <LabsMascot book={promoBook} />
                 </TooltipProvider>
               </MascotHintProvider>
             </MotionProvider>
