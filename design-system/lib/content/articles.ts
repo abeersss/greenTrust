@@ -307,6 +307,22 @@ const ARTICLE_DETAIL_SELECT = `
 `;
 
 /**
+ * PostgREST's `order(..., { referencedTable })` sorts the *embedded*
+ * rows of a to-one relation, not the parent `article_translations`
+ * rows -- so these queries come back in physical table order and new
+ * articles never reach the top of a list. Sorting the mapped summaries
+ * here is what actually puts newest first.
+ */
+function sortByPublishedAtDesc<T extends { publishedAt: string | null }>(rows: T[]): T[] {
+  return [...rows].sort((a, b) => {
+    if (a.publishedAt === b.publishedAt) return 0;
+    if (!a.publishedAt) return 1;
+    if (!b.publishedAt) return -1;
+    return a.publishedAt < b.publishedAt ? 1 : -1;
+  });
+}
+
+/**
  * The Insights and Research pages both read from the same
  * article-publishing pipeline (Phase 3 CONTENT domain:
  * articles + article_translations + categories). This is the "content
@@ -341,7 +357,9 @@ export async function getPublishedArticles(locale: AppLocale): Promise<ArticleSu
     // refuses a direct `as ArticleTranslationRow[]` cast ("insufficient
     // overlap"), even though the shape is correct once the real DB types
     // are generated.
-    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
+    return sortByPublishedAtDesc(
+      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)),
+    );
   } catch (err) {
     console.error("getPublishedArticles failed, returning empty list", err);
     return [];
@@ -369,7 +387,9 @@ export async function getArticlesByCategoryIds(locale: AppLocale, categoryIds: s
       .order("published_at", { referencedTable: "articles", ascending: false });
 
     if (error) throw error;
-    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
+    return sortByPublishedAtDesc(
+      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)),
+    );
   } catch (err) {
     console.error("getArticlesByCategoryIds failed, returning empty list", err);
     return [];
@@ -399,7 +419,9 @@ export async function getLatestIntelligenceArticles(locale: AppLocale, limit = 5
       .limit(limit);
 
     if (error) throw error;
-    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
+    return sortByPublishedAtDesc(
+      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)),
+    );
   } catch (err) {
     console.error("getLatestIntelligenceArticles failed, returning empty list", err);
     return [];
@@ -441,7 +463,9 @@ export async function getArticlesByTag(locale: AppLocale, tagKey: string): Promi
       .eq("articles.status", "published")
       .order("published_at", { referencedTable: "articles", ascending: false });
     if (error) throw error;
-    return ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale));
+    return sortByPublishedAtDesc(
+      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)),
+    );
   } catch (err) {
     console.error("getArticlesByTag failed, returning empty list", err);
     return [];
