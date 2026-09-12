@@ -412,6 +412,9 @@ body.instructor-mode .instructor-note { display: block; }
   gap: 10px;
   animation: slideIn 300ms ease both;
 }
+/* The [hidden] attribute must win over the class's own "display: flex" above,
+   otherwise a completion message can render before its activity finishes. */
+.activity-complete-msg[hidden] { display: none; }
 .complete-icon { font-size: 1.2rem; }
 
 /* ---------------------------- 8. BUTTONS (general) ---------------------------- */
