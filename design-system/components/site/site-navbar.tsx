@@ -68,7 +68,17 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
         { label: t("freeTools"), href: "/free-tools" },
       ],
     },
-    { label: t("labs"), href: "/labs" },
+    {
+      label: t("labs"),
+      href: "/labs",
+      children: [
+        {
+          label: locale === "ar" ? "مختبر البرمجة الكائنية" : "OOP Learning Lab",
+          href: "/oop-lab/index.html",
+          external: true,
+        },
+      ],
+    },
     {
       label: t("insights"),
       href: "/insights",
@@ -116,15 +126,27 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
               />
             </Link>
             <div className="invisible absolute start-0 top-full z-dropdown mt-1 min-w-[12rem] rounded-card border border-border bg-surface p-1 opacity-0 shadow-lg transition-opacity duration-fast group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              {children.map((child) => (
-                <Link
-                  key={child.href}
-                  href={child.href}
-                  className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
-                >
-                  {child.label}
-                </Link>
-              ))}
+              {children.map((child) =>
+                child.external ? (
+                  <a
+                    key={child.href}
+                    href={child.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                  >
+                    {child.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                  >
+                    {child.label}
+                  </Link>
+                )
+              )}
             </div>
           </div>
         );
@@ -142,15 +164,27 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
             </Link>
             {children && children.length > 0 && (
               <div className="ms-3 flex flex-col gap-0.5 border-s border-border ps-3">
-                {children.map((child) => (
-                  <Link
-                    key={child.href}
-                    href={child.href}
-                    className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
-                  >
-                    {child.label}
-                  </Link>
-                ))}
+                {children.map((child) =>
+                  child.external ? (
+                    <a
+                      key={child.href}
+                      href={child.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                    >
+                      {child.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                    >
+                      {child.label}
+                    </Link>
+                  )
+                )}
               </div>
             )}
           </div>
