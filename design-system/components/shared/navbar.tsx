@@ -7,6 +7,10 @@ export interface NavItem {
   active?: boolean;
   /** Optional dropdown sub-items (e.g. "For Organizations" -> GreenTrust AI, Free Tools). */
   children?: NavItem[];
+  /** True for items that point outside the Next.js app (e.g. a static HTML
+   * page served straight from /public) and so must render as a plain <a>
+   * rather than the app's locale-aware client-side Link. */
+  external?: boolean;
 }
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
