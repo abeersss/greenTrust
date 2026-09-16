@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SiteBreadcrumb } from "@/components/site/site-breadcrumb";
 import { EnterpriseEnquiryForm } from "@/components/forms/enterprise-enquiry-form";
@@ -59,6 +61,11 @@ export default async function GreenTrustPage({ params }: { params: Promise<{ loc
           {t("heroTitle")}
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-text-secondary">{t("heroSubtitle")}</p>
+        <div className="mt-6 flex justify-center">
+          <Button asChild size="lg">
+            <a href="#request-access">{t("cta")}</a>
+          </Button>
+        </div>
       </section>
 
       {/* What it does */}
@@ -95,6 +102,11 @@ export default async function GreenTrustPage({ params }: { params: Promise<{ loc
         <div className="mx-auto max-w-3xl px-4 py-12 text-center tablet:px-6">
           <h2 className="font-display text-xl font-semibold text-text-primary">{t("whoHeading")}</h2>
           <p className="mt-3 text-text-secondary">{t("whoBody")}</p>
+        <div className="mt-6 flex justify-center">
+          <Button asChild size="lg">
+            <a href="#request-access">{t("cta")}</a>
+          </Button>
+        </div>
         </div>
       </section>
 
