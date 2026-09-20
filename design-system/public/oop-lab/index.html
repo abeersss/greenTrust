@@ -574,6 +574,60 @@ body.instructor-mode .instructor-note { display: block; }
 .code-block-small { font-size: 0.82rem; padding: 14px 16px; }
 .code-block-fixed { border-left: 4px solid var(--green); }
 
+/* ---------------------------- 12b. LIVE VOTE (Vote, Argue, Vote Again) ---------------------------- */
+.vote-card { padding: 24px; }
+.vote-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+.vote-code { margin: 0; }
+.vote-round-label {
+  font-weight: 800;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+}
+.vote-options { display: flex; flex-direction: column; gap: 10px; }
+.vote-option-btn { display: flex; align-items: center; gap: 12px; }
+.vote-choice-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.vote-option-btn.selected { background: var(--teal-100); border-color: var(--teal); }
+.vote-option-btn.selected .vote-choice-badge { background: var(--teal-600); }
+.vote-status { margin: 12px 0 0; font-size: 0.88rem; color: var(--gray-600); font-style: italic; }
+
+.vote-results { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.vote-bar-row { display: grid; grid-template-columns: 90px 1fr 90px; align-items: center; gap: 10px; }
+.vote-bar-label { font-weight: 700; color: var(--navy); font-size: 0.88rem; }
+.vote-bar-track { background: var(--gray-100); border-radius: 999px; height: 14px; overflow: hidden; }
+.vote-bar-fill { background: var(--teal); height: 100%; border-radius: 999px; transition: width 400ms ease; }
+.vote-bar-count { font-size: 0.82rem; color: var(--gray-600); text-align: right; }
+.vote-total-note { margin: 4px 0 0; font-size: 0.82rem; color: var(--gray-500); }
+
+.vote-controls { margin-top: 16px; }
+.vote-reveal {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: var(--green-100);
+  border: 1px solid var(--green);
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 700px) {
+  .vote-layout { grid-template-columns: 1fr; }
+  .vote-bar-row { grid-template-columns: 60px 1fr 70px; }
+}
+
 .option-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
 .option-btn {
   text-align: left;
@@ -693,6 +747,22 @@ body.instructor-mode .instructor-note { display: block; }
   margin-top: 16px;
 }
 .identity-form .btn { grid-column: 1 / -1; justify-self: start; }
+
+.lab-entry-gate {
+  min-height: calc(100vh - var(--header-h, 150px));
+  display: flex;
+  align-items: center;
+  background: var(--gray-50);
+  padding: 40px 0 56px;
+}
+.lab-entry-gate .container { max-width: 560px; width: 100%; }
+.lab-entry-gate h1 { margin-top: 0; }
+.lab-entry-gate .identity-form { grid-template-columns: 1fr; }
+
+@media (max-width: 600px) {
+  .lab-entry-gate { padding: 28px 0 40px; }
+  .lab-entry-gate .container { padding: 0 20px; }
+}
 
 /* ---------------------------- 15c. TIMER ---------------------------- */
 .quiz-timer-bar {
@@ -854,6 +924,7 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
   }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
@@ -919,9 +990,10 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
 </header>
 
 <!-- ============================= LAB NAVIGATION ============================= -->
-<nav class="lab-nav" id="labNav" aria-label="Lab sections">
+<nav class="lab-nav" id="labNav" aria-label="Lab sections" hidden>
   <ul>
     <li><a href="#intro" class="nav-link">Introduction</a></li>
+    <li><a href="#vote-predict" class="nav-link">Vote &amp; Predict</a></li>
     <li><a href="#class-object" class="nav-link">Class vs Object</a></li>
     <li><a href="#attr-method" class="nav-link">Attributes &amp; Methods</a></li>
     <li><a href="#build-class" class="nav-link">Build a Class</a></li>
@@ -935,7 +1007,33 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
 
 <div class="live-region sr-only" id="liveRegion" aria-live="polite"></div>
 
-<main id="main-content">
+<!-- ============================= LAB ENTRY GATE: collects name + class before anything else is shown ============================= -->
+<div class="lab-entry-gate" id="labEntryGate">
+  <div class="container">
+    <div class="identity-gate">
+      <p class="eyebrow">Before You Begin</p>
+      <h1>Let's get you set up</h1>
+      <p class="activity-instruction">Enter your name and class to start the Interactive OOP Learning Lab. This is also the name that will appear on the final class challenge leaderboard.</p>
+      <form class="identity-form" id="labEntryForm">
+        <div class="form-row">
+          <label for="entryFirstName">First name</label>
+          <input type="text" id="entryFirstName" name="entryFirstName" placeholder="e.g. Sara" required autocomplete="given-name">
+        </div>
+        <div class="form-row">
+          <label for="entryLastName">Last name</label>
+          <input type="text" id="entryLastName" name="entryLastName" placeholder="e.g. Alqahtani" required autocomplete="family-name">
+        </div>
+        <div class="form-row">
+          <label for="entryClassName">Class</label>
+          <input type="text" id="entryClassName" name="entryClassName" placeholder="e.g. CS-201, Section 3" required autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary" id="enterLabBtn">Start the Lab</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" hidden>
 
   <!-- ============================= INTRO ============================= -->
   <section id="intro" class="lab-section intro-section">
@@ -1008,8 +1106,49 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
     </div>
   </section>
 
+  <!-- ============================= SECTION 1 : VOTE, ARGUE, VOTE AGAIN (live class poll) ============================= -->
+  <section id="vote-predict" class="lab-section alt-bg">
+    <div class="container">
+      <p class="eyebrow">Vote, Argue, Vote Again</p>
+      <h2>Predict: What Does <code>taxi</code> Show?</h2>
+      <p class="intro-text">Read the code, then vote for what you think it prints. We will show the room&#8217;s results live. Argue your answer with a neighbor, then vote again before we reveal the answer.</p>
+
+      <div class="card vote-card">
+        <div class="vote-layout">
+          <pre class="code-block vote-code">class Car:
+    def __init__(self):
+        self.speed = 0
+
+    def accelerate(self):
+        self.speed += 10
+
+my_car = Car()
+taxi   = Car()
+
+my_car.accelerate()
+my_car.accelerate()
+
+print(taxi.speed)</pre>
+          <div class="vote-panel">
+            <div class="vote-round-label" id="voteRoundLabel">Round 1 &middot; Cast Your Vote</div>
+            <div class="vote-options" id="voteOptions"></div>
+            <p class="vote-status" id="voteStatus" hidden>Vote recorded. Watching the room&#8217;s results live&hellip;</p>
+            <div class="vote-results" id="voteResults" hidden></div>
+            <div class="vote-controls">
+              <button type="button" class="btn btn-outline" id="voteNextRoundBtn" hidden>We&#8217;ve Argued &mdash; Vote Again</button>
+              <button type="button" class="btn btn-primary" id="voteRevealBtn" hidden>Reveal the Answer</button>
+            </div>
+            <div class="vote-reveal" id="voteReveal" hidden>
+              <p><strong>Answer: 0.</strong> <code>taxi</code> is a separate object from <code>my_car</code>. Each object keeps its own independent copy of <code>speed</code> &mdash; calling <code>accelerate()</code> on <code>my_car</code> never touches <code>taxi</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============================= SECTION 2 + ACTIVITY 2 : ATTRIBUTE VS METHOD ============================= -->
-  <section id="attr-method" class="lab-section alt-bg">
+  <section id="attr-method" class="lab-section">
     <div class="container">
       <p class="eyebrow">Section 2</p>
       <h2>Attribute or Method?</h2>
@@ -1065,7 +1204,7 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
   </section>
 
   <!-- ============================= ACTIVITY 3 : BUILD YOUR OWN CLASS ============================= -->
-  <section id="build-class" class="lab-section">
+  <section id="build-class" class="lab-section alt-bg">
     <div class="container">
       <p class="eyebrow">Section 3</p>
       <div class="activity-block" id="activity3Block">
@@ -1095,7 +1234,7 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
   </section>
 
   <!-- ============================= ACTIVITY 4 : CREATE AN OBJECT ============================= -->
-  <section id="create-object" class="lab-section alt-bg">
+  <section id="create-object" class="lab-section">
     <div class="container">
       <p class="eyebrow">Section 4</p>
       <div class="activity-block" id="activity4Block">
@@ -1132,7 +1271,7 @@ body.presentation-mode .header-controls .ctrl-btn { padding: 10px; }
   </section>
 
   <!-- ============================= ACTIVITY 5 : FIX THE CODE ============================= -->
-  <section id="fix-code" class="lab-section">
+  <section id="fix-code" class="lab-section alt-bg">
     <div class="container">
       <p class="eyebrow">Section 5</p>
       <div class="activity-block" id="activity5Block">
@@ -1175,7 +1314,7 @@ student1.study()</pre>
   </section>
 
   <!-- ============================= SECTION 7 : FOUR PILLARS + ACTIVITY 6 ============================= -->
-  <section id="pillars" class="lab-section alt-bg">
+  <section id="pillars" class="lab-section">
     <div class="container">
       <p class="eyebrow">Section 6</p>
       <h2>The Four Pillars of OOP</h2>
@@ -1307,25 +1446,11 @@ incident1 = SecurityIncident("INC-001", "High", "Open")</pre>
       <h2>The 5-Minute Class Challenge</h2>
       <p class="intro-text">Five questions covering everything from this lab: classes, objects, attributes, methods, and the four pillars. Enter your name, race the clock, and climb the leaderboard.</p>
 
-      <!-- Identity gate: shown before the timed quiz starts -->
+      <!-- Ready prompt: name/class already captured at the lab entry gate -->
       <div class="identity-gate" id="identityGate">
-        <h3>Ready to compete?</h3>
-        <p class="activity-instruction">Enter your details, then start the clock. You will have 5 minutes to answer all 5 questions.</p>
-        <form class="identity-form" id="identityForm">
-          <div class="form-row">
-            <label for="studentFirstName">First name</label>
-            <input type="text" id="studentFirstName" name="studentFirstName" placeholder="e.g. Sara" required autocomplete="given-name">
-          </div>
-          <div class="form-row">
-            <label for="studentLastName">Last name</label>
-            <input type="text" id="studentLastName" name="studentLastName" placeholder="e.g. Alqahtani" required autocomplete="family-name">
-          </div>
-          <div class="form-row">
-            <label for="studentClassName">Class</label>
-            <input type="text" id="studentClassName" name="studentClassName" placeholder="e.g. CS-201, Section 3" required autocomplete="off">
-          </div>
-          <button type="submit" class="btn btn-primary" id="startQuizBtn">Start the 5-Minute Challenge</button>
-        </form>
+        <h3>Ready to compete, <span id="quizReadyName"></span>?</h3>
+        <p class="activity-instruction">You will have 5 minutes to answer all 5 questions.</p>
+        <button type="button" class="btn btn-primary" id="startQuizBtn">Start the 5-Minute Challenge</button>
       </div>
 
       <!-- Active quiz: identity captured, timer running -->
@@ -1413,6 +1538,178 @@ function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, function (ch) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
   });
+}
+
+/* ============================= 1b. LIVE VOTE (Vote, Argue, Vote Again) =============================
+   Cross-device live poll for Section: "Vote, Argue, Vote Again". Uses the
+   CyberAbeer Supabase project's public anon key (safe to expose client-side;
+   access is controlled by row-level security, not by hiding this key) so
+   every student's device can insert a vote and everyone in the same class
+   sees the tally update live via Supabase Realtime. */
+var SUPABASE_URL = 'https://lqnusdgcggdgvkjegcas.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_d9p4AF8PRJrDm4ZuIdUZmQ_rtQpkZJg';
+var VOTE_QUESTION_ID = 'taxi-speed-predict';
+var VOTE_OPTIONS = [
+  { key: 'A', label: '0' },
+  { key: 'B', label: '10' },
+  { key: 'C', label: '20' },
+  { key: 'D', label: 'Error' }
+];
+var voteRound = 1;
+var hasVotedThisRound = false;
+var voteChannel = null;
+var sbClient = null;
+
+function getSupabaseClient() {
+  if (sbClient) return sbClient;
+  if (typeof window === 'undefined' || !window.supabase || !SUPABASE_URL || SUPABASE_URL.indexOf('YOUR-PROJECT-REF') !== -1) {
+    return null;
+  }
+  sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return sbClient;
+}
+
+function initVoteSection() {
+  var wrap = document.getElementById('voteOptions');
+  if (!wrap) return;
+  wrap.innerHTML = VOTE_OPTIONS.map(function (o) {
+    return '<button type="button" class="option-btn vote-option-btn" data-choice="' + o.key + '">' +
+      '<span class="vote-choice-badge">' + o.key + '</span>' + escapeHtml(o.label) + '</button>';
+  }).join('');
+  wrap.querySelectorAll('.vote-option-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () { castVote(btn.dataset.choice); });
+  });
+
+  var nextBtn = document.getElementById('voteNextRoundBtn');
+  var revealBtn = document.getElementById('voteRevealBtn');
+  if (nextBtn) nextBtn.addEventListener('click', startVoteRound2);
+  if (revealBtn) revealBtn.addEventListener('click', revealVoteAnswer);
+}
+
+function castVote(choice) {
+  if (hasVotedThisRound || !currentStudent) return;
+  hasVotedThisRound = true;
+
+  document.querySelectorAll('.vote-option-btn').forEach(function (b) {
+    b.disabled = true;
+    b.classList.toggle('selected', b.dataset.choice === choice);
+  });
+
+  var statusEl = document.getElementById('voteStatus');
+  if (statusEl) statusEl.hidden = false;
+
+  var client = getSupabaseClient();
+  var insertPromise = client
+    ? client.from('oop_lab_votes').insert({
+        class_name: currentStudent.className,
+        question_id: VOTE_QUESTION_ID,
+        round: voteRound,
+        choice: choice,
+        student_first_name: currentStudent.firstName
+      })
+    : Promise.resolve();
+
+  insertPromise.then(function () {
+    showVoteResults();
+    subscribeVoteRealtime();
+  }).catch(function () {
+    showVoteResults();
+  });
+}
+
+function showVoteResults() {
+  var resultsEl = document.getElementById('voteResults');
+  if (resultsEl) resultsEl.hidden = false;
+  refreshVoteTally().then(function () {
+    if (voteRound === 1) {
+      var nextBtn = document.getElementById('voteNextRoundBtn');
+      if (nextBtn) nextBtn.hidden = false;
+    } else {
+      var revealBtn = document.getElementById('voteRevealBtn');
+      if (revealBtn) revealBtn.hidden = false;
+    }
+  });
+}
+
+function refreshVoteTally() {
+  var counts = { A: 0, B: 0, C: 0, D: 0 };
+  var client = getSupabaseClient();
+  if (!client || !currentStudent) {
+    renderVoteTally(counts);
+    return Promise.resolve();
+  }
+  return client
+    .from('oop_lab_votes')
+    .select('choice')
+    .eq('class_name', currentStudent.className)
+    .eq('question_id', VOTE_QUESTION_ID)
+    .eq('round', voteRound)
+    .then(function (res) {
+      var data = res && res.data ? res.data : [];
+      data.forEach(function (row) {
+        if (counts[row.choice] !== undefined) counts[row.choice]++;
+      });
+      renderVoteTally(counts);
+    })
+    .catch(function () {
+      renderVoteTally(counts);
+    });
+}
+
+function renderVoteTally(counts) {
+  var wrap = document.getElementById('voteResults');
+  if (!wrap) return;
+  var total = counts.A + counts.B + counts.C + counts.D;
+  wrap.innerHTML = VOTE_OPTIONS.map(function (o) {
+    var count = counts[o.key] || 0;
+    var pct = total ? Math.round((count / total) * 100) : 0;
+    return '<div class="vote-bar-row">' +
+      '<span class="vote-bar-label">' + o.key + '. ' + escapeHtml(o.label) + '</span>' +
+      '<div class="vote-bar-track"><div class="vote-bar-fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="vote-bar-count">' + count + ' (' + pct + '%)</span>' +
+      '</div>';
+  }).join('') + '<p class="vote-total-note">' + total + ' vote' + (total === 1 ? '' : 's') +
+    (currentStudent ? ' so far in ' + escapeHtml(currentStudent.className) : '') + '</p>';
+}
+
+function subscribeVoteRealtime() {
+  var client = getSupabaseClient();
+  if (!client || !currentStudent || voteChannel) return;
+  voteChannel = client
+    .channel('oop-votes-' + VOTE_QUESTION_ID)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'oop_lab_votes' }, function (payload) {
+      var row = payload && payload.new;
+      if (!row || row.question_id !== VOTE_QUESTION_ID || row.round !== voteRound) return;
+      if (!currentStudent || row.class_name !== currentStudent.className) return;
+      refreshVoteTally();
+    })
+    .subscribe();
+}
+
+function startVoteRound2() {
+  voteRound = 2;
+  hasVotedThisRound = false;
+
+  var nextBtn = document.getElementById('voteNextRoundBtn');
+  var statusEl = document.getElementById('voteStatus');
+  var resultsEl = document.getElementById('voteResults');
+  var roundLabel = document.getElementById('voteRoundLabel');
+  if (nextBtn) nextBtn.hidden = true;
+  if (statusEl) statusEl.hidden = true;
+  if (resultsEl) resultsEl.hidden = true;
+  if (roundLabel) roundLabel.textContent = 'Round 2 · Vote Again';
+
+  document.querySelectorAll('.vote-option-btn').forEach(function (b) {
+    b.disabled = false;
+    b.classList.remove('selected');
+  });
+}
+
+function revealVoteAnswer() {
+  var revealEl = document.getElementById('voteReveal');
+  var revealBtn = document.getElementById('voteRevealBtn');
+  if (revealEl) revealEl.hidden = false;
+  if (revealBtn) revealBtn.hidden = true;
 }
 
 // Fisher-Yates shuffle (used so Activity 3's chip pool order varies).
@@ -2026,17 +2323,36 @@ function formatTime(totalSeconds) {
   return m + ':' + String(r).padStart(2, '0');
 }
 
-function initIdentityGate() {
-  document.getElementById('identityForm').addEventListener('submit', function (e) {
+function initLabEntryGate() {
+  document.getElementById('labEntryForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    const firstName = document.getElementById('studentFirstName').value.trim();
-    const lastName = document.getElementById('studentLastName').value.trim();
-    const className = document.getElementById('studentClassName').value.trim();
+    const firstName = document.getElementById('entryFirstName').value.trim();
+    const lastName = document.getElementById('entryLastName').value.trim();
+    const className = document.getElementById('entryClassName').value.trim();
     if (!firstName || !lastName || !className) return;
 
     currentStudent = { firstName: firstName, lastName: lastName, className: className };
+    updateQuizReadyName();
+    document.getElementById('labEntryGate').hidden = true;
+    document.getElementById('labNav').hidden = false;
+    const mainEl = document.getElementById('main-content');
+    mainEl.hidden = false;
+    mainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    announce('Welcome, ' + currentStudent.firstName + '. The lab has started.');
+    if (typeof syncStickyOffsets === 'function') syncStickyOffsets();
+  });
+}
+
+function initIdentityGate() {
+  document.getElementById('startQuizBtn').addEventListener('click', function () {
+    if (!currentStudent) return;
     startChallenge();
   });
+}
+
+function updateQuizReadyName() {
+  const el = document.getElementById('quizReadyName');
+  if (el && currentStudent) el.textContent = currentStudent.firstName;
 }
 
 function startChallenge() {
@@ -2276,13 +2592,17 @@ function goToNextStudent() {
   fqIndex = 0;
   fqCorrect = 0;
 
-  document.getElementById('identityForm').reset();
   document.getElementById('quizActiveArea').hidden = true;
   document.getElementById('finalResultCard').hidden = true;
   document.getElementById('finalQuizArea').hidden = false;
   document.getElementById('identityGate').hidden = false;
-  document.getElementById('identityGate').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  document.getElementById('studentFirstName').focus();
+
+  document.getElementById('main-content').hidden = true;
+  document.getElementById('labNav').hidden = true;
+  document.getElementById('labEntryForm').reset();
+  document.getElementById('labEntryGate').hidden = false;
+  document.getElementById('labEntryGate').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('entryFirstName').focus();
 }
 
 /* ============================= 11. GLOBAL CONTROLS ============================= */
@@ -2345,6 +2665,31 @@ function initResetLab() {
 }
 
 function resetLab() {
+  // --- Vote, Argue, Vote Again (local UI only; does not delete other students' votes) ---
+  voteRound = 1;
+  hasVotedThisRound = false;
+  if (voteChannel && typeof getSupabaseClient === 'function') {
+    var client = getSupabaseClient();
+    if (client) client.removeChannel(voteChannel);
+  }
+  voteChannel = null;
+  document.querySelectorAll('.vote-option-btn').forEach(function (b) {
+    b.disabled = false;
+    b.classList.remove('selected');
+  });
+  var voteStatusEl = document.getElementById('voteStatus');
+  var voteResultsEl = document.getElementById('voteResults');
+  var voteNextBtn = document.getElementById('voteNextRoundBtn');
+  var voteRevealBtn = document.getElementById('voteRevealBtn');
+  var voteRevealEl = document.getElementById('voteReveal');
+  var voteRoundLabelEl = document.getElementById('voteRoundLabel');
+  if (voteStatusEl) voteStatusEl.hidden = true;
+  if (voteResultsEl) voteResultsEl.hidden = true;
+  if (voteNextBtn) voteNextBtn.hidden = true;
+  if (voteRevealBtn) voteRevealBtn.hidden = true;
+  if (voteRevealEl) voteRevealEl.hidden = true;
+  if (voteRoundLabelEl) voteRoundLabelEl.textContent = 'Round 1 · Cast Your Vote';
+
   // --- global score / progress ---
   state.activities = { a1: false, a2: false, a3: false, a4: false, a5: false, a6: false };
   state.score = 0;
@@ -2411,11 +2756,16 @@ function resetLab() {
   quizFinished = false;
   fqIndex = 0; fqCorrect = 0;
   quizTimeRemaining = QUIZ_DURATION_SECONDS;
-  document.getElementById('identityForm').reset();
   document.getElementById('identityGate').hidden = false;
   document.getElementById('quizActiveArea').hidden = true;
   document.getElementById('finalResultCard').hidden = true;
   document.getElementById('finalQuizArea').hidden = false;
+
+  document.getElementById('main-content').hidden = true;
+  document.getElementById('labNav').hidden = true;
+  document.getElementById('labEntryForm').reset();
+  document.getElementById('labEntryGate').hidden = false;
+
   saveLeaderboard([]);
   renderLeaderboard();
   renderFinalQuiz();
@@ -2446,6 +2796,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('tryAgainBtn').addEventListener('click', retrySameStudent);
   document.getElementById('nextStudentBtn').addEventListener('click', goToNextStudent);
 
+  initLabEntryGate();
+  initVoteSection();
   initIdentityGate();
   initPresentationMode();
   initInstructorMode();
