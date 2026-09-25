@@ -44,12 +44,16 @@ import type { AppLocale } from "@/lib/i18n/config";
  * below flattens every item (and its children) into a tappable list
  * for the new hamburger-triggered mobile panel in Navbar.
  *
- * CyberAbeer USA link (2026-09-25): added an external entry under
- * "For Organizations" pointing at the new static /usa section (AI
- * Cyber Trust Lab: TrustCheck AI risk assessment, Scam Analyzer, AI
- * Governance Check). Same `external: true` pattern already used for
- * the OOP Learning Lab under Labs, since /usa is a self-contained
- * static HTML section rather than a Next.js route.
+ * CyberAbeer TrustLab link (2026-09-25): added an external entry under
+ * "For Organizations" pointing at the static /trustlab section
+ * (TrustCheck AI risk assessment, Scam Analyzer, AI Governance Check).
+ * Renamed from the original /usa working name to a proper product
+ * name, CyberAbeer TrustLab, tying it to CyberAbeer's homepage promise
+ * ("free cybersecurity tools and skills for everyone") and grounding
+ * its content in NIST CSF 2.0, CISA, and FTC small-business guidance.
+ * Same `external: true` pattern already used for the OOP Learning Lab
+ * under Labs, since /trustlab is a self-contained static HTML section
+ * rather than a Next.js route.
  */
 export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isAuthenticated: boolean }) {
   const t = useTranslations("nav");
@@ -74,8 +78,8 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
         { label: t("greentrust"), href: "/greentrust" },
         { label: t("freeTools"), href: "/free-tools" },
         {
-          label: locale === "ar" ? "سايبر أبير الولايات المتحدة" : "CyberAbeer USA",
-          href: "/usa/index.html",
+          label: locale === "ar" ? "سايبر أبير تراست لاب" : "CyberAbeer TrustLab",
+          href: "/trustlab/index.html",
           external: true,
         },
       ],
