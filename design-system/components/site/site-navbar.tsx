@@ -43,6 +43,13 @@ import type { AppLocale } from "@/lib/i18n/config";
  * equivalent -- was reachable on phones/tablets. `renderMobileLink`
  * below flattens every item (and its children) into a tappable list
  * for the new hamburger-triggered mobile panel in Navbar.
+ *
+ * CyberAbeer USA link (2026-09-25): added an external entry under
+ * "For Organizations" pointing at the new static /usa section (AI
+ * Cyber Trust Lab: TrustCheck AI risk assessment, Scam Analyzer, AI
+ * Governance Check). Same `external: true` pattern already used for
+ * the OOP Learning Lab under Labs, since /usa is a self-contained
+ * static HTML section rather than a Next.js route.
  */
 export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isAuthenticated: boolean }) {
   const t = useTranslations("nav");
@@ -66,6 +73,11 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
       children: [
         { label: t("greentrust"), href: "/greentrust" },
         { label: t("freeTools"), href: "/free-tools" },
+        {
+          label: locale === "ar" ? "سايبر أبير الولايات المتحدة" : "CyberAbeer USA",
+          href: "/usa/usa_deploy/index.html",
+          external: true,
+        },
       ],
     },
     {
