@@ -8,7 +8,7 @@ import { LocaleSwitcher } from "./locale-switcher";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { logoutUser } from "@/lib/actions/auth";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import type { AppLocale } from "@/lib/i18n/config";
 
 /**
@@ -60,6 +60,19 @@ import type { AppLocale } from "@/lib/i18n/config";
  * pattern already used for the OOP Learning Lab under Labs, since
  * /trustlab is a self-contained static HTML section rather than a
  * Next.js route.
+ *
+ * Labs submenu regroup (2026-09-25): the Labs dropdown now shows 3
+ * items -- "CyberAbeer Decision Labs" (the flagship gamified-learning
+ * hub at /labs/decision-labs) as a direct link, and a "Dr. Abeer
+ * Training Labs" group that opens a second-level flyout containing
+ * "OOP Learning Lab" (and is the designated home for future live
+ * training content taught by Dr. Abeer). The shared Navbar component's
+ * NavItem type only renders one level of children on its own, so this
+ * component's renderLink/renderMobileLink closures now handle the
+ * second level themselves: a child with its own `children` array
+ * renders as a non-navigating trigger (group/sub hover on desktop,
+ * always-expanded indent on mobile) instead of a plain Link, exactly
+ * mirroring the top-level dropdown pattern one level deeper.
  */
 export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isAuthenticated: boolean }) {
   const t = useTranslations("nav");
@@ -95,9 +108,19 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
       href: "/labs",
       children: [
         {
-          label: locale === "ar" ? "مختبر البرمجة الكائنية" : "OOP Learning Lab",
+          label: locale === "ar" ? "مختبرات القرار من سايبر أبير" : "CyberAbeer Decision Labs",
+          href: "/labs/decision-labs",
+        },
+        {
+          label: locale === "ar" ? "مختبرات التدريب مع د. عبير" : "Dr. Abeer Training Labs",
           href: "/oop-lab/index.html",
-          external: true,
+          children: [
+            {
+              label: locale === "ar" ? "مختبر البرمجة الكائنية" : "OOP Learning Lab",
+              href: "/oop-lab/index.html",
+              external: true,
+            },
+          ],
         },
       ],
     },
@@ -116,7 +139,11 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
     ...item,
     active:
       pathname === item.href ||
-      Boolean(item.children?.some((child) => pathname === child.href)),
+      Boolean(
+        item.children?.some(
+          (child) => pathname === child.href || Boolean(child.children?.some((gc) => pathname === gc.href))
+        )
+      ),
   }));
 
   return (
@@ -148,8 +175,43 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
               />
             </Link>
             <div className="invisible absolute start-0 top-full z-dropdown mt-1 min-w-[12rem] rounded-card border border-border bg-surface p-1 opacity-0 shadow-lg transition-opacity duration-fast group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              {children.map((child) =>
-                child.external ? (
+              {children.map((child) => {
+                const grandchildren = child.children;
+                if (grandchildren && grandchildren.length > 0) {
+                  return (
+                    <div key={child.href} className="group/sub relative">
+                      <div className="flex cursor-default items-center justify-between gap-2 rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary">
+                        {child.label}
+                        <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
+                      </div>
+                      <div className="invisible absolute start-full top-0 z-dropdown ms-1 min-w-[12rem] rounded-card border border-border bg-surface p-1 opacity-0 shadow-lg transition-opacity duration-fast group-hover/sub:visible group-hover/sub:opacity-100">
+                        {grandchildren.map((grandchild) =>
+                          grandchild.external ? (
+                            <a
+                              key={grandchild.href}
+                              href={grandchild.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                            >
+                              {grandchild.label}
+                            </a>
+                          ) : (
+                            <Link
+                              key={grandchild.href}
+                              href={grandchild.href}
+                              className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                            >
+                              {grandchild.label}
+                            </Link>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return child.external ? (
                   <a
                     key={child.href}
                     href={child.href}
@@ -167,8 +229,8 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
                   >
                     {child.label}
                   </Link>
-                )
-              )}
+                );
+              })}
             </div>
           </div>
         );
@@ -186,8 +248,42 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
             </Link>
             {children && children.length > 0 && (
               <div className="ms-3 flex flex-col gap-0.5 border-s border-border ps-3">
-                {children.map((child) =>
-                  child.external ? (
+                {children.map((child) => {
+                  const grandchildren = child.children;
+                  if (grandchildren && grandchildren.length > 0) {
+                    return (
+                      <div key={child.href} className="w-full">
+                        <div className="block rounded-md px-3 py-2 text-sm font-medium text-text-secondary">
+                          {child.label}
+                        </div>
+                        <div className="ms-3 flex flex-col gap-0.5 border-s border-border ps-3">
+                          {grandchildren.map((grandchild) =>
+                            grandchild.external ? (
+                              <a
+                                key={grandchild.href}
+                                href={grandchild.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                              >
+                                {grandchild.label}
+                              </a>
+                            ) : (
+                              <Link
+                                key={grandchild.href}
+                                href={grandchild.href}
+                                className="block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-neutral-100 hover:text-text-primary"
+                              >
+                                {grandchild.label}
+                              </Link>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return child.external ? (
                     <a
                       key={child.href}
                       href={child.href}
@@ -205,8 +301,8 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
                     >
                       {child.label}
                     </Link>
-                  )
-                )}
+                  );
+                })}
               </div>
             )}
           </div>
