@@ -75,7 +75,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
         { label: t("freeTools"), href: "/free-tools" },
         {
           label: locale === "ar" ? "سايبر أبير الولايات المتحدة" : "CyberAbeer USA",
-          href: "/usa/usa_deploy/index.html",
+          href: "/usa/index.html",
           external: true,
         },
       ],
