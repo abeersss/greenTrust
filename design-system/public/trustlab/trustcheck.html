@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustCheck AI | Cyber Trust & Risk Assessment - CyberAbeer TrustLab</title>
+<meta name="description" content="Take a free, transparent 16-question cybersecurity risk assessment. Get your Cyber Trust Score, top risks, and a 30-day improvement plan mapped to NIST CSF 2.0.">
+<meta property="og:title" content="TrustCheck AI | Cyber Trust & Risk Assessment - CyberAbeer TrustLab">
+<meta property="og:description" content="Take a free, transparent 16-question cybersecurity risk assessment. Get your Cyber Trust Score, top risks, and a 30-day improvement plan mapped to NIST CSF 2.0.">
+<meta property="og:type" content="website">
+<meta name="robots" content="index, follow">
+<style>
+:root {
+  --navy: #0b1f3a;
+  --navy-2: #123058;
+  --navy-soft: #1c3a63;
+  --white: #ffffff;
+  --gray-50: #f6f8fa;
+  --gray-100: #eef1f5;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-600: #475569;
+  --gray-800: #1e293b;
+  --teal: #0d9488;
+  --teal-600: #0f766e;
+  --teal-100: #e6f7f5;
+  --green: #16a34a;
+  --green-100: #e9f9ee;
+  --red: #dc2626;
+  --red-100: #fdecec;
+  --amber: #b45309;
+  --amber-100: #fff4e0;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(11, 31, 58, 0.08);
+  --shadow-md: 0 6px 20px rgba(11, 31, 58, 0.10);
+  --shadow-lg: 0 14px 36px rgba(11, 31, 58, 0.14);
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --transition: 180ms ease;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+body { margin: 0; font-family: var(--font-body); color: var(--gray-800); background: var(--white); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.skip-link { position: absolute; left: -999px; top: 0; background: var(--navy); color: var(--white); padding: 10px 16px; z-index: 1000; border-radius: 0 0 8px 0; }
+.skip-link:focus { left: 0; }
+img { max-width: 100%; display: block; }
+a { color: var(--teal-600); }
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.container-narrow { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+/* HEADER */
+.usa-header { background: var(--navy); color: var(--white); position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm); }
+.usa-header-inner { max-width: 1080px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.usa-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: var(--white); }
+.usa-brand-mark { font-weight: 800; font-size: 1.05rem; letter-spacing: .02em; }
+.usa-brand-sub { font-size: .72rem; color: #9fb4d8; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.usa-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.usa-nav a { color: #d7e2f5; text-decoration: none; font-size: .88rem; font-weight: 600; padding: 8px 10px; border-radius: 8px; transition: var(--transition); }
+.usa-nav a:hover, .usa-nav a:focus-visible { background: rgba(255,255,255,.08); color: var(--white); }
+.usa-nav a.active { background: var(--teal-600); color: var(--white); }
+.usa-back-main { font-size: .74rem; color: #9fb4d8; text-decoration: none; display: inline-block; margin-bottom: 4px; }
+.usa-back-main:hover { color: var(--white); }
+
+/* HERO */
+.usa-hero { background: linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 55%, var(--navy-soft) 100%); color: var(--white); padding: 64px 0 56px; }
+.usa-eyebrow { display: inline-block; background: rgba(13,148,136,.18); border: 1px solid rgba(13,148,136,.4); color: #7fe3d8; font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; margin-bottom: 18px; }
+.usa-hero h1 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin: 0 0 16px; font-weight: 800; line-height: 1.15; max-width: 720px; }
+.usa-hero p.lead { font-size: 1.1rem; color: #c9d7ee; max-width: 640px; margin: 0 0 28px; }
+.usa-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 10px; font-weight: 700; font-size: .95rem; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: var(--transition); }
+.btn-primary { background: var(--teal-600); color: var(--white); }
+.btn-primary:hover { background: var(--teal); }
+.btn-outline { background: transparent; color: var(--white); border-color: rgba(255,255,255,.5); }
+.btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,.08); }
+.btn-navy { background: var(--navy); color: var(--white); }
+.btn-navy:hover { background: var(--navy-2); }
+.btn-block { width: 100%; }
+.usa-trust-row { display: flex; gap: 22px; flex-wrap: wrap; font-size: .84rem; color: #aebfdc; }
+.usa-trust-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* SECTIONS */
+.usa-section { padding: 56px 0; }
+.usa-section.alt { background: var(--gray-50); }
+.usa-section h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 14px; font-weight: 800; color: var(--navy); }
+.usa-section p.section-lead { color: var(--gray-600); max-width: 680px; margin: 0 0 32px; font-size: 1.02rem; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+.card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+.card h3 { margin: 0 0 8px; color: var(--navy); font-size: 1.05rem; }
+.card p { color: var(--gray-600); font-size: .92rem; margin: 0; }
+.card .icon { font-size: 1.6rem; margin-bottom: 10px; }
+
+/* FOOTER */
+.usa-footer { background: var(--navy); color: #c9d7ee; padding: 40px 0 28px; margin-top: 60px; }
+.usa-footer .container { display: flex; flex-wrap: wrap; gap: 28px; justify-content: space-between; }
+.usa-footer-col h4 { color: var(--white); font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 10px; }
+.usa-footer-col a { display: block; color: #aebfdc; text-decoration: none; font-size: .88rem; margin-bottom: 7px; }
+.usa-footer-col a:hover { color: var(--white); }
+.usa-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); margin-top: 28px; padding-top: 18px; font-size: .78rem; color: #8ba0c7; }
+.usa-footer-disclaimer { max-width: 900px; margin: 0 auto 10px; text-align: center; padding: 0 24px; }
+
+/* FORM ELEMENTS */
+.q-block { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+.q-domain { font-size: .72rem; font-weight: 700; color: var(--teal-600); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.q-text { font-weight: 700; color: var(--navy); font-size: 1.02rem; margin-bottom: 4px; }
+.q-help { color: var(--gray-600); font-size: .85rem; margin-bottom: 14px; }
+.q-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.q-options label { flex: 1 1 130px; }
+.q-options input[type="radio"] { position: absolute; opacity: 0; }
+.q-opt-pill { display: block; text-align: center; padding: 10px 8px; border: 2px solid var(--gray-200); border-radius: 10px; font-size: .86rem; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: var(--transition); user-select: none; }
+input[type="radio"]:checked + .q-opt-pill { border-color: var(--teal-600); background: var(--teal-100); color: var(--teal-600); }
+input[type="radio"]:focus-visible + .q-opt-pill { outline: 2px solid var(--teal-600); outline-offset: 2px; }
+.field label { display: block; font-weight: 700; color: var(--navy); font-size: .9rem; margin-bottom: 6px; }
+.field select, .field input[type="text"], .field textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--gray-300); border-radius: 8px; font-size: .95rem; font-family: inherit; }
+.field textarea { min-height: 160px; resize: vertical; }
+.field { margin-bottom: 18px; }
+.progress-bar { height: 8px; background: var(--gray-200); border-radius: 99px; overflow: hidden; margin-bottom: 26px; }
+.progress-bar-fill { height: 100%; background: var(--teal-600); border-radius: 99px; transition: width .25s ease; }
+.progress-label { font-size: .82rem; color: var(--gray-600); margin-bottom: 8px; font-weight: 600; }
+
+/* SCORE / DASHBOARD */
+.score-hero { text-align: center; padding: 32px 24px; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 28px; }
+.score-ring { width: 160px; height: 160px; margin: 0 auto 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+.score-ring-value { font-size: 2.4rem; font-weight: 800; color: var(--navy); }
+.score-ring-max { font-size: .85rem; color: var(--gray-600); }
+.score-band { display: inline-block; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: .88rem; }
+.band-critical { background: var(--red-100); color: var(--red); }
+.band-high { background: var(--amber-100); color: var(--amber); }
+.band-developing { background: #fff9db; color: #92720b; }
+.band-managed { background: var(--teal-100); color: var(--teal-600); }
+.band-strong { background: var(--green-100); color: var(--green); }
+.domain-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.domain-bar-label { width: 190px; font-size: .84rem; font-weight: 700; color: var(--navy); flex-shrink: 0; }
+.domain-bar-track { flex: 1; height: 10px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
+.domain-bar-fill { height: 100%; border-radius: 99px; }
+.domain-bar-pct { width: 46px; text-align: right; font-size: .82rem; font-weight: 700; color: var(--gray-600); flex-shrink: 0; }
+.result-list { list-style: none; margin: 0; padding: 0; }
+.result-list li { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray-200); font-size: .92rem; }
+.result-list li:last-child { border-bottom: none; }
+.result-tag { flex-shrink: 0; font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; height: fit-content; }
+.tag-risk { background: var(--red-100); color: var(--red); }
+.tag-action { background: var(--teal-100); color: var(--teal-600); }
+.tag-quick { background: var(--amber-100); color: var(--amber); }
+.plan-phase { border-left: 3px solid var(--teal-600); padding-left: 18px; margin-bottom: 24px; }
+.plan-phase h4 { color: var(--navy); margin: 0 0 4px; font-size: 1rem; }
+.plan-phase .plan-days { font-size: .78rem; color: var(--teal-600); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.plan-phase ul { margin: 8px 0 0; padding-left: 18px; color: var(--gray-600); font-size: .9rem; }
+.nist-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.nist-table th, .nist-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--gray-200); }
+.nist-table th { color: var(--navy); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* MISC */
+.alert-box { background: var(--teal-100); border: 1px solid #b7e4de; border-radius: var(--radius-md); padding: 16px 20px; font-size: .88rem; color: #0b5a52; margin-bottom: 24px; }
+.alert-box.warn { background: var(--amber-100); border-color: #f0d9b5; color: #7a4c05; }
+.alert-box.danger { background: var(--red-100); border-color: #f3c7c7; color: #8f2020; }
+.disclaimer-box { background: var(--gray-50); border: 1px dashed var(--gray-300); border-radius: var(--radius-md); padding: 16px 20px; font-size: .82rem; color: var(--gray-600); margin: 24px 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } .usa-nav { display: none; } .usa-nav.mobile-open { display: flex; flex-direction: column; width: 100%; } .domain-bar-label { width: 120px; font-size: .76rem; } }
+.link-list { list-style: none; margin: 0; padding: 0; }
+.link-list li { margin-bottom: 10px; }
+.link-list a { display: block; padding: 12px 14px; background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; text-decoration: none; color: var(--navy); font-weight: 600; font-size: .92rem; transition: var(--transition); }
+.link-list a:hover { border-color: var(--teal-600); background: var(--teal-100); }
+.link-list a .res-desc { display: block; font-weight: 400; color: var(--gray-600); font-size: .82rem; margin-top: 3px; }
+table.plain { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.plain th, table.plain td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--gray-200); }
+@media print {
+  .usa-header, .usa-footer, .no-print { display: none !important; }
+  body { color: #000; }
+  .usa-section { padding: 12px 0; }
+}
+
+</style>
+
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<header class="usa-header">
+  <div class="usa-header-inner">
+    <div>
+      <a href="https://cyberabeer.com/" class="usa-back-main">&larr; CyberAbeer.com</a>
+      <a href="index.html" class="usa-brand">
+        <span class="usa-brand-mark">CyberAbeer TrustLab</span>
+        <span class="usa-brand-sub">AI Cyber Trust Lab</span>
+      </a>
+    </div>
+    <nav class="usa-nav" aria-label="USA section navigation">
+        <a href="index.html">Home</a>
+        <a href="trustcheck.html" class="active">TrustCheck AI</a>
+        <a href="scam-check.html">Scam Analyzer</a>
+        <a href="ai-governance.html">AI Governance</a>
+        <a href="research.html">Research</a>
+        <a href="resources.html">Resources</a>
+        <a href="impact.html">Impact</a>
+        <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="usa-section" style="padding-top:36px;">
+  <div class="container-narrow">
+    <span class="usa-eyebrow" style="background:rgba(13,148,136,.1);border-color:#b7e4de;color:#0f766e;">TrustCheck AI</span>
+    <h1 style="color:var(--navy);font-size:clamp(1.6rem,3vw,2.2rem);margin:0 0 10px;">Cyber Trust &amp; Risk Assessment</h1>
+    <p style="color:var(--gray-600);margin:0 0 8px;">16 questions. About 10 minutes. Nothing you type here is sent anywhere &mdash; scoring happens entirely in your browser.</p>
+    <div class="alert-box">This is an educational decision-support tool, not a certification, compliance determination, security guarantee, formal audit, or penetration test. See the <a href="methodology.html">full methodology</a>.</div>
+
+    <div id="tc-form-wrap">
+      <div class="progress-label" id="tc-progress-label">Question 1 of 16</div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="tc-progress-fill" style="width:6%;"></div></div>
+      <form id="tc-form"></form>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="button" class="btn btn-outline" id="tc-back" style="color:var(--navy);border-color:var(--gray-300);display:none;">Back</button>
+        <button type="button" class="btn btn-primary" id="tc-next">Next</button>
+      </div>
+    </div>
+
+    <div id="tc-results" style="display:none;"></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var DOMAINS = {
+    govern:  { label: "Govern &amp; Identify", weight: 20, nist: "GOVERN / IDENTIFY", color: "#0f766e" },
+    protect: { label: "Protect",               weight: 25, nist: "PROTECT",           color: "#0d9488" },
+    detect:  { label: "Detect",                weight: 15, nist: "DETECT",            color: "#b45309" },
+    respond: { label: "Respond",                weight: 15, nist: "RESPOND",           color: "#dc2626" },
+    recover: { label: "Recover",                weight: 15, nist: "RECOVER",           color: "#16a34a" },
+    ai:      { label: "AI Governance",          weight: 10, nist: "GOVERN (AI Use)",   color: "#123058" }
+  };
+
+  var QUESTIONS = [
+    { id:"ctx_size", context:true, text:"How many people work at your organization (including you)?", type:"select",
+      opts:["Just me / sole proprietor","2–10 people","11–50 people","51–200 people","200+ people"] },
+    { id:"ctx_industry", context:true, text:"Which best describes your organization?", type:"select",
+      opts:["Professional / consulting services","Retail or e-commerce","Healthcare or wellness","Finance or accounting","Nonprofit","Technology / software","Other small business"] },
+    { id:"ctx_sensitive", domain:"govern", text:"Does your organization handle sensitive information (customer data, payment details, health records, employee records, etc.)?",
+      help:"This helps us understand your risk exposure. It does not ask you to share the data itself." },
+    { id:"gov_policy", domain:"govern", text:"Does your organization have a basic written cybersecurity policy or set of security rules for staff?",
+      help:"Even a one-page document counts — it does not need to be formal or lengthy." },
+    { id:"gov_admin", domain:"govern", text:"Are administrator-level account privileges limited to only the people who genuinely need them?",
+      help:"Most staff should use standard accounts, not admin accounts, for daily work." },
+    { id:"prot_mfa", domain:"protect", text:"Is multi-factor authentication (MFA) turned on for your important accounts (email, banking, cloud storage)?",
+      help:"MFA means a code or app confirmation in addition to a password." },
+    { id:"prot_password", domain:"protect", text:"Does your organization use strong, unique passwords or a password manager instead of reused/simple passwords?" },
+    { id:"prot_endpoint", domain:"protect", text:"Do your computers and devices have up-to-date antivirus or endpoint protection installed?" },
+    { id:"prot_patch", domain:"protect", text:"Are your operating systems and key software kept updated with security patches on a regular basis?" },
+    { id:"prot_data", domain:"protect", text:"Is sensitive data protected with access controls or encryption (e.g., limited folder access, encrypted drives)?" },
+    { id:"prot_vendor", domain:"protect", text:"Do you review the security practices of third-party vendors or apps before giving them access to your data or systems?" },
+    { id:"det_training", domain:"detect", text:"Do employees receive at least basic cybersecurity awareness training (even informally)?" },
+    { id:"det_phishing", domain:"detect", text:"Do staff generally know how to recognize and report a suspicious/phishing email?" },
+    { id:"resp_plan", domain:"respond", text:"Does your organization have a basic plan for what to do if you suspect a cyberattack or data breach (who to call, what to do first)?" },
+    { id:"rec_backup", domain:"recover", text:"Is your important business data backed up on a regular, scheduled basis?" },
+    { id:"rec_test", domain:"recover", text:"Have you tested restoring data from a backup in the past 12 months?" },
+    { id:"ai_use", domain:null, text:"Does your organization currently use generative AI tools (e.g., ChatGPT, Copilot, Gemini, Claude)?", gate:"ai" },
+    { id:"ai_confidential", domain:"ai", text:"Are employees prohibited from entering confidential or sensitive information into public generative AI tools?",
+      help:"A clear “do not paste sensitive data into public AI tools” rule counts as Yes.", gatedBy:"ai" },
+    { id:"ai_review", domain:"ai", text:"Are AI-generated outputs reviewed by a person for accuracy before being used or sent to others?", gatedBy:"ai" }
+  ];
+
+  var OPTIONS = [
+    { v:100, label:"Yes" },
+    { v:50,  label:"Partially" },
+    { v:0,   label:"No" },
+    { v:25,  label:"Not sure" },
+    { v:null,label:"N/A" }
+  ];
+
+  var GATE_OPTIONS = [ { v:"yes", label:"Yes" }, { v:"no", label:"No" } ];
+
+  // Risk / action metadata for questions that can be scored weak (score <= 50)
+  var META = {
+    ctx_sensitive: { risk:"Handling sensitive data without confirmed safeguards raises the stakes of any security gap.", action:"Make a short list of the sensitive data you hold and where it lives (which systems, which folders).", quickWin:true, phase:1 },
+    gov_policy:    { risk:"Without written rules, security practices depend on memory and vary person to person.", action:"Write a one-page security policy covering passwords, device use, and data handling. Share it with everyone.", quickWin:true, phase:4 },
+    gov_admin:     { risk:"Excess admin access means more accounts that, if compromised, can do maximum damage.", action:"Review who has admin/owner access on each system and remove it from anyone who doesn't need it.", quickWin:true, phase:1 },
+    prot_mfa:      { risk:"Accounts without MFA can be taken over with a stolen or guessed password alone.", action:"Turn on MFA for email, banking, and cloud storage accounts this week — start with email.", quickWin:true, phase:1 },
+    prot_password: { risk:"Reused or weak passwords are one of the most common ways accounts get compromised.", action:"Adopt a password manager (many have free tiers) and update your most important passwords first.", quickWin:true, phase:2 },
+    prot_endpoint: { risk:"Devices without endpoint protection are more vulnerable to malware and ransomware.", action:"Enable built-in protection (e.g., Microsoft Defender) or install a reputable endpoint security tool on every device.", quickWin:true, phase:1 },
+    prot_patch:    { risk:"Unpatched software is a leading entry point for attackers exploiting known vulnerabilities.", action:"Turn on automatic updates for your operating systems, browsers, and key applications.", quickWin:true, phase:2 },
+    prot_data:     { risk:"Unprotected sensitive data is at higher risk if a device is lost, stolen, or compromised.", action:"Enable device encryption (built into most modern laptops/phones) and restrict folder access by role.", quickWin:false, phase:2 },
+    prot_vendor:   { risk:"Vendors and apps with access to your systems can become a backdoor if they are compromised.", action:"Before connecting a new app or vendor, spend 10 minutes checking their security page and data practices.", quickWin:false, phase:4 },
+    det_training:  { risk:"Without training, staff are more likely to fall for social engineering and phishing attempts.", action:"Run a short, free security-awareness session using CISA or SBA materials from the Resource Center.", quickWin:false, phase:3 },
+    det_phishing:  { risk:"Unrecognized phishing emails are one of the most common paths to a breach.", action:"Share 3–5 real phishing examples with your team and agree on how to report suspicious messages.", quickWin:true, phase:3 },
+    resp_plan:     { risk:"Without a plan, the first hours after an incident are often chaotic and costly.", action:"Write down who to call (IT support, bank, legal) and the first 3 steps to take if you suspect a breach.", quickWin:false, phase:3 },
+    rec_backup:    { risk:"Without regular backups, ransomware or hardware failure can mean permanent data loss.", action:"Set up automatic, scheduled backups for your critical files (local + cloud is ideal).", quickWin:true, phase:2 },
+    rec_test:      { risk:"Untested backups sometimes fail silently — you may not learn this until you need them.", action:"Restore a sample file from your backup this month to confirm it actually works.", quickWin:false, phase:4 },
+    ai_confidential: { risk:"Confidential data pasted into public AI tools may be retained or used to train external models.", action:"Set a clear rule: no confidential, customer, or financial data goes into public AI chat tools.", quickWin:true, phase:4 },
+    ai_review:     { risk:"Unreviewed AI outputs can contain errors, fabrications, or biased recommendations.", action:"Require a human review step before AI-generated content or decisions are finalized.", quickWin:false, phase:4 }
+  };
+
+  var BANDS = [
+    { max:39,  key:"critical",   label:"Critical Attention" },
+    { max:59,  key:"high",       label:"High Priority" },
+    { max:74,  key:"developing", label:"Developing" },
+    { max:89,  key:"managed",    label:"Managed" },
+    { max:100, key:"strong",     label:"Strong" }
+  ];
+
+  var answers = {};
+  var order = QUESTIONS.filter(function(q){ return true; });
+  var idx = 0;
+
+  function visibleOrder(){
+    // Skip AI-governance questions if user said "no" to ai_use
+    return QUESTIONS.filter(function(q){
+      if (q.gatedBy === "ai" && answers.ai_use !== "yes") return false;
+      return true;
+    });
+  }
+
+  function renderQuestion(){
+    var list = visibleOrder();
+    if (idx >= list.length) { computeAndRender(); return; }
+    var q = list[idx];
+    var form = document.getElementById("tc-form");
+    var html = '<div class="q-block">';
+    if (q.domain) html += '<div class="q-domain">' + DOMAINS[q.domain].label + '</div>';
+    html += '<div class="q-text">' + q.text + '</div>';
+    if (q.help) html += '<div class="q-help">' + q.help + '</div>';
+    html += '<div class="q-options">';
+    var opts = q.type === "select" ? null : (q.gate ? GATE_OPTIONS : OPTIONS);
+    if (q.type === "select") {
+      html += '<select id="q-input" style="width:100%;padding:11px 12px;border:1px solid var(--gray-300);border-radius:8px;font-size:.95rem;">';
+      html += '<option value="">Choose one…</option>';
+      q.opts.forEach(function(o){
+        var sel = answers[q.id] === o ? " selected" : "";
+        html += '<option value="' + o.replace(/"/g,'&quot;') + '"' + sel + '>' + o + '</option>';
+      });
+      html += '</select>';
+    } else {
+      opts.forEach(function(o, i){
+        var name = "q_" + q.id;
+        var checked = (answers[q.id] === o.v) ? " checked" : "";
+        var inputId = "opt_" + q.id + "_" + i;
+        html += '<label><input type="radio" name="'+name+'" id="'+inputId+'" value="'+o.v+'"'+checked+'><span class="q-opt-pill">'+o.label+'</span></label>';
+      });
+    }
+    html += '</div></div>';
+    form.innerHTML = html;
+
+    if (q.type === "select") {
+      document.getElementById("q-input").addEventListener("change", function(e){ answers[q.id] = e.target.value; });
+    } else {
+      var radios = form.querySelectorAll('input[type="radio"]');
+      radios.forEach(function(r){
+        r.addEventListener("change", function(){
+          answers[q.id] = (q.gate) ? r.value : Number(r.value === "null" ? null : r.value);
+          if (r.value === "null") answers[q.id] = null;
+        });
+      });
+    }
+
+    document.getElementById("tc-progress-label").textContent = "Question " + (idx+1) + " of " + list.length;
+    document.getElementById("tc-progress-fill").style.width = Math.round(((idx+1)/list.length)*100) + "%";
+    document.getElementById("tc-back").style.display = idx > 0 ? "inline-flex" : "none";
+    document.getElementById("tc-next").textContent = (idx === list.length - 1) ? "See My Results" : "Next";
+    window.scrollTo({top: document.getElementById("tc-form-wrap").offsetTop - 90, behavior:"smooth"});
+  }
+
+  document.getElementById("tc-next").addEventListener("click", function(){
+    var list = visibleOrder();
+    var q = list[idx];
+    if (q.context !== true && !(q.id in answers)) {
+      var q2 = list[idx];
+      if (!(q2.id in answers)) { alert("Please choose an answer before continuing (or select N/A if it doesn't apply)."); return; }
+    }
+    if (q.context === true && q.type === "select" && !answers[q.id]) { alert("Please choose an answer before continuing."); return; }
+    idx++;
+    renderQuestion();
+  });
+  document.getElementById("tc-back").addEventListener("click", function(){
+    if (idx > 0) { idx--; renderQuestion(); }
+  });
+
+  function bandFor(score){
+    for (var i=0;i<BANDS.length;i++){ if (score <= BANDS[i].max) return BANDS[i]; }
+    return BANDS[BANDS.length-1];
+  }
+
+  function computeAndRender(){
+    var domainScores = {};
+    var domainCounts = {};
+    Object.keys(DOMAINS).forEach(function(d){ domainScores[d]=0; domainCounts[d]=0; });
+
+    var scoredQuestions = QUESTIONS.filter(function(q){ return q.domain && (q.id in answers) && answers[q.id] !== null; });
+    scoredQuestions.forEach(function(q){
+      domainScores[q.domain] += answers[q.id];
+      domainCounts[q.domain] += 1;
+    });
+
+    var domainAverages = {};
+    var totalWeight = 0, weightedSum = 0;
+    Object.keys(DOMAINS).forEach(function(d){
+      if (domainCounts[d] > 0) {
+        domainAverages[d] = domainScores[d] / domainCounts[d];
+        totalWeight += DOMAINS[d].weight;
+        weightedSum += domainAverages[d] * DOMAINS[d].weight;
+      } else {
+        domainAverages[d] = null;
+      }
+    });
+    var overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
+    var band = bandFor(overall);
+
+    // weaknesses: scored non-context questions with score <= 50, sorted ascending
+    var weak = QUESTIONS.filter(function(q){
+      return q.domain && (q.id in answers) && answers[q.id] !== null && answers[q.id] <= 50 && META[q.id];
+    }).sort(function(a,b){ return answers[a.id] - answers[b.id]; });
+
+    var top5 = weak.slice(0,5);
+    var quickWins = weak.filter(function(q){ return META[q.id].quickWin; }).slice(0,4);
+
+    var phases = {1:[],2:[],3:[],4:[]};
+    weak.forEach(function(q){ var m = META[q.id]; phases[m.phase].push(m.action); });
+    // ensure phases never fully empty with generic fallback
+    var fallback = {
+      1: "Review account access and turn on MFA on your most important accounts.",
+      2: "Confirm backups are running and enable automatic software updates.",
+      3: "Share basic phishing-awareness guidance with your team.",
+      4: "Write or refresh your one-page security policy."
+    };
+    Object.keys(fallback).forEach(function(k){ if (phases[k].length===0) phases[k].push(fallback[k]); });
+
+    var wrap = document.getElementById("tc-results");
+    document.getElementById("tc-form-wrap").style.display = "none";
+
+    var html = '';
+    html += '<div class="score-hero">';
+    html += '<div class="score-ring" style="background:conic-gradient(' + bandColor(band.key) + ' ' + overall + '%, var(--gray-200) 0);">';
+    html += '<div style="background:#fff;border-radius:50%;width:120px;height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;">';
+    html += '<div class="score-ring-value">' + overall + '</div><div class="score-ring-max">/ 100</div></div></div>';
+    html += '<div class="score-band band-' + band.key + '">' + band.label + '</div>';
+    html += '<p style="color:var(--gray-600);margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">Your Cyber Trust Score is an educational indicator based on your answers today, not a certification or guarantee. Assessment date: ' + new Date().toLocaleDateString() + '.</p>';
+    html += '<div class="no-print" style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;"><button class="btn btn-navy" onclick="window.print()">Print / Save as PDF</button><button class="btn btn-outline" style="color:var(--navy);border-color:var(--gray-300);" onclick="location.reload()">Retake Assessment</button></div>';
+    html += '</div>';
+
+    html += '<div class="card" style="margin-bottom:28px;"><h3 style="margin-bottom:16px;">Score by Domain (NIST CSF 2.0 alignment)</h3>';
+    Object.keys(DOMAINS).forEach(function(d){
+      var dom = DOMAINS[d];
+      var val = domainAverages[d];
+      if (val === null) {
+        html += '<div class="domain-bar-row"><div class="domain-bar-label">' + dom.label + '</div><div style="flex:1;color:var(--gray-400);font-size:.82rem;">Not applicable to your organization</div></div>';
+      } else {
+        html += '<div class="domain-bar-row"><div class="domain-bar-label">' + dom.label + '</div><div class="domain-bar-track"><div class="domain-bar-fill" style="width:' + Math.round(val) + '%;background:' + dom.color + ';"></div></div><div class="domain-bar-pct">' + Math.round(val) + '%</div></div>';
+      }
+    });
+    html += '</div>';
+
+    html += '<div class="two-col" style="margin-bottom:28px;">';
+    html += '<div class="card"><h3>Top Priority Risks</h3><ul class="result-list">';
+    if (top5.length === 0) {
+      html += '<li>No significant weaknesses identified from your answers &mdash; nice work. Keep reviewing periodically.</li>';
+    } else {
+      top5.forEach(function(q){ html += '<li><span class="result-tag tag-risk">Risk</span><span>' + META[q.id].risk + '</span></li>'; });
+    }
+    html += '</ul></div>';
+    html += '<div class="card"><h3>Recommended Priority Actions</h3><ul class="result-list">';
+    if (top5.length === 0) {
+      html += '<li>Continue monitoring your security practices and revisit this assessment periodically.</li>';
+    } else {
+      top5.forEach(function(q){ html += '<li><span class="result-tag tag-action">Action</span><span>' + META[q.id].action + '</span></li>'; });
+    }
+    html += '</ul></div></div>';
+
+    if (quickWins.length > 0) {
+      html += '<div class="card" style="margin-bottom:28px;"><h3>Quick Wins (low cost, high impact)</h3><ul class="result-list">';
+      quickWins.forEach(function(q){ html += '<li><span class="result-tag tag-quick">Quick win</span><span>' + META[q.id].action + '</span></li>'; });
+      html += '</ul></div>';
+    }
+
+    html += '<div class="card" style="margin-bottom:28px;"><h3>Your 30-Day Cybersecurity Improvement Plan</h3>';
+    html += planPhase("Days 1–7", "Immediate Risk Reduction", phases[1]);
+    html += planPhase("Days 8–14", "Account and Data Protection", phases[2]);
+    html += planPhase("Days 15–21", "Detection and Incident Preparedness", phases[3]);
+    html += planPhase("Days 22–30", "Governance and Resilience", phases[4]);
+    html += '</div>';
+
+    html += '<div class="card" style="margin-bottom:28px;"><h3>NIST Cybersecurity Framework 2.0 Alignment</h3>';
+    html += '<table class="nist-table"><thead><tr><th>NIST CSF 2.0 Function</th><th>Your Readiness</th></tr></thead><tbody>';
+    Object.keys(DOMAINS).forEach(function(d){
+      var dom = DOMAINS[d]; var val = domainAverages[d];
+      html += '<tr><td>' + dom.nist + '</td><td>' + (val===null ? "Not applicable" : bandFor(Math.round(val)).label + " (" + Math.round(val) + "%)") + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+
+    if (domainAverages.ai === null) {
+      html += '<div class="alert-box">You indicated your organization does not currently use generative AI tools, so the AI Governance domain was excluded from your score. If that changes, revisit this assessment or try the standalone <a href="ai-governance.html">AI Governance Check</a>.</div>';
+    }
+
+    html += '<div class="disclaimer-box">This report is generated entirely in your browser from a documented, deterministic scoring methodology (see <a href="methodology.html">Methodology v1.0</a>). It is an educational decision-support tool only and does not constitute a certification, compliance determination, security guarantee, formal audit, or penetration test. No answers from this assessment are transmitted or stored unless you choose to save or print this page yourself.</div>';
+
+    wrap.innerHTML = html;
+    wrap.style.display = "block";
+  }
+
+  function planPhase(days, title, items){
+    var html = '<div class="plan-phase"><div class="plan-days">' + days + '</div><h4>' + title + '</h4><ul>';
+    items.forEach(function(i){ html += '<li>' + i + '</li>'; });
+    html += '</ul></div>';
+    return html;
+  }
+
+  function bandColor(key){
+    return { critical:"#dc2626", high:"#b45309", developing:"#ca8a04", managed:"#0f766e", strong:"#16a34a" }[key];
+  }
+
+  renderQuestion();
+})();
+</script>
+
+</main>
+<footer class="usa-footer">
+  <div class="usa-footer-disclaimer">
+    CyberAbeer TrustLab is an independent public-interest initiative and is not affiliated with or endorsed by the U.S. Government, NIST, CISA, FTC, FBI, or the Small Business Administration. Tools on this site provide educational decision support only and do not constitute a certification, compliance determination, security guarantee, formal audit, or penetration test.
+  </div>
+  <div class="container">
+    <div class="usa-footer-col">
+      <h4>CyberAbeer TrustLab</h4>
+      <a href="index.html">Home</a>
+      <a href="trustcheck.html">TrustCheck AI</a>
+      <a href="scam-check.html">Scam Analyzer</a>
+      <a href="ai-governance.html">AI Governance</a>
+    </div>
+    <div class="usa-footer-col">
+      <h4>Learn</h4>
+      <a href="research.html">Research Observatory</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="resources.html">Resource Center</a>
+      <a href="impact.html">Impact &amp; Transparency</a>
+    </div>
+    <div class="usa-footer-col">
+      <h4>About</h4>
+      <a href="about.html">About the Founder</a>
+      <a href="privacy.html">Privacy Notice</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="https://cyberabeer.com/">CyberAbeer.com</a>
+    </div>
+  </div>
+  <div class="container">
+    <div class="usa-footer-bottom">&copy; 2026 CyberAbeer TrustLab &middot; Dr. Abeer Saleh Alshammari &middot; Methodology v1.0</div>
+  </div>
+</footer>
+</body>
+</html>

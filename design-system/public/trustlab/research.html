@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Observatory | CyberAbeer TrustLab</title>
+<meta name="description" content="CyberAbeer's voluntary, opt-in research program studying cybersecurity readiness and AI governance among U.S. small businesses.">
+<meta property="og:title" content="Research Observatory | CyberAbeer TrustLab">
+<meta property="og:description" content="CyberAbeer's voluntary, opt-in research program studying cybersecurity readiness and AI governance among U.S. small businesses.">
+<meta property="og:type" content="website">
+<meta name="robots" content="index, follow">
+<style>
+:root {
+  --navy: #0b1f3a;
+  --navy-2: #123058;
+  --navy-soft: #1c3a63;
+  --white: #ffffff;
+  --gray-50: #f6f8fa;
+  --gray-100: #eef1f5;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-600: #475569;
+  --gray-800: #1e293b;
+  --teal: #0d9488;
+  --teal-600: #0f766e;
+  --teal-100: #e6f7f5;
+  --green: #16a34a;
+  --green-100: #e9f9ee;
+  --red: #dc2626;
+  --red-100: #fdecec;
+  --amber: #b45309;
+  --amber-100: #fff4e0;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(11, 31, 58, 0.08);
+  --shadow-md: 0 6px 20px rgba(11, 31, 58, 0.10);
+  --shadow-lg: 0 14px 36px rgba(11, 31, 58, 0.14);
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --transition: 180ms ease;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+body { margin: 0; font-family: var(--font-body); color: var(--gray-800); background: var(--white); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.skip-link { position: absolute; left: -999px; top: 0; background: var(--navy); color: var(--white); padding: 10px 16px; z-index: 1000; border-radius: 0 0 8px 0; }
+.skip-link:focus { left: 0; }
+img { max-width: 100%; display: block; }
+a { color: var(--teal-600); }
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.container-narrow { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+/* HEADER */
+.usa-header { background: var(--navy); color: var(--white); position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm); }
+.usa-header-inner { max-width: 1080px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.usa-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: var(--white); }
+.usa-brand-mark { font-weight: 800; font-size: 1.05rem; letter-spacing: .02em; }
+.usa-brand-sub { font-size: .72rem; color: #9fb4d8; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.usa-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.usa-nav a { color: #d7e2f5; text-decoration: none; font-size: .88rem; font-weight: 600; padding: 8px 10px; border-radius: 8px; transition: var(--transition); }
+.usa-nav a:hover, .usa-nav a:focus-visible { background: rgba(255,255,255,.08); color: var(--white); }
+.usa-nav a.active { background: var(--teal-600); color: var(--white); }
+.usa-back-main { font-size: .74rem; color: #9fb4d8; text-decoration: none; display: inline-block; margin-bottom: 4px; }
+.usa-back-main:hover { color: var(--white); }
+
+/* HERO */
+.usa-hero { background: linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 55%, var(--navy-soft) 100%); color: var(--white); padding: 64px 0 56px; }
+.usa-eyebrow { display: inline-block; background: rgba(13,148,136,.18); border: 1px solid rgba(13,148,136,.4); color: #7fe3d8; font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; margin-bottom: 18px; }
+.usa-hero h1 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin: 0 0 16px; font-weight: 800; line-height: 1.15; max-width: 720px; }
+.usa-hero p.lead { font-size: 1.1rem; color: #c9d7ee; max-width: 640px; margin: 0 0 28px; }
+.usa-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 10px; font-weight: 700; font-size: .95rem; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: var(--transition); }
+.btn-primary { background: var(--teal-600); color: var(--white); }
+.btn-primary:hover { background: var(--teal); }
+.btn-outline { background: transparent; color: var(--white); border-color: rgba(255,255,255,.5); }
+.btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,.08); }
+.btn-navy { background: var(--navy); color: var(--white); }
+.btn-navy:hover { background: var(--navy-2); }
+.btn-block { width: 100%; }
+.usa-trust-row { display: flex; gap: 22px; flex-wrap: wrap; font-size: .84rem; color: #aebfdc; }
+.usa-trust-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* SECTIONS */
+.usa-section { padding: 56px 0; }
+.usa-section.alt { background: var(--gray-50); }
+.usa-section h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 14px; font-weight: 800; color: var(--navy); }
+.usa-section p.section-lead { color: var(--gray-600); max-width: 680px; margin: 0 0 32px; font-size: 1.02rem; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+.card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+.card h3 { margin: 0 0 8px; color: var(--navy); font-size: 1.05rem; }
+.card p { color: var(--gray-600); font-size: .92rem; margin: 0; }
+.card .icon { font-size: 1.6rem; margin-bottom: 10px; }
+
+/* FOOTER */
+.usa-footer { background: var(--navy); color: #c9d7ee; padding: 40px 0 28px; margin-top: 60px; }
+.usa-footer .container { display: flex; flex-wrap: wrap; gap: 28px; justify-content: space-between; }
+.usa-footer-col h4 { color: var(--white); font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 10px; }
+.usa-footer-col a { display: block; color: #aebfdc; text-decoration: none; font-size: .88rem; margin-bottom: 7px; }
+.usa-footer-col a:hover { color: var(--white); }
+.usa-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); margin-top: 28px; padding-top: 18px; font-size: .78rem; color: #8ba0c7; }
+.usa-footer-disclaimer { max-width: 900px; margin: 0 auto 10px; text-align: center; padding: 0 24px; }
+
+/* FORM ELEMENTS */
+.q-block { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+.q-domain { font-size: .72rem; font-weight: 700; color: var(--teal-600); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.q-text { font-weight: 700; color: var(--navy); font-size: 1.02rem; margin-bottom: 4px; }
+.q-help { color: var(--gray-600); font-size: .85rem; margin-bottom: 14px; }
+.q-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.q-options label { flex: 1 1 130px; }
+.q-options input[type="radio"] { position: absolute; opacity: 0; }
+.q-opt-pill { display: block; text-align: center; padding: 10px 8px; border: 2px solid var(--gray-200); border-radius: 10px; font-size: .86rem; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: var(--transition); user-select: none; }
+input[type="radio"]:checked + .q-opt-pill { border-color: var(--teal-600); background: var(--teal-100); color: var(--teal-600); }
+input[type="radio"]:focus-visible + .q-opt-pill { outline: 2px solid var(--teal-600); outline-offset: 2px; }
+.field label { display: block; font-weight: 700; color: var(--navy); font-size: .9rem; margin-bottom: 6px; }
+.field select, .field input[type="text"], .field textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--gray-300); border-radius: 8px; font-size: .95rem; font-family: inherit; }
+.field textarea { min-height: 160px; resize: vertical; }
+.field { margin-bottom: 18px; }
+.progress-bar { height: 8px; background: var(--gray-200); border-radius: 99px; overflow: hidden; margin-bottom: 26px; }
+.progress-bar-fill { height: 100%; background: var(--teal-600); border-radius: 99px; transition: width .25s ease; }
+.progress-label { font-size: .82rem; color: var(--gray-600); margin-bottom: 8px; font-weight: 600; }
+
+/* SCORE / DASHBOARD */
+.score-hero { text-align: center; padding: 32px 24px; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 28px; }
+.score-ring { width: 160px; height: 160px; margin: 0 auto 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+.score-ring-value { font-size: 2.4rem; font-weight: 800; color: var(--navy); }
+.score-ring-max { font-size: .85rem; color: var(--gray-600); }
+.score-band { display: inline-block; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: .88rem; }
+.band-critical { background: var(--red-100); color: var(--red); }
+.band-high { background: var(--amber-100); color: var(--amber); }
+.band-developing { background: #fff9db; color: #92720b; }
+.band-managed { background: var(--teal-100); color: var(--teal-600); }
+.band-strong { background: var(--green-100); color: var(--green); }
+.domain-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.domain-bar-label { width: 190px; font-size: .84rem; font-weight: 700; color: var(--navy); flex-shrink: 0; }
+.domain-bar-track { flex: 1; height: 10px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
+.domain-bar-fill { height: 100%; border-radius: 99px; }
+.domain-bar-pct { width: 46px; text-align: right; font-size: .82rem; font-weight: 700; color: var(--gray-600); flex-shrink: 0; }
+.result-list { list-style: none; margin: 0; padding: 0; }
+.result-list li { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray-200); font-size: .92rem; }
+.result-list li:last-child { border-bottom: none; }
+.result-tag { flex-shrink: 0; font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; height: fit-content; }
+.tag-risk { background: var(--red-100); color: var(--red); }
+.tag-action { background: var(--teal-100); color: var(--teal-600); }
+.tag-quick { background: var(--amber-100); color: var(--amber); }
+.plan-phase { border-left: 3px solid var(--teal-600); padding-left: 18px; margin-bottom: 24px; }
+.plan-phase h4 { color: var(--navy); margin: 0 0 4px; font-size: 1rem; }
+.plan-phase .plan-days { font-size: .78rem; color: var(--teal-600); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.plan-phase ul { margin: 8px 0 0; padding-left: 18px; color: var(--gray-600); font-size: .9rem; }
+.nist-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.nist-table th, .nist-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--gray-200); }
+.nist-table th { color: var(--navy); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* MISC */
+.alert-box { background: var(--teal-100); border: 1px solid #b7e4de; border-radius: var(--radius-md); padding: 16px 20px; font-size: .88rem; color: #0b5a52; margin-bottom: 24px; }
+.alert-box.warn { background: var(--amber-100); border-color: #f0d9b5; color: #7a4c05; }
+.alert-box.danger { background: var(--red-100); border-color: #f3c7c7; color: #8f2020; }
+.disclaimer-box { background: var(--gray-50); border: 1px dashed var(--gray-300); border-radius: var(--radius-md); padding: 16px 20px; font-size: .82rem; color: var(--gray-600); margin: 24px 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } .usa-nav { display: none; } .usa-nav.mobile-open { display: flex; flex-direction: column; width: 100%; } .domain-bar-label { width: 120px; font-size: .76rem; } }
+.link-list { list-style: none; margin: 0; padding: 0; }
+.link-list li { margin-bottom: 10px; }
+.link-list a { display: block; padding: 12px 14px; background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; text-decoration: none; color: var(--navy); font-weight: 600; font-size: .92rem; transition: var(--transition); }
+.link-list a:hover { border-color: var(--teal-600); background: var(--teal-100); }
+.link-list a .res-desc { display: block; font-weight: 400; color: var(--gray-600); font-size: .82rem; margin-top: 3px; }
+table.plain { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.plain th, table.plain td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--gray-200); }
+@media print {
+  .usa-header, .usa-footer, .no-print { display: none !important; }
+  body { color: #000; }
+  .usa-section { padding: 12px 0; }
+}
+
+</style>
+
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<header class="usa-header">
+  <div class="usa-header-inner">
+    <div>
+      <a href="https://cyberabeer.com/" class="usa-back-main">&larr; CyberAbeer.com</a>
+      <a href="index.html" class="usa-brand">
+        <span class="usa-brand-mark">CyberAbeer TrustLab</span>
+        <span class="usa-brand-sub">AI Cyber Trust Lab</span>
+      </a>
+    </div>
+    <nav class="usa-nav" aria-label="USA section navigation">
+        <a href="index.html">Home</a>
+        <a href="trustcheck.html">TrustCheck AI</a>
+        <a href="scam-check.html">Scam Analyzer</a>
+        <a href="ai-governance.html">AI Governance</a>
+        <a href="research.html" class="active">Research</a>
+        <a href="resources.html">Resources</a>
+        <a href="impact.html">Impact</a>
+        <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="usa-section" style="padding-top:36px;">
+  <div class="container-narrow">
+    <span class="usa-eyebrow" style="background:rgba(13,148,136,.1);border-color:#b7e4de;color:#0f766e;">Research Observatory</span>
+    <h1 style="color:var(--navy);font-size:clamp(1.6rem,3vw,2.2rem);margin:0 0 14px;">CyberAbeer Research Observatory</h1>
+    <p style="color:var(--gray-600);">The Research Observatory studies cybersecurity readiness and AI-governance challenges affecting small organizations in the United States. It is entirely separate from, and never required for, using TrustCheck AI or the Scam Analyzer.</p>
+
+    <h2 style="font-size:1.3rem;margin-top:32px;">Provisional research theme</h2>
+    <p style="color:var(--gray-600);font-style:italic;">"AI-Assisted Cybersecurity Governance for U.S. Small Businesses: A NIST CSF 2.0-Based Decision Support Framework"</p>
+
+    <h2 style="font-size:1.3rem;margin-top:28px;">Guiding research questions</h2>
+    <table class="plain">
+      <tr><td style="width:60px;font-weight:700;color:var(--teal-600);">RQ1</td><td>What cybersecurity governance gaps are most commonly identified among participating small organizations?</td></tr>
+      <tr><td style="font-weight:700;color:var(--teal-600);">RQ2</td><td>Which NIST CSF 2.0 functions demonstrate the largest readiness gaps?</td></tr>
+      <tr><td style="font-weight:700;color:var(--teal-600);">RQ3</td><td>Can an AI-assisted decision-support interface improve users' understanding of cybersecurity priorities?</td></tr>
+      <tr><td style="font-weight:700;color:var(--teal-600);">RQ4</td><td>What AI-governance concerns emerge among small organizations adopting generative AI?</td></tr>
+    </table>
+
+    <div class="alert-box" style="margin-top:28px;">Participation in research is entirely voluntary and requires an explicit, separate opt-in. Using TrustCheck AI or the Scam Analyzer does <strong>not</strong> automatically enroll you in research, and no research participation is required to use either tool.</div>
+
+    <h2 style="font-size:1.3rem;margin-top:28px;">Where this stands today</h2>
+    <p style="color:var(--gray-600);">CyberAbeer TrustLab has just launched, and the voluntary research opt-in and aggregate-data pipeline are not yet collecting data. This page documents the intended design honestly, ahead of implementation:</p>
+    <ul style="color:var(--gray-600);">
+      <li>Any future opt-in will collect only minimal, non-identifying information: organization size category, industry category, broad geographic region, domain-level assessment scores, major gap categories, and AI-adoption category.</li>
+      <li>No names, email addresses, exact locations, or free-text answers would be included in the research dataset.</li>
+      <li>We will not describe any dataset as "anonymous" unless the technical implementation genuinely prevents re-identification, and we will not claim IRB (institutional review board) approval unless that approval has actually been obtained.</li>
+      <li>Aggregate findings, once a sufficient and ethically reviewed dataset exists, will be published on the <a href="impact.html">Impact &amp; Transparency</a> page.</li>
+    </ul>
+
+    <h2 style="font-size:1.3rem;margin-top:28px;">Interested in participating when it opens?</h2>
+    <p style="color:var(--gray-600);">If you would like to be notified when voluntary, ethically reviewed research participation opens, you can reach out directly through the contact information on <a href="https://cyberabeer.com/contact">CyberAbeer.com</a>.</p>
+  </div>
+</section>
+
+</main>
+<footer class="usa-footer">
+  <div class="usa-footer-disclaimer">
+    CyberAbeer TrustLab is an independent public-interest initiative and is not affiliated with or endorsed by the U.S. Government, NIST, CISA, FTC, FBI, or the Small Business Administration. Tools on this site provide educational decision support only and do not constitute a certification, compliance determination, security guarantee, formal audit, or penetration test.
+  </div>
+  <div class="container">
+    <div class="usa-footer-col">
+      <h4>CyberAbeer TrustLab</h4>
+      <a href="index.html">Home</a>
+      <a href="trustcheck.html">TrustCheck AI</a>
+      <a href="scam-check.html">Scam Analyzer</a>
+      <a href="ai-governance.html">AI Governance</a>
+    </div>
+    <div class="usa-footer-col">
+      <h4>Learn</h4>
+      <a href="research.html">Research Observatory</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="resources.html">Resource Center</a>
+      <a href="impact.html">Impact &amp; Transparency</a>
+    </div>
+    <div class="usa-footer-col">
+      <h4>About</h4>
+      <a href="about.html">About the Founder</a>
+      <a href="privacy.html">Privacy Notice</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="https://cyberabeer.com/">CyberAbeer.com</a>
+    </div>
+  </div>
+  <div class="container">
+    <div class="usa-footer-bottom">&copy; 2026 CyberAbeer TrustLab &middot; Dr. Abeer Saleh Alshammari &middot; Methodology v1.0</div>
+  </div>
+</footer>
+</body>
+</html>
