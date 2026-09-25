@@ -44,16 +44,22 @@ import type { AppLocale } from "@/lib/i18n/config";
  * below flattens every item (and its children) into a tappable list
  * for the new hamburger-triggered mobile panel in Navbar.
  *
- * CyberAbeer TrustLab link (2026-09-25): added an external entry under
- * "For Organizations" pointing at the static /trustlab section
- * (TrustCheck AI risk assessment, Scam Analyzer, AI Governance Check).
- * Renamed from the original /usa working name to a proper product
- * name, CyberAbeer TrustLab, tying it to CyberAbeer's homepage promise
- * ("free cybersecurity tools and skills for everyone") and grounding
- * its content in NIST CSF 2.0, CISA, and FTC small-business guidance.
- * Same `external: true` pattern already used for the OOP Learning Lab
- * under Labs, since /trustlab is a self-contained static HTML section
- * rather than a Next.js route.
+ * TrustCheck AI link (2026-09-25, corrected same day): added an
+ * external entry under "For Organizations" pointing at the static
+ * /trustlab section (TrustCheck AI risk assessment, Scam Analyzer, AI
+ * Governance Check). Brand architecture: CyberAbeer is the parent
+ * brand; GreenTrust AI is the existing, separate enterprise AI
+ * governance/GRC product and is NOT touched by this section;
+ * TrustCheck AI is the new free cybersecurity assessment product for
+ * small businesses and individuals, positioned as a CyberAbeer
+ * Research Lab initiative. The nav label was corrected from an
+ * earlier "CyberAbeer TrustLab" working name to "TrustCheck AI" so it
+ * never reads as the same product as GreenTrust AI. The URL stays at
+ * /trustlab/ (technical slug only, not shown to visitors as a brand
+ * name) to avoid breaking the already-live link. Same `external: true`
+ * pattern already used for the OOP Learning Lab under Labs, since
+ * /trustlab is a self-contained static HTML section rather than a
+ * Next.js route.
  */
 export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isAuthenticated: boolean }) {
   const t = useTranslations("nav");
@@ -78,7 +84,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
         { label: t("greentrust"), href: "/greentrust" },
         { label: t("freeTools"), href: "/free-tools" },
         {
-          label: locale === "ar" ? "سايبر أبير تراست لاب" : "CyberAbeer TrustLab",
+          label: locale === "ar" ? "تراست تشيك AI" : "TrustCheck AI",
           href: "/trustlab/index.html",
           external: true,
         },
