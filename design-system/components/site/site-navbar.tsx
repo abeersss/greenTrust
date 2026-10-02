@@ -87,7 +87,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
     router.refresh();
   }
 
-  const items: NavChild[] = [
+  const items = ([
     { label: t("home"), href: "/" },
     { label: t("about"), href: "/about" },
     {
@@ -135,7 +135,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
       ],
     },
     { label: t("contact"), href: "/contact" },
-  ].map((item) => ({
+  ] as NavChild[]).map((item) => ({
     ...item,
     active:
       pathname === item.href ||
