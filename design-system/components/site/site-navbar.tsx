@@ -9,7 +9,7 @@ import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { logoutUser } from "@/lib/actions/auth";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import type { AppLocale } from "@/lib/i18n/config";
+import type { AppLocale } from "@/lib/i18n/config"; type NavChild = { label: string; href: string; external?: boolean; children?: NavChild[] };
 
 /**
  * Public-site navigation. Wraps the design system's brand-agnostic
@@ -87,7 +87,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
     router.refresh();
   }
 
-  const items = [
+  const items: NavChild[] = [
     { label: t("home"), href: "/" },
     { label: t("about"), href: "/about" },
     {
