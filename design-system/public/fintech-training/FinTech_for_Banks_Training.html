@@ -7,32 +7,61 @@
 <style>
   :root {
     --dk1: #1E2761; --dk2: #0F1838; --lt1: #FFFFFF; --lt2: #CADCFC;
-    --accent2: #E8B64A; --accent3: #6D87C9; --accent4: #97BC62; --accent5: #F96167; --text: #021024;
+    --gold: #E8B64A; --accent3: #6D87C9; --accent4: #97BC62; --accent5: #F96167; --text: #021024;
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Calibri, Arial, sans-serif; background: #F4F6FB; color: var(--text); }
-  header { background: var(--dk1); color: #fff; padding: 28px 24px; text-align: center; }
-  header h1 { margin: 0 0 8px; font-family: Cambria, Georgia, serif; font-size: 30px; }
-  header p { margin: 0; color: var(--lt2); font-size: 15px; }
+
+  /* ---------- Welcome gate ---------- */
+  #gate { position: fixed; inset: 0; background: linear-gradient(135deg, var(--dk1), var(--dk2)); z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .gate-card { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 460px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .gate-coin { width: 64px; height: 64px; margin: 0 auto 14px; }
+  .gate-card h1 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 6px; font-size: 24px; }
+  .gate-card p { color: #4a5578; font-size: 14px; margin-bottom: 18px; }
+  .gate-card input { width: 100%; padding: 12px 14px; border-radius: 8px; border: 2px solid #e2e7f5; font-size: 15px; margin-bottom: 14px; }
+  .gate-card input:focus { outline: none; border-color: var(--gold); }
+  .gate-btn { background: var(--dk1); color: #fff; border: none; border-radius: 10px; padding: 13px 20px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; }
+  .gate-btn:hover { background: var(--accent3); }
+  .gate-skip { margin-top: 10px; font-size: 12.5px; color: #8a8f9e; background: none; border: none; cursor: pointer; text-decoration: underline; }
+
+  header { background: var(--dk1); color: #fff; padding: 24px 24px 16px; text-align: center; }
+  header h1 { margin: 0 0 6px; font-family: Cambria, Georgia, serif; font-size: 28px; }
+  header p { margin: 0; color: var(--lt2); font-size: 14.5px; }
+  #greetLine { margin-top: 8px; font-size: 13.5px; color: var(--gold); font-weight: bold; min-height: 18px; }
+
+  /* progress bar */
+  #progressWrap { background: var(--dk2); padding: 10px 16px; }
+  #progressTrack { max-width: 700px; margin: 0 auto; display: flex; gap: 6px; }
+  .seg { flex: 1; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.15); overflow: hidden; }
+  .seg-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.5s ease; }
+  #progressLabel { text-align: center; color: #cfd8f0; font-size: 11.5px; margin-top: 6px; }
+
   nav { display: flex; flex-wrap: wrap; justify-content: center; background: var(--dk2); padding: 10px; gap: 8px; position: sticky; top: 0; z-index: 10; }
-  nav button { background: transparent; border: 1px solid var(--accent3); color: #fff; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
-  nav button.active, nav button:hover { background: var(--accent2); color: var(--dk1); border-color: var(--accent2); }
+  nav button { background: transparent; border: 1px solid var(--accent3); color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+  nav button.active, nav button:hover { background: var(--gold); color: var(--dk1); border-color: var(--gold); }
+  nav button .check { color: var(--accent4); font-size: 13px; }
+  nav button.active .check { color: var(--dk1); }
+
   main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 60px; }
   .day-section { display: none; }
   .day-section.active { display: block; }
-  .day-intro { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); }
-  .day-intro h2 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin-top: 0; }
-  .widget { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); }
+  .day-intro { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); display: flex; gap: 16px; align-items: flex-start; }
+  .day-icon { flex-shrink: 0; width: 46px; height: 46px; }
+  .day-intro h2 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 6px; }
+  .day-intro p { margin: 0; color: #4a5578; }
+  .widget { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); position: relative; }
   .widget h3 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin-top: 0; }
+  .widget.done { border: 2px solid var(--accent4); }
+  .widget .done-badge { position: absolute; top: 18px; right: 18px; background: var(--accent4); color: #fff; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: none; }
+  .widget.done .done-badge { display: inline-block; }
   .widget .instructions { font-size: 13.5px; color: #4a5578; margin-bottom: 14px; }
   .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
   .pill { background: var(--lt2); color: var(--dk1); border: 2px solid var(--lt2); border-radius: 20px; padding: 8px 14px; font-size: 13.5px; cursor: pointer; user-select: none; font-weight: 600; }
-  .pill.selected { border-color: var(--accent2); background: #fff; }
+  .pill.selected { border-color: var(--gold); background: #fff; }
   .pill.matched { background: var(--accent4); color: #fff; border-color: var(--accent4); cursor: default; }
   .pill.wrong-flash { background: var(--accent5); color: #fff; border-color: var(--accent5); }
   .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .match-col h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent3); margin-bottom: 8px; }
-  .score-line { font-size: 14px; font-weight: bold; color: var(--dk1); margin-top: 10px; }
   .feedback { margin-top: 10px; font-size: 13.5px; padding: 10px 12px; border-radius: 8px; display: none; }
   .feedback.show { display: block; }
   .feedback.ok { background: #e8f5ec; color: #1f6b3a; }
@@ -40,6 +69,7 @@
   .btn { background: var(--dk1); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13.5px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-right: 8px; }
   .btn:hover { background: var(--accent3); }
   .btn.secondary { background: transparent; color: var(--dk1); border: 1.5px solid var(--dk1); }
+  .btn.gold { background: var(--gold); color: var(--dk1); }
   .mcq-option { display: block; width: 100%; text-align: left; background: #F4F6FB; border: 2px solid #e2e7f5; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
   .mcq-option.correct { background: #e8f5ec; border-color: var(--accent4); }
   .mcq-option.incorrect { background: #fde8e8; border-color: var(--accent5); }
@@ -50,35 +80,120 @@
   .sort-item button { background: var(--dk1); color: #fff; border: none; border-radius: 4px; width: 26px; height: 26px; cursor: pointer; font-size: 13px; }
   .xml-box { background: #F2F5FC; border-radius: 10px; padding: 16px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
   .xml-token { padding: 1px 3px; border-radius: 3px; cursor: pointer; }
-  .xml-token.picked { outline: 2px solid var(--accent2); }
-  .scenario-box { background: #FFF7E6; border-left: 4px solid var(--accent2); padding: 14px 18px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
+  .xml-token.picked { outline: 2px solid var(--gold); }
+  .scenario-box { background: #FFF7E6; border-left: 4px solid var(--gold); padding: 14px 18px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
   .toggle-row { display: flex; gap: 10px; margin-bottom: 14px; }
   .toggle-btn { flex: 1; padding: 12px; border-radius: 8px; border: 2px solid var(--accent3); background: #fff; color: var(--dk1); font-weight: bold; cursor: pointer; }
   .toggle-btn.active { background: var(--accent3); color: #fff; }
   .checklist label { display: block; margin-bottom: 8px; font-size: 14px; cursor: pointer; }
   .summary-card { background: var(--dk1); color: #fff; border-radius: 12px; padding: 20px 24px; margin-top: 10px; }
-  .summary-card h3 { margin-top: 0; color: var(--accent2); }
+  .summary-card h3 { margin-top: 0; color: var(--gold); }
   footer { text-align: center; padding: 24px; color: #6b7694; font-size: 12.5px; }
-  .fictional-note { font-size: 11.5px; color: #8a8f9e; font-style: italic; margin-top: 8px; }
-  @media (max-width: 700px) { .match-grid { grid-template-columns: 1fr; } }
+
+  /* mascot */
+  #mascot { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  #mascotBubble { background: #fff; border: 2px solid var(--gold); border-radius: 12px; padding: 12px 14px; max-width: 240px; font-size: 13px; color: var(--dk1); box-shadow: 0 6px 18px rgba(0,0,0,0.18); display: none; }
+  #mascotBubble.show { display: block; }
+  #mascotBtn { width: 58px; height: 58px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
+  #mascotBtn svg { width: 36px; height: 36px; }
+  #mascotBtn:hover { transform: scale(1.06); }
+
+  /* certificate */
+  #certCanvas { width: 100%; max-width: 760px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: block; margin: 0 auto; }
+  .cert-wrap { text-align: center; }
+
+  /* confetti */
+  .confetti-piece { position: fixed; top: -10px; width: 8px; height: 14px; z-index: 500; pointer-events: none; }
+
+  @media (max-width: 700px) { .match-grid { grid-template-columns: 1fr; } .day-intro { flex-direction: column; } }
 </style>
 </head>
 <body>
 
+<div id="gate">
+  <div class="gate-card">
+    <svg class="gate-coin" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#E8B64A" stroke="#1E2761" stroke-width="3"/><text x="32" y="40" font-size="26" text-anchor="middle" fill="#1E2761" font-family="Cambria, serif" font-weight="bold">F</text></svg>
+    <h1>FinTech for Banks Training</h1>
+    <p>Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training. Enter your name to personalize your progress and your completion certificate, or skip ahead.</p>
+    <input type="text" id="nameInput" placeholder="Your name" maxlength="40">
+    <button class="gate-btn" id="startBtn">Start training</button>
+    <button class="gate-skip" id="skipBtn">Skip, I will stay anonymous</button>
+  </div>
+</div>
+
 <header>
   <h1>FinTech for Banks Training</h1>
   <p>Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training</p>
+  <div id="greetLine"></div>
 </header>
+
+<div id="progressWrap">
+  <div id="progressTrack">
+    <div class="seg"><div class="seg-fill" id="fill1"></div></div>
+    <div class="seg"><div class="seg-fill" id="fill2"></div></div>
+    <div class="seg"><div class="seg-fill" id="fill3"></div></div>
+    <div class="seg"><div class="seg-fill" id="fill4"></div></div>
+    <div class="seg"><div class="seg-fill" id="fill5"></div></div>
+  </div>
+  <div id="progressLabel">0 of 5 days complete</div>
+</div>
 
 <nav id="dayNav"></nav>
 
 <main id="mainContent"></main>
+
+<div id="mascot">
+  <div id="mascotBubble"></div>
+  <button id="mascotBtn" title="Tips from the training guide">
+    <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#1E2761"/><circle cx="24" cy="28" r="4" fill="#fff"/><circle cx="40" cy="28" r="4" fill="#fff"/><path d="M20 40 Q32 50 44 40" stroke="#E8B64A" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  </button>
+</div>
 
 <footer>
   All scenarios, account names and message samples on this site are fictional and built for training purposes only. No real bank, institution or customer is represented.
 </footer>
 
 <script>
+/* ============================================================
+   State and persistence
+============================================================ */
+const STORAGE_KEY = "fintechTrainingProgress_v2";
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { name: "", dayDone: { day1: false, day2: false, day3: false, day4: false, day5: false } };
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+let state = loadState();
+
+/* a stable per-browser session id, used server-side only to avoid
+   double-counting the same trainee's day completion if they reload */
+const SESSION_ID_KEY = "fintechTrainingSessionId";
+function getSessionId() {
+  let sid = localStorage.getItem(SESSION_ID_KEY);
+  if (!sid) {
+    sid = "s_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 12);
+    try { localStorage.setItem(SESSION_ID_KEY, sid); } catch (e) {}
+  }
+  return sid;
+}
+
+/* reports a completed day to the founder admin dashboard so the
+   instructor can follow trainee progress by name. Fails silently if
+   the endpoint is unreachable, the simulation itself still works. */
+function reportDayCompletion(dayId, dayLabel) {
+  const name = (state.name && state.name.trim()) ? state.name.trim() : "Anonymous trainee";
+  fetch("/api/fintech-training/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: name, dayId: dayId, dayLabel: dayLabel, sessionId: getSessionId() })
+  }).catch(() => {});
+}
+
 /* ============================================================
    Shared helpers
 ============================================================ */
@@ -94,29 +209,164 @@ function el(tag, attrs, children) {
 }
 function text(str) { return document.createTextNode(str); }
 
+function markDayDone(dayId) {
+  if (!state.dayDone[dayId]) {
+    state.dayDone[dayId] = true;
+    saveState();
+    updateProgressBar();
+    updateNavChecks();
+    launchConfetti();
+    showMascotTip("Well done, you completed " + dayLabelFor(dayId) + ". " + nextTip());
+    reportDayCompletion(dayId, dayLabelFor(dayId));
+  }
+}
+function dayLabelFor(id) {
+  const d = DAYS.find(x => x.id === id);
+  return d ? d.label : id;
+}
+function updateProgressBar() {
+  const ids = ["day1", "day2", "day3", "day4", "day5"];
+  let doneCount = 0;
+  ids.forEach((id, i) => {
+    const fill = document.getElementById("fill" + (i + 1));
+    const isDone = Boolean(state.dayDone[id]);
+    if (isDone) doneCount++;
+    fill.style.width = isDone ? "100%" : "0%";
+  });
+  document.getElementById("progressLabel").textContent = doneCount + " of 5 days complete";
+  if (doneCount === 5) {
+    const certBtn = document.getElementById("certNavBtn");
+    if (certBtn) certBtn.style.display = "flex";
+  }
+}
+function updateNavChecks() {
+  DAYS.forEach(d => {
+    const checkSpan = document.getElementById("navcheck_" + d.id);
+    if (checkSpan) checkSpan.textContent = state.dayDone[d.id] ? "✓" : "";
+  });
+}
+
+/* confetti */
+function launchConfetti() {
+  const colors = ["#E8B64A", "#6D87C9", "#97BC62", "#1E2761", "#F96167"];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement("div");
+    piece.className = "confetti-piece";
+    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+    document.body.appendChild(piece);
+    const duration = 1800 + Math.random() * 1200;
+    const drift = (Math.random() - 0.5) * 200;
+    piece.animate(
+      [
+        { transform: piece.style.transform + " translate(0, 0)", opacity: 1 },
+        { transform: piece.style.transform + " translate(" + drift + "px, 100vh)", opacity: 0.9 }
+      ],
+      { duration: duration, easing: "ease-in" }
+    );
+    setTimeout(() => piece.remove(), duration);
+  }
+}
+
+/* mascot */
+const TIPS = [
+  "Remember, a message can be schema valid and still fail CBPR plus if mandatory data like the UETR is missing.",
+  "Cancellation and return are not interchangeable, the dividing line is always whether settlement already happened.",
+  "Mapping from MT to MX is semantic translation, not simple field substitution.",
+  "The UETR is what lets you trace a single payment across every message in its lifecycle.",
+  "A camt.053 statement entry can reference the exact payment and return that produced it through AcctSvcrRef.",
+  "Debtor and Creditor are the people or companies, Debtor Agent and Creditor Agent are their banks."
+];
+function nextTip() { return TIPS[Math.floor(Math.random() * TIPS.length)]; }
+function showMascotTip(msg) {
+  const bubble = document.getElementById("mascotBubble");
+  bubble.textContent = msg;
+  bubble.classList.add("show");
+  clearTimeout(window._mascotTimer);
+  window._mascotTimer = setTimeout(() => bubble.classList.remove("show"), 6000);
+}
+document.getElementById("mascotBtn").addEventListener("click", () => showMascotTip(nextTip()));
+
+/* ============================================================
+   Welcome gate
+============================================================ */
+const gate = document.getElementById("gate");
+const nameInput = document.getElementById("nameInput");
+function closeGate() {
+  gate.style.display = "none";
+  document.getElementById("greetLine").textContent = state.name ? ("Welcome back, " + state.name + ". Pick up where you left off.") : "";
+}
+if (state.name) {
+  nameInput.value = state.name;
+}
+document.getElementById("startBtn").addEventListener("click", () => {
+  const v = nameInput.value.trim();
+  state.name = v;
+  saveState();
+  closeGate();
+});
+document.getElementById("skipBtn").addEventListener("click", () => {
+  closeGate();
+});
+
 /* ============================================================
    DAY DEFINITIONS
 ============================================================ */
 const DAYS = [
-  { id: "day1", label: "Day 1", title: "Foundations: Actors, Validation Layers and XML" },
-  { id: "day2", label: "Day 2", title: "MT to MX Mapping" },
-  { id: "day3", label: "Day 3", title: "Status, Returns and Cancellation" },
-  { id: "day4", label: "Day 4", title: "Statements, Validation and Reconciliation" },
-  { id: "day5", label: "Day 5", title: "Integrated Scenario and Capstone" },
+  { id: "day1", label: "Day 1", title: "Foundations: Actors, Validation Layers and XML", icon: "book" },
+  { id: "day2", label: "Day 2", title: "MT to MX Mapping", icon: "swap" },
+  { id: "day3", label: "Day 3", title: "Status, Returns and Cancellation", icon: "undo" },
+  { id: "day4", label: "Day 4", title: "Statements, Validation and Reconciliation", icon: "stmt" },
+  { id: "day5", label: "Day 5", title: "Integrated Scenario and Capstone", icon: "trophy" },
 ];
+
+const ICONS = {
+  book: '<svg viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="4" fill="#CADCFC"/><path d="M14 14h20M14 20h20M14 26h14" stroke="#1E2761" stroke-width="2.5" stroke-linecap="round"/></svg>',
+  swap: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#CADCFC"/><path d="M16 20h16l-5-5M32 28H16l5 5" stroke="#1E2761" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  undo: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#CADCFC"/><path d="M30 16l-6 6 6 6M16 22h12a8 8 0 0 1 0 16h-4" stroke="#1E2761" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  stmt: '<svg viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="34" rx="3" fill="#CADCFC"/><path d="M16 15h16M16 21h16M16 27h10" stroke="#1E2761" stroke-width="2.5" stroke-linecap="round"/></svg>',
+  trophy: '<svg viewBox="0 0 48 48"><path d="M16 8h16v10a8 8 0 0 1-16 0V8z" fill="#E8B64A"/><path d="M16 10H9a6 6 0 0 0 6 7M32 10h7a6 6 0 0 1-6 7" stroke="#1E2761" stroke-width="2.2" fill="none"/><rect x="21" y="26" width="6" height="8" fill="#E8B64A"/><rect x="16" y="34" width="16" height="4" rx="1" fill="#1E2761"/></svg>',
+  cert: '<svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="24" rx="3" fill="#CADCFC"/><circle cx="24" cy="36" r="7" fill="#E8B64A"/><path d="M20 36l3 3 6-6" stroke="#1E2761" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
 
 const nav = document.getElementById("dayNav");
 const main = document.getElementById("mainContent");
 
-DAYS.forEach((d, i) => {
-  const btn = el("button", { "data-day": d.id }, [text(d.label)]);
+DAYS.forEach(d => {
+  const btn = el("button", { "data-day": d.id }, [
+    text(d.label + " "),
+    el("span", { class: "check", id: "navcheck_" + d.id }, [])
+  ]);
   btn.addEventListener("click", () => showDay(d.id));
   nav.appendChild(btn);
 });
+const certBtn = el("button", { "data-day": "cert", id: "certNavBtn" }, [text("Certificate")]);
+certBtn.style.display = "none";
+certBtn.addEventListener("click", () => showDay("cert"));
+nav.appendChild(certBtn);
 
 function showDay(id) {
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.getAttribute("data-day") === id));
   document.querySelectorAll(".day-section").forEach(s => s.classList.toggle("active", s.id === id));
+}
+
+function widgetDoneWrap(widget, dayId, onComplete) {
+  widget._markComplete = function () {
+    if (!widget.classList.contains("done")) {
+      widget.classList.add("done");
+      if (onComplete) onComplete();
+    }
+  };
+  const badge = el("div", { class: "done-badge" }, [text("Completed")]);
+  widget.appendChild(badge);
+  return widget;
+}
+
+function checkDayWidgetsComplete(dayId, totalWidgets) {
+  const section = document.getElementById(dayId);
+  const doneCount = section.querySelectorAll(".widget.done").length;
+  if (doneCount >= totalWidgets) markDayDone(dayId);
 }
 
 /* ============================================================
@@ -125,12 +375,19 @@ function showDay(id) {
 function buildDay1() {
   const section = el("section", { id: "day1", class: "day-section" });
   section.appendChild(el("div", { class: "day-intro" }, [
-    el("h2", {}, [text("Day 1: Foundations")]),
-    el("p", {}, [text("Before reading any message, you need to know who the actors are, how validation layers work, and how to read basic XML. Try the three simulations below.")]),
+    el("div", { class: "day-icon", html: ICONS.book }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Day 1: Foundations")]),
+      el("p", {}, [text("Before reading any message, you need to know who the actors are, how validation layers work, and how to read basic XML. Complete all three simulations below to finish Day 1.")]),
+      el("a", { href: "/training/presentations/01_ISO20022_Foundations_EN.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 1 course slides (PPTX)")]),
+    ])
   ]));
 
+  let widgetsDone = 0;
+  function onWidgetDone() { widgetsDone++; checkDayWidgetsComplete("day1", 3); }
+
   // Widget 1: Payment Actor Match
-  const w1 = el("div", { class: "widget" });
+  const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day1", onWidgetDone);
   w1.appendChild(el("h3", {}, [text("Simulation: Match the Payment Actor")]));
   w1.appendChild(el("p", { class: "instructions" }, [text("Click a role on the left, then click the matching description on the right. A fictional corporate customer is paying a fictional overseas supplier through Meridian Bank.")]));
   const actors = [
@@ -167,6 +424,7 @@ function buildDay1() {
         if (matchedCount === actors.length) {
           feedback1.textContent = "All four roles matched correctly. The Debtor and Creditor are people or companies, the Agents are their banks.";
           feedback1.className = "feedback show ok";
+          w1._markComplete();
         }
       } else {
         pill.classList.add("wrong-flash");
@@ -182,7 +440,7 @@ function buildDay1() {
   section.appendChild(w1);
 
   // Widget 2: Validation Layer Sorter
-  const w2 = el("div", { class: "widget" });
+  const w2 = widgetDoneWrap(el("div", { class: "widget" }), "day1", onWidgetDone);
   w2.appendChild(el("h3", {}, [text("Simulation: Order the Validation Layers")]));
   w2.appendChild(el("p", { class: "instructions" }, [text("Use the up and down arrows to put these seven validation layers in the correct order, from the first check a message meets to the last.")]));
   const layersCorrect = [
@@ -222,13 +480,14 @@ function buildDay1() {
     feedback2.textContent = correct
       ? "Correct. A message can pass an early layer and still fail a later one, schema valid does not mean CBPR plus valid."
       : "Not quite yet, keep reordering. Hint: technical checks (XML, schema) come before business and compliance checks.";
+    if (correct) w2._markComplete();
   });
   w2.appendChild(checkBtn2);
   w2.appendChild(feedback2);
   section.appendChild(w2);
 
   // Widget 3: XML tag identification
-  const w3 = el("div", { class: "widget" });
+  const w3 = widgetDoneWrap(el("div", { class: "widget" }), "day1", onWidgetDone);
   w3.appendChild(el("h3", {}, [text("Simulation: Identify the XML Parts")]));
   w3.appendChild(el("p", { class: "instructions" }, [text("Click the piece of the line below that matches each question.")]));
   const xmlBox = el("div", { class: "xml-box" });
@@ -268,7 +527,7 @@ function buildDay1() {
         if (qi < questions3.length) {
           setTimeout(() => { qLabel.textContent = questions3[qi].q; }, 600);
         } else {
-          setTimeout(() => { qLabel.textContent = "All three identified correctly. You can now read an XML line confidently."; }, 600);
+          setTimeout(() => { qLabel.textContent = "All three identified correctly. You can now read an XML line confidently."; w3._markComplete(); }, 600);
         }
       }
     });
@@ -284,12 +543,18 @@ function buildDay1() {
 function buildDay2() {
   const section = el("section", { id: "day2", class: "day-section" });
   section.appendChild(el("div", { class: "day-intro" }, [
-    el("h2", {}, [text("Day 2: MT to MX Mapping")]),
-    el("p", {}, [text("Mapping is semantic translation, not simple substitution. Practice matching old message fields to their new structured equivalents, and classifying the kind of mapping involved.")]),
+    el("div", { class: "day-icon", html: ICONS.swap }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Day 2: MT to MX Mapping")]),
+      el("p", {}, [text("Mapping is semantic translation, not simple substitution. Complete both simulations to finish Day 2.")]),
+      el("a", { href: "/training/presentations/02_MT_to_MX_Mapping_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 2 course slides (PPTX)")]),
+    ])
   ]));
 
+  let onWidgetDone = () => checkDayWidgetsComplete("day2", 2);
+
   // Widget 1: Field mapper match
-  const w1 = el("div", { class: "widget" });
+  const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day2", onWidgetDone);
   w1.appendChild(el("h3", {}, [text("Simulation: MT103 to Pacs.008 Field Mapper")]));
   w1.appendChild(el("p", { class: "instructions" }, [text("Click a legacy field on the left, then its correct structured equivalent on the right.")]));
   const pairs = [
@@ -326,6 +591,7 @@ function buildDay2() {
         if (matched === pairs.length) {
           fb.textContent = "All four fields mapped correctly.";
           fb.className = "feedback show ok";
+          w1._markComplete();
         }
       } else {
         pill.classList.add("wrong-flash");
@@ -340,7 +606,7 @@ function buildDay2() {
   section.appendChild(w1);
 
   // Widget 2: classify mapping principle quiz
-  const w2 = el("div", { class: "widget" });
+  const w2 = widgetDoneWrap(el("div", { class: "widget" }), "day2", onWidgetDone);
   w2.appendChild(el("h3", {}, [text("Quiz: Which Mapping Principle Is This?")]));
   w2.appendChild(el("p", { class: "instructions" }, [text("For each scenario, pick the correct mapping principle.")]));
   const mcqs = [
@@ -349,6 +615,7 @@ function buildDay2() {
     { q: "A UETR is added even though the original MT message never carried one.", options: ["Direct mapping", "Structural split", "Enrichment", "Operational judgment"], correct: 2 },
     { q: "An ambiguous institution reference needs a human to decide which agent role it means.", options: ["Direct mapping", "Structural split", "Enrichment", "Operational judgment"], correct: 3 },
   ];
+  let mcqCorrectCount = 0;
   mcqs.forEach((m, idx) => {
     const qBox = el("div", { style: "margin-bottom:18px;" });
     qBox.appendChild(el("p", { style: "font-weight:bold;" }, [text(`${idx + 1}. ${m.q}`)]));
@@ -356,7 +623,11 @@ function buildDay2() {
       const b = el("button", { class: "mcq-option" }, [text(opt)]);
       b.addEventListener("click", () => {
         qBox.querySelectorAll(".mcq-option").forEach(x => x.disabled = true);
-        if (oi === m.correct) b.classList.add("correct");
+        if (oi === m.correct) {
+          b.classList.add("correct");
+          mcqCorrectCount++;
+          if (mcqCorrectCount === mcqs.length) w2._markComplete();
+        }
         else { b.classList.add("incorrect"); qBox.querySelectorAll(".mcq-option")[m.correct].classList.add("correct"); }
       });
       qBox.appendChild(b);
@@ -374,9 +645,15 @@ function buildDay2() {
 function buildDay3() {
   const section = el("section", { id: "day3", class: "day-section" });
   section.appendChild(el("div", { class: "day-intro" }, [
-    el("h2", {}, [text("Day 3: Status, Returns and Cancellation")]),
-    el("p", {}, [text("The single most tested idea in the program: everything depends on whether settlement has already happened.")]),
+    el("div", { class: "day-icon", html: ICONS.undo }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Day 3: Status, Returns and Cancellation")]),
+      el("p", {}, [text("The single most tested idea in the program: everything depends on whether settlement has already happened. Complete both simulations to finish Day 3.")]),
+      el("a", { href: "/training/presentations/03_Returns_Cancellations_Status_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 3 course slides (PPTX)")]),
+    ])
   ]));
+
+  let onWidgetDone = () => checkDayWidgetsComplete("day3", 2);
 
   const scenarios = [
     { text: "A payment was sent five minutes ago and Meridian Bank confirms it has not yet settled. The customer wants it stopped.", settled: false },
@@ -385,9 +662,10 @@ function buildDay3() {
     { text: "Funds credited three days ago need to be reversed because the beneficiary requested a refund.", settled: true },
   ];
   let sIndex = 0;
-  const w1 = el("div", { class: "widget" });
+  let correctStreak = 0;
+  const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day3", onWidgetDone);
   w1.appendChild(el("h3", {}, [text("Simulation: Cancellation or Return?")]));
-  w1.appendChild(el("p", { class: "instructions" }, [text("Read the scenario, then choose the correct mechanism.")]));
+  w1.appendChild(el("p", { class: "instructions" }, [text("Read the scenario, then choose the correct mechanism. Answer three scenarios correctly in a row to complete this simulation.")]));
   const scenarioBox = el("div", { class: "scenario-box" });
   const toggleRow = el("div", { class: "toggle-row" });
   const btnCancel = el("button", { class: "toggle-btn" }, [text("Cancellation (camt.056)")]);
@@ -406,6 +684,8 @@ function buildDay3() {
     fb3.textContent = correct
       ? (scenarios[sIndex].settled ? "Correct, settlement already happened, so a return is needed." : "Correct, settlement has not happened yet, so cancellation is still possible.")
       : (scenarios[sIndex].settled ? "Not quite, the funds already moved, so cancellation cannot apply here, a return is needed." : "Not quite, settlement has not happened yet, so cancellation is still the right tool.");
+    correctStreak = correct ? correctStreak + 1 : 0;
+    if (correctStreak >= 3) w1._markComplete();
   }
   btnCancel.addEventListener("click", () => { btnCancel.classList.add("active"); btnReturn.classList.remove("active"); answer(false); });
   btnReturn.addEventListener("click", () => { btnReturn.classList.add("active"); btnCancel.classList.remove("active"); answer(true); });
@@ -414,14 +694,14 @@ function buildDay3() {
   w1.appendChild(scenarioBox); w1.appendChild(toggleRow); w1.appendChild(fb3); w1.appendChild(nextBtn);
   section.appendChild(w1);
 
-  // Widget 2: status/reason code lookup
-  const w2 = el("div", { class: "widget" });
+  const w2 = widgetDoneWrap(el("div", { class: "widget" }), "day3", onWidgetDone);
   w2.appendChild(el("h3", {}, [text("Quiz: Status and Reason Codes")]));
   const codeMcqs = [
     { q: "A payment status report shows PDNG. What does this mean?", options: ["It failed permanently", "It is still being processed", "It settled successfully", "It was cancelled"], correct: 1 },
     { q: "A pacs.004 return carries reason code AC04. What happened?", options: ["Insufficient funds", "Closed account", "Duplicate payment", "Wrong currency"], correct: 1 },
     { q: "A status of RJCT always comes with what?", options: ["A new UETR", "A reason code", "A settlement date", "Nothing extra"], correct: 1 },
   ];
+  let codeCorrect = 0;
   codeMcqs.forEach((m, idx) => {
     const qBox = el("div", { style: "margin-bottom:16px;" });
     qBox.appendChild(el("p", { style: "font-weight:bold;" }, [text(`${idx + 1}. ${m.q}`)]));
@@ -429,7 +709,7 @@ function buildDay3() {
       const b = el("button", { class: "mcq-option" }, [text(opt)]);
       b.addEventListener("click", () => {
         qBox.querySelectorAll(".mcq-option").forEach(x => x.disabled = true);
-        if (oi === m.correct) b.classList.add("correct");
+        if (oi === m.correct) { b.classList.add("correct"); codeCorrect++; if (codeCorrect === codeMcqs.length) w2._markComplete(); }
         else { b.classList.add("incorrect"); qBox.querySelectorAll(".mcq-option")[m.correct].classList.add("correct"); }
       });
       qBox.appendChild(b);
@@ -447,12 +727,17 @@ function buildDay3() {
 function buildDay4() {
   const section = el("section", { id: "day4", class: "day-section" });
   section.appendChild(el("div", { class: "day-intro" }, [
-    el("h2", {}, [text("Day 4: Statements, Validation and Reconciliation")]),
-    el("p", {}, [text("Close the loop between a payment and the paper trail it leaves behind.")]),
+    el("div", { class: "day-icon", html: ICONS.stmt }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Day 4: Statements, Validation and Reconciliation")]),
+      el("p", {}, [text("Close the loop between a payment and the paper trail it leaves behind. Complete both simulations to finish Day 4.")]),
+      el("a", { href: "/training/presentations/04_Statements_Validation_Translation_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 4 course slides (PPTX)")]),
+    ])
   ]));
 
-  // Widget 1: Reconciliation matcher
-  const w1 = el("div", { class: "widget" });
+  let onWidgetDone = () => checkDayWidgetsComplete("day4", 2);
+
+  const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day4", onWidgetDone);
   w1.appendChild(el("h3", {}, [text("Simulation: Reconcile the Statement")]));
   w1.appendChild(el("p", { class: "instructions" }, [text("Match each statement entry to the ledger line it belongs to, using the reference shown.")]));
   const entries = [
@@ -485,7 +770,7 @@ function buildDay4() {
         pill.classList.add("matched");
         document.querySelector(`#day4 .match-col:first-child .pill[data-key="${CSS.escape(picked)}"]`)?.classList.add("matched");
         matched++;
-        if (matched === entries.length) { fb.textContent = "All entries reconciled."; fb.className = "feedback show ok"; }
+        if (matched === entries.length) { fb.textContent = "All entries reconciled."; fb.className = "feedback show ok"; w1._markComplete(); }
       } else {
         pill.classList.add("wrong-flash");
         setTimeout(() => pill.classList.remove("wrong-flash"), 500);
@@ -498,8 +783,7 @@ function buildDay4() {
   w1.appendChild(grid); w1.appendChild(fb);
   section.appendChild(w1);
 
-  // Widget 2: CBPR+ checklist checker
-  const w2 = el("div", { class: "widget" });
+  const w2 = widgetDoneWrap(el("div", { class: "widget" }), "day4", onWidgetDone);
   w2.appendChild(el("h3", {}, [text("Simulation: Run the CBPR Plus Validation Checklist")]));
   w2.appendChild(el("p", { class: "instructions" }, [text("This sample message is missing some mandatory CBPR plus data. Check every box you believe the message actually satisfies, then reveal the result.")]));
   w2.appendChild(el("div", { class: "xml-box" }, [text(
@@ -531,6 +815,7 @@ function buildDay4() {
     fb4.textContent = allCorrect
       ? "Correct. This message fails CBPR plus because it is missing a UETR and the creditor agent has no BIC, even though it is schema valid."
       : "Check again, compare each box against the XML sample above, missing data fails the check even if the schema itself would still parse.";
+    if (allCorrect) w2._markComplete();
   });
   w2.appendChild(revealBtn); w2.appendChild(fb4);
   section.appendChild(w2);
@@ -544,11 +829,15 @@ function buildDay4() {
 function buildDay5() {
   const section = el("section", { id: "day5", class: "day-section" });
   section.appendChild(el("div", { class: "day-intro" }, [
-    el("h2", {}, [text("Day 5: Integrated Scenario and Capstone")]),
-    el("p", {}, [text("Bring every skill from the week together in one final scenario.")]),
+    el("div", { class: "day-icon", html: ICONS.trophy }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Day 5: Integrated Scenario and Capstone")]),
+      el("p", {}, [text("Bring every skill from the week together in one final scenario. Answer all four steps correctly to complete the program.")]),
+      el("a", { href: "/training/presentations/05_EndToEnd_Assessment_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 5 course slides (PPTX)")]),
+    ])
   ]));
 
-  const w1 = el("div", { class: "widget" });
+  const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day5", () => checkDayWidgetsComplete("day5", 1));
   w1.appendChild(el("h3", {}, [text("Capstone: Pick the Right Message, Step by Step")]));
   w1.appendChild(el("div", { class: "scenario-box" }, [text(
     "A corporate customer at Meridian Bank asks their bank to pay a fictional overseas supplier. Two days later, the supplier's account turns out to be closed, and the funds, which had already settled, must be returned."
@@ -579,13 +868,92 @@ function buildDay5() {
     el("p", { id: "summaryText" }, [text("Answer the four steps above to see your score.")]),
   ]);
   function updateSummary() {
-    const answered = document.querySelectorAll("#day5 .mcq-option.correct, #day5 .mcq-option.incorrect").length;
     document.getElementById("summaryText").textContent = `Score so far: ${stepScore} correct out of 4 steps.` + (stepScore === 4 ? " Full marks, you have traced the complete lifecycle from payment to statement." : "");
+    if (stepScore === 4) w1._markComplete();
   }
   w1.appendChild(summary);
   section.appendChild(w1);
 
   return section;
+}
+
+/* ============================================================
+   CERTIFICATE SECTION
+============================================================ */
+function buildCertificate() {
+  const section = el("section", { id: "cert", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("div", { class: "day-icon", html: ICONS.cert }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Your Completion Certificate")]),
+      el("p", {}, [text("You completed all five days of FinTech for Banks Training. Download your certificate below.")]),
+    ])
+  ]));
+  const widget = el("div", { class: "widget cert-wrap" });
+  widget.appendChild(el("canvas", { id: "certCanvas", width: "1000", height: "700" }));
+  const downloadBtn = el("button", { class: "btn gold" }, [text("Download certificate as image")]);
+  downloadBtn.addEventListener("click", () => {
+    const canvas = document.getElementById("certCanvas");
+    const link = document.createElement("a");
+    link.download = "FinTech_for_Banks_Training_Certificate.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+  widget.appendChild(downloadBtn);
+  section.appendChild(widget);
+  return section;
+}
+function drawCertificate() {
+  const canvas = document.getElementById("certCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = "#1E2761";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "#E8B64A";
+  ctx.lineWidth = 8;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+  ctx.strokeStyle = "#CADCFC";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(40, 40, w - 80, h - 80);
+  ctx.fillStyle = "#E8B64A";
+  ctx.textAlign = "center";
+  ctx.font = "bold 22px Georgia";
+  ctx.fillText("CERTIFICATE OF COMPLETION", w / 2, 130);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "bold 42px Georgia";
+  ctx.fillText("FinTech for Banks Training", w / 2, 190);
+  ctx.font = "16px Calibri";
+  ctx.fillStyle = "#CADCFC";
+  ctx.fillText("Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training", w / 2, 225);
+  ctx.font = "15px Calibri";
+  ctx.fillText("This certifies that", w / 2, 300);
+  ctx.fillStyle = "#E8B64A";
+  ctx.font = "bold 36px Georgia";
+  const name = (state.name && state.name.trim()) ? state.name.trim() : "Training Participant";
+  ctx.fillText(name, w / 2, 350);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "15px Calibri";
+  ctx.fillText("has successfully completed all five days of the program,", w / 2, 395);
+  ctx.fillText("covering ISO 20022 foundations, MT to MX mapping, returns and cancellations,", w / 2, 420);
+  ctx.fillText("statements and reconciliation, and an integrated capstone scenario.", w / 2, 445);
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  ctx.font = "14px Calibri";
+  ctx.fillStyle = "#CADCFC";
+  ctx.fillText("Date: " + dateStr, w / 2, 500);
+  ctx.strokeStyle = "#E8B64A";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(w / 2 - 140, 560);
+  ctx.lineTo(w / 2 + 140, 560);
+  ctx.stroke();
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "italic 18px Georgia";
+  ctx.fillText("Dr. Abeer Alshammari", w / 2, 585);
+  ctx.font = "13px Calibri";
+  ctx.fillStyle = "#CADCFC";
+  ctx.fillText("Program Director, FinTech for Banks Training", w / 2, 605);
 }
 
 /* ============================================================
@@ -596,7 +964,16 @@ main.appendChild(buildDay2());
 main.appendChild(buildDay3());
 main.appendChild(buildDay4());
 main.appendChild(buildDay5());
+main.appendChild(buildCertificate());
 showDay("day1");
+updateProgressBar();
+updateNavChecks();
+if (state.dayDone.day1 && state.dayDone.day2 && state.dayDone.day3 && state.dayDone.day4 && state.dayDone.day5) {
+  document.getElementById("certNavBtn").style.display = "flex";
+}
+const certObserver = new MutationObserver(() => { if (document.getElementById("cert").classList.contains("active")) drawCertificate(); });
+certObserver.observe(document.getElementById("cert"), { attributes: true, attributeFilter: ["class"] });
+document.getElementById("certNavBtn").addEventListener("click", () => setTimeout(drawCertificate, 50));
 </script>
 </body>
 </html>
