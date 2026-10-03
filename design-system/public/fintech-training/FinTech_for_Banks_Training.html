@@ -119,6 +119,17 @@ footer { text-align: center; padding: 24px; color: #6b7694; font-size: 12.5px; }
 .feed-empty, .cohort-empty { color: #8a8f9e; font-size: 13.5px; padding: 10px 0; }
 .cohort-note { font-size: 12px; color: #8a8f9e; margin-top: 12px; }
 
+/* about the course */
+.about-block { margin-bottom: 18px; }
+.about-block:last-child { margin-bottom: 0; }
+.about-block h3 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 8px; font-size: 17px; }
+.about-block p { margin: 0; color: #4a5578; font-size: 14px; line-height: 1.6; }
+.about-days { list-style: none; margin: 0; padding: 0; }
+.about-days li { font-size: 14px; color: #4a5578; line-height: 1.6; margin-bottom: 8px; padding-left: 18px; position: relative; }
+.about-days li::before { content: "\2022"; color: var(--gold); font-weight: bold; position: absolute; left: 0; }
+.about-days li strong { color: var(--dk1); }
+.about-block a { color: var(--dk1); font-weight: bold; }
+
 /* mascot */
 #mascot { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 #mascotBubble { background: #fff; border: 2px solid var(--gold); border-radius: 12px; padding: 12px 14px; max-width: 240px; font-size: 13px; color: var(--dk1); box-shadow: 0 6px 18px rgba(0,0,0,0.18); display: none; }
@@ -357,11 +368,16 @@ const ICONS = {
   stmt: '<svg viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="34" rx="3" fill="#CADCFC"/><path d="M16 15h16M16 21h16M16 27h10" stroke="#1E2761" stroke-width="2.5" stroke-linecap="round"/></svg>',
   trophy: '<svg viewBox="0 0 48 48"><path d="M16 8h16v10a8 8 0 0 1-16 0V8z" fill="#E8B64A"/><path d="M16 10H9a6 6 0 0 0 6 7M32 10h7a6 6 0 0 1-6 7" stroke="#1E2761" stroke-width="2.2" fill="none"/><rect x="21" y="26" width="6" height="8" fill="#E8B64A"/><rect x="16" y="34" width="16" height="4" rx="1" fill="#1E2761"/></svg>',
   cert: '<svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="24" rx="3" fill="#CADCFC"/><circle cx="24" cy="36" r="7" fill="#E8B64A"/><path d="M20 36l3 3 6-6" stroke="#1E2761" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  cohort: '<svg viewBox="0 0 48 48"><circle cx="16" cy="18" r="6" fill="#CADCFC"/><circle cx="32" cy="18" r="6" fill="#CADCFC"/><path d="M6 38c0-7 5-11 10-11s10 4 10 11M22 38c0-7 5-11 10-11s10 4 10 11" stroke="#1E2761" stroke-width="2.2" fill="none"/></svg>'
+  cohort: '<svg viewBox="0 0 48 48"><circle cx="16" cy="18" r="6" fill="#CADCFC"/><circle cx="32" cy="18" r="6" fill="#CADCFC"/><path d="M6 38c0-7 5-11 10-11s10 4 10 11M22 38c0-7 5-11 10-11s10 4 10 11" stroke="#1E2761" stroke-width="2.2" fill="none"/></svg>',
+  about: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="#CADCFC"/><circle cx="24" cy="16" r="2.4" fill="#1E2761"/><path d="M24 22v12" stroke="#1E2761" stroke-width="2.5" stroke-linecap="round"/></svg>'
 };
 
 const nav = document.getElementById("dayNav");
 const main = document.getElementById("mainContent");
+
+const aboutBtn = el("button", { "data-day": "about" }, [text("About the Course")]);
+aboutBtn.addEventListener("click", () => showDay("about"));
+nav.appendChild(aboutBtn);
 
 DAYS.forEach(d => {
   const btn = el("button", { "data-day": d.id }, [
@@ -959,7 +975,7 @@ function buildDay4() {
   w2.appendChild(el("p", { class: "instructions" }, [text("This sample message is missing some mandatory CBPR plus data. Check every box you believe the message actually satisfies, then reveal the result.")]));
   w2.appendChild(el("div", { class: "xml-box" }, [text(
     'Cdtr Nm: Fictional Supply Co\nCdtrAgt FinInstnId Nm: Some Overseas Bank\nIntrBkSttlmAmt Ccy USD: 15000.00\nNote: no UETR present in this message'
-  ) }));
+  )]));
   const checklist = [
     { label: "UETR is present", pass: false },
     { label: "Creditor agent has a BIC", pass: false },
@@ -1065,6 +1081,54 @@ function buildDay5() {
   w1.appendChild(summary);
   section.appendChild(w1);
 
+  return section;
+}
+
+/* ============================================================
+ABOUT THE COURSE
+============================================================ */
+function buildAboutSection() {
+  const section = el("section", { id: "about", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("div", { class: "day-icon", html: ICONS.about }, []),
+    el("div", {}, [
+      el("h2", {}, [text("About the Course")]),
+      el("p", {}, [text("What this program covers, how it works, and how to get your certificate.")]),
+    ])
+  ]));
+
+  const widget = el("div", { class: "widget" });
+
+  const block = (heading, paraHtml) => {
+    const b = el("div", { class: "about-block" }, [
+      el("h3", {}, [text(heading)]),
+    ]);
+    b.appendChild(paraHtml);
+    widget.appendChild(b);
+  };
+
+  block("What This Is", el("p", {}, [text("FinTech for Banks Training is a five-day interactive program covering ISO 20022 and CBPR plus payment standards. It is built around live, timed simulations rather than passive reading, so trainees practice the real decisions a payments operations desk makes every day.")]));
+
+  const daysList = el("ul", { class: "about-days" }, [
+    el("li", {}, [el("strong", {}, [text("Day 1: ")]), text("Foundations: payment actors, validation layers, and reading basic XML.")]),
+    el("li", {}, [el("strong", {}, [text("Day 2: ")]), text("MT to MX mapping, including direct mapping, structural splits, and enrichment.")]),
+    el("li", {}, [el("strong", {}, [text("Day 3: ")]), text("Status, returns, and cancellation, centered on whether settlement has happened.")]),
+    el("li", {}, [el("strong", {}, [text("Day 4: ")]), text("Statements, validation, and reconciliation of payments against the paper trail.")]),
+    el("li", {}, [el("strong", {}, [text("Day 5: ")]), text("An integrated scenario and capstone bringing every skill together.")]),
+  ]);
+  const daysBlock = el("div", { class: "about-block" }, [el("h3", {}, [text("The Five Days")])]);
+  daysBlock.appendChild(daysList);
+  widget.appendChild(daysBlock);
+
+  block("How to Access", el("p", {}, [text("Open the training site on any device: cyberabeer.com/fintech-training/FinTech_for_Banks_Training.html. Enter a name once to track progress and unlock a certificate, or continue anonymously.")]));
+
+  block("How It Works", el("p", {}, [text("Each day combines matching, sorting, and quiz exercises with a timed live simulation desk. Completing a day's exercises unlocks the next day and moves the progress bar forward. A Live Cohort tab shows every trainee's progress in real time, so the room feels like one shared session rather than five separate quizzes.")]));
+
+  block("Certificate", el("p", {}, [text("Completing all five days unlocks a personalized certificate of completion, signed by Dr. Abeer Alshammari, downloadable directly from the site as an image.")]));
+
+  block("For Instructors", el("p", {}, [text("Trainee names and day-by-day completion are visible on the founder dashboard at cyberabeer.com/en/founder/fintech-training, so progress can be followed without asking trainees directly.")]));
+
+  section.appendChild(widget);
   return section;
 }
 
@@ -1256,6 +1320,7 @@ function drawCertificate() {
 /* ============================================================
 BUILD PAGE
 ============================================================ */
+main.appendChild(buildAboutSection());
 main.appendChild(buildDay1());
 main.appendChild(buildDay2());
 main.appendChild(buildDay3());
