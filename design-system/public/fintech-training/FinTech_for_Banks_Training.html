@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTech for Banks Training</title>
+<style>
+  :root {
+    --dk1: #1E2761; --dk2: #0F1838; --lt1: #FFFFFF; --lt2: #CADCFC;
+    --accent2: #E8B64A; --accent3: #6D87C9; --accent4: #97BC62; --accent5: #F96167; --text: #021024;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Calibri, Arial, sans-serif; background: #F4F6FB; color: var(--text); }
+  header { background: var(--dk1); color: #fff; padding: 28px 24px; text-align: center; }
+  header h1 { margin: 0 0 8px; font-family: Cambria, Georgia, serif; font-size: 30px; }
+  header p { margin: 0; color: var(--lt2); font-size: 15px; }
+  nav { display: flex; flex-wrap: wrap; justify-content: center; background: var(--dk2); padding: 10px; gap: 8px; position: sticky; top: 0; z-index: 10; }
+  nav button { background: transparent; border: 1px solid var(--accent3); color: #fff; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
+  nav button.active, nav button:hover { background: var(--accent2); color: var(--dk1); border-color: var(--accent2); }
+  main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 60px; }
+  .day-section { display: none; }
+  .day-section.active { display: block; }
+  .day-intro { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); }
+  .day-intro h2 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin-top: 0; }
+  .widget { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); }
+  .widget h3 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin-top: 0; }
+  .widget .instructions { font-size: 13.5px; color: #4a5578; margin-bottom: 14px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .pill { background: var(--lt2); color: var(--dk1); border: 2px solid var(--lt2); border-radius: 20px; padding: 8px 14px; font-size: 13.5px; cursor: pointer; user-select: none; font-weight: 600; }
+  .pill.selected { border-color: var(--accent2); background: #fff; }
+  .pill.matched { background: var(--accent4); color: #fff; border-color: var(--accent4); cursor: default; }
+  .pill.wrong-flash { background: var(--accent5); color: #fff; border-color: var(--accent5); }
+  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .match-col h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent3); margin-bottom: 8px; }
+  .score-line { font-size: 14px; font-weight: bold; color: var(--dk1); margin-top: 10px; }
+  .feedback { margin-top: 10px; font-size: 13.5px; padding: 10px 12px; border-radius: 8px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #e8f5ec; color: #1f6b3a; }
+  .feedback.bad { background: #fde8e8; color: #8a1f1f; }
+  .btn { background: var(--dk1); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13.5px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-right: 8px; }
+  .btn:hover { background: var(--accent3); }
+  .btn.secondary { background: transparent; color: var(--dk1); border: 1.5px solid var(--dk1); }
+  .mcq-option { display: block; width: 100%; text-align: left; background: #F4F6FB; border: 2px solid #e2e7f5; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+  .mcq-option.correct { background: #e8f5ec; border-color: var(--accent4); }
+  .mcq-option.incorrect { background: #fde8e8; border-color: var(--accent5); }
+  .mcq-option:disabled { cursor: default; }
+  .sort-list { list-style: none; padding: 0; margin: 0; }
+  .sort-item { background: var(--lt2); border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; font-size: 13.5px; font-weight: 600; color: var(--dk1); cursor: grab; display: flex; justify-content: space-between; align-items: center; }
+  .sort-item .mover { display: flex; gap: 4px; }
+  .sort-item button { background: var(--dk1); color: #fff; border: none; border-radius: 4px; width: 26px; height: 26px; cursor: pointer; font-size: 13px; }
+  .xml-box { background: #F2F5FC; border-radius: 10px; padding: 16px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+  .xml-token { padding: 1px 3px; border-radius: 3px; cursor: pointer; }
+  .xml-token.picked { outline: 2px solid var(--accent2); }
+  .scenario-box { background: #FFF7E6; border-left: 4px solid var(--accent2); padding: 14px 18px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
+  .toggle-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .toggle-btn { flex: 1; padding: 12px; border-radius: 8px; border: 2px solid var(--accent3); background: #fff; color: var(--dk1); font-weight: bold; cursor: pointer; }
+  .toggle-btn.active { background: var(--accent3); color: #fff; }
+  .checklist label { display: block; margin-bottom: 8px; font-size: 14px; cursor: pointer; }
+  .summary-card { background: var(--dk1); color: #fff; border-radius: 12px; padding: 20px 24px; margin-top: 10px; }
+  .summary-card h3 { margin-top: 0; color: var(--accent2); }
+  footer { text-align: center; padding: 24px; color: #6b7694; font-size: 12.5px; }
+  .fictional-note { font-size: 11.5px; color: #8a8f9e; font-style: italic; margin-top: 8px; }
+  @media (max-width: 700px) { .match-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FinTech for Banks Training</h1>
+  <p>Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training</p>
+</header>
+
+<nav id="dayNav"></nav>
+
+<main id="mainContent"></main>
+
+<footer>
+  All scenarios, account names and message samples on this site are fictional and built for training purposes only. No real bank, institution or customer is represented.
+</footer>
+
+<script>
+/* ============================================================
+   Shared helpers
+============================================================ */
+function el(tag, attrs, children) {
+  const e = document.createElement(tag);
+  if (attrs) Object.entries(attrs).forEach(([k, v]) => {
+    if (k === "class") e.className = v;
+    else if (k === "html") e.innerHTML = v;
+    else e.setAttribute(k, v);
+  });
+  (children || []).forEach(c => e.appendChild(c));
+  return e;
+}
+function text(str) { return document.createTextNode(str); }
+
+/* ============================================================
+   DAY DEFINITIONS
+============================================================ */
+const DAYS = [
+  { id: "day1", label: "Day 1", title: "Foundations: Actors, Validation Layers and XML" },
+  { id: "day2", label: "Day 2", title: "MT to MX Mapping" },
+  { id: "day3", label: "Day 3", title: "Status, Returns and Cancellation" },
+  { id: "day4", label: "Day 4", title: "Statements, Validation and Reconciliation" },
+  { id: "day5", label: "Day 5", title: "Integrated Scenario and Capstone" },
+];
+
+const nav = document.getElementById("dayNav");
+const main = document.getElementById("mainContent");
+
+DAYS.forEach((d, i) => {
+  const btn = el("button", { "data-day": d.id }, [text(d.label)]);
+  btn.addEventListener("click", () => showDay(d.id));
+  nav.appendChild(btn);
+});
+
+function showDay(id) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.getAttribute("data-day") === id));
+  document.querySelectorAll(".day-section").forEach(s => s.classList.toggle("active", s.id === id));
+}
+
+/* ============================================================
+   DAY 1 SECTION
+============================================================ */
+function buildDay1() {
+  const section = el("section", { id: "day1", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("h2", {}, [text("Day 1: Foundations")]),
+    el("p", {}, [text("Before reading any message, you need to know who the actors are, how validation layers work, and how to read basic XML. Try the three simulations below.")]),
+  ]));
+
+  // Widget 1: Payment Actor Match
+  const w1 = el("div", { class: "widget" });
+  w1.appendChild(el("h3", {}, [text("Simulation: Match the Payment Actor")]));
+  w1.appendChild(el("p", { class: "instructions" }, [text("Click a role on the left, then click the matching description on the right. A fictional corporate customer is paying a fictional overseas supplier through Meridian Bank.")]));
+  const actors = [
+    { k: "Dbtr", v: "The corporate customer requesting the payment" },
+    { k: "DbtrAgt", v: "Meridian Bank, the customer's own bank" },
+    { k: "CdtrAgt", v: "The supplier's bank, where the funds will be credited" },
+    { k: "Cdtr", v: "The supplier receiving the payment" },
+  ];
+  const w1grid = el("div", { class: "match-grid" });
+  const colA = el("div", { class: "match-col" }, [el("h4", {}, [text("Role")])]);
+  const colB = el("div", { class: "match-col" }, [el("h4", {}, [text("Description")])]);
+  const shuffledV = [...actors].sort(() => Math.random() - 0.5);
+  let pickedK = null, matchedCount = 0;
+  const feedback1 = el("div", { class: "feedback" });
+  actors.forEach(a => {
+    const pill = el("div", { class: "pill" }, [text(a.k)]);
+    pill.addEventListener("click", () => {
+      if (pill.classList.contains("matched")) return;
+      document.querySelectorAll("#day1 .match-col:first-child .pill").forEach(p => p.classList.remove("selected"));
+      pill.classList.add("selected");
+      pickedK = a.k;
+    });
+    pill.dataset.key = a.k;
+    colA.appendChild(pill);
+  });
+  shuffledV.forEach(a => {
+    const pill = el("div", { class: "pill" }, [text(a.v)]);
+    pill.addEventListener("click", () => {
+      if (pill.classList.contains("matched") || !pickedK) return;
+      if (pickedK === a.k) {
+        pill.classList.add("matched");
+        document.querySelector(`#day1 .match-col:first-child .pill[data-key="${pickedK}"]`).classList.add("matched");
+        matchedCount++;
+        if (matchedCount === actors.length) {
+          feedback1.textContent = "All four roles matched correctly. The Debtor and Creditor are people or companies, the Agents are their banks.";
+          feedback1.className = "feedback show ok";
+        }
+      } else {
+        pill.classList.add("wrong-flash");
+        setTimeout(() => pill.classList.remove("wrong-flash"), 500);
+      }
+      pickedK = null;
+    });
+    colB.appendChild(pill);
+  });
+  w1grid.appendChild(colA); w1grid.appendChild(colB);
+  w1.appendChild(w1grid);
+  w1.appendChild(feedback1);
+  section.appendChild(w1);
+
+  // Widget 2: Validation Layer Sorter
+  const w2 = el("div", { class: "widget" });
+  w2.appendChild(el("h3", {}, [text("Simulation: Order the Validation Layers")]));
+  w2.appendChild(el("p", { class: "instructions" }, [text("Use the up and down arrows to put these seven validation layers in the correct order, from the first check a message meets to the last.")]));
+  const layersCorrect = [
+    "XML well formedness",
+    "Schema or XSD validation",
+    "ISO 20022 message definition constraints",
+    "CBPR plus usage guideline constraints",
+    "SWIFT, network or service rules",
+    "Bank internal business rules",
+    "Compliance, screening and operational processing",
+  ];
+  let layersCurrent = [...layersCorrect].sort(() => Math.random() - 0.5);
+  const sortList = el("ol", { class: "sort-list" });
+  function renderSort() {
+    sortList.innerHTML = "";
+    layersCurrent.forEach((lv, i) => {
+      const li = el("li", { class: "sort-item" }, [
+        text(`${i + 1}. ${lv}`),
+      ]);
+      const movers = el("div", { class: "mover" });
+      const up = el("button", {}, [text("↑")]);
+      up.addEventListener("click", () => { if (i > 0) { [layersCurrent[i-1], layersCurrent[i]] = [layersCurrent[i], layersCurrent[i-1]]; renderSort(); } });
+      const down = el("button", {}, [text("↓")]);
+      down.addEventListener("click", () => { if (i < layersCurrent.length - 1) { [layersCurrent[i+1], layersCurrent[i]] = [layersCurrent[i], layersCurrent[i+1]]; renderSort(); } });
+      movers.appendChild(up); movers.appendChild(down);
+      li.appendChild(movers);
+      sortList.appendChild(li);
+    });
+  }
+  renderSort();
+  w2.appendChild(sortList);
+  const feedback2 = el("div", { class: "feedback" });
+  const checkBtn2 = el("button", { class: "btn" }, [text("Check my order")]);
+  checkBtn2.addEventListener("click", () => {
+    const correct = layersCurrent.every((v, i) => v === layersCorrect[i]);
+    feedback2.className = "feedback show " + (correct ? "ok" : "bad");
+    feedback2.textContent = correct
+      ? "Correct. A message can pass an early layer and still fail a later one, schema valid does not mean CBPR plus valid."
+      : "Not quite yet, keep reordering. Hint: technical checks (XML, schema) come before business and compliance checks.";
+  });
+  w2.appendChild(checkBtn2);
+  w2.appendChild(feedback2);
+  section.appendChild(w2);
+
+  // Widget 3: XML tag identification
+  const w3 = el("div", { class: "widget" });
+  w3.appendChild(el("h3", {}, [text("Simulation: Identify the XML Parts")]));
+  w3.appendChild(el("p", { class: "instructions" }, [text("Click the piece of the line below that matches each question.")]));
+  const xmlBox = el("div", { class: "xml-box" });
+  const tokens = [
+    { t: "<IntrBkSttlmAmt", type: "element" },
+    { t: " Ccy", type: "attribute" },
+    { t: "=", type: "plain" },
+    { t: '"USD"', type: "attrvalue" },
+    { t: ">", type: "plain" },
+    { t: "15000.00", type: "elementvalue" },
+    { t: "</IntrBkSttlmAmt>", type: "element" },
+  ];
+  tokens.forEach(tk => {
+    const span = el("span", { class: "xml-token", "data-type": tk.type }, [text(tk.t)]);
+    xmlBox.appendChild(span);
+  });
+  w3.appendChild(xmlBox);
+  const questions3 = [
+    { q: "Click the attribute value", type: "attrvalue" },
+    { q: "Click the element value", type: "elementvalue" },
+    { q: "Click the attribute", type: "attribute" },
+  ];
+  let qi = 0;
+  const qLabel = el("p", { style: "margin-top:14px;font-weight:bold;color:#1E2761;" }, [text(questions3[0].q)]);
+  const feedback3 = el("div", { class: "feedback" });
+  w3.appendChild(qLabel);
+  w3.appendChild(feedback3);
+  xmlBox.querySelectorAll(".xml-token").forEach(span => {
+    span.addEventListener("click", () => {
+      if (qi >= questions3.length) return;
+      const expected = questions3[qi].type;
+      const correct = span.dataset.type === expected;
+      feedback3.className = "feedback show " + (correct ? "ok" : "bad");
+      feedback3.textContent = correct ? "Correct." : "Not quite, try again.";
+      if (correct) {
+        qi++;
+        if (qi < questions3.length) {
+          setTimeout(() => { qLabel.textContent = questions3[qi].q; }, 600);
+        } else {
+          setTimeout(() => { qLabel.textContent = "All three identified correctly. You can now read an XML line confidently."; }, 600);
+        }
+      }
+    });
+  });
+  section.appendChild(w3);
+
+  return section;
+}
+
+/* ============================================================
+   DAY 2 SECTION
+============================================================ */
+function buildDay2() {
+  const section = el("section", { id: "day2", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("h2", {}, [text("Day 2: MT to MX Mapping")]),
+    el("p", {}, [text("Mapping is semantic translation, not simple substitution. Practice matching old message fields to their new structured equivalents, and classifying the kind of mapping involved.")]),
+  ]));
+
+  // Widget 1: Field mapper match
+  const w1 = el("div", { class: "widget" });
+  w1.appendChild(el("h3", {}, [text("Simulation: MT103 to Pacs.008 Field Mapper")]));
+  w1.appendChild(el("p", { class: "instructions" }, [text("Click a legacy field on the left, then its correct structured equivalent on the right.")]));
+  const pairs = [
+    { k: ":50K: Ordering Customer", v: "Dbtr (the Debtor)" },
+    { k: ":57A: Account With Institution", v: "CdtrAgt (the Creditor Agent)" },
+    { k: ":59: Beneficiary", v: "Cdtr (the Creditor)" },
+    { k: ":71A: Details of Charges", v: "ChrgBr (charge bearer code)" },
+  ];
+  const grid = el("div", { class: "match-grid" });
+  const colA = el("div", { class: "match-col" }, [el("h4", {}, [text("Legacy field")])]);
+  const colB = el("div", { class: "match-col" }, [el("h4", {}, [text("Structured element")])]);
+  const shuffled = [...pairs].sort(() => Math.random() - 0.5);
+  let picked = null, matched = 0;
+  const fb = el("div", { class: "feedback" });
+  pairs.forEach(p => {
+    const pill = el("div", { class: "pill" }, [text(p.k)]);
+    pill.addEventListener("click", () => {
+      if (pill.classList.contains("matched")) return;
+      document.querySelectorAll("#day2 .match-col:first-child .pill").forEach(x => x.classList.remove("selected"));
+      pill.classList.add("selected");
+      picked = p.k;
+    });
+    pill.dataset.key = p.k;
+    colA.appendChild(pill);
+  });
+  shuffled.forEach(p => {
+    const pill = el("div", { class: "pill" }, [text(p.v)]);
+    pill.addEventListener("click", () => {
+      if (pill.classList.contains("matched") || !picked) return;
+      if (picked === p.k) {
+        pill.classList.add("matched");
+        document.querySelector(`#day2 .match-col:first-child .pill[data-key="${CSS.escape(picked)}"]`)?.classList.add("matched");
+        matched++;
+        if (matched === pairs.length) {
+          fb.textContent = "All four fields mapped correctly.";
+          fb.className = "feedback show ok";
+        }
+      } else {
+        pill.classList.add("wrong-flash");
+        setTimeout(() => pill.classList.remove("wrong-flash"), 500);
+      }
+      picked = null;
+    });
+    colB.appendChild(pill);
+  });
+  grid.appendChild(colA); grid.appendChild(colB);
+  w1.appendChild(grid); w1.appendChild(fb);
+  section.appendChild(w1);
+
+  // Widget 2: classify mapping principle quiz
+  const w2 = el("div", { class: "widget" });
+  w2.appendChild(el("h3", {}, [text("Quiz: Which Mapping Principle Is This?")]));
+  w2.appendChild(el("p", { class: "instructions" }, [text("For each scenario, pick the correct mapping principle.")]));
+  const mcqs = [
+    { q: "An MT103 amount field moves into IntrBkSttlmAmt with no change in meaning.", options: ["Direct mapping", "Structural split", "Enrichment", "Operational judgment"], correct: 0 },
+    { q: "A free text address becomes separate street, town and country fields.", options: ["Direct mapping", "Structural split", "Enrichment", "Operational judgment"], correct: 1 },
+    { q: "A UETR is added even though the original MT message never carried one.", options: ["Direct mapping", "Structural split", "Enrichment", "Operational judgment"], correct: 2 },
+    { q: "An ambiguous institution reference needs a human to decide which agent role it means.", options: ["Direct mapping", "Structural split", "Enrichment", "Operational judgment"], correct: 3 },
+  ];
+  mcqs.forEach((m, idx) => {
+    const qBox = el("div", { style: "margin-bottom:18px;" });
+    qBox.appendChild(el("p", { style: "font-weight:bold;" }, [text(`${idx + 1}. ${m.q}`)]));
+    m.options.forEach((opt, oi) => {
+      const b = el("button", { class: "mcq-option" }, [text(opt)]);
+      b.addEventListener("click", () => {
+        qBox.querySelectorAll(".mcq-option").forEach(x => x.disabled = true);
+        if (oi === m.correct) b.classList.add("correct");
+        else { b.classList.add("incorrect"); qBox.querySelectorAll(".mcq-option")[m.correct].classList.add("correct"); }
+      });
+      qBox.appendChild(b);
+    });
+    w2.appendChild(qBox);
+  });
+  section.appendChild(w2);
+
+  return section;
+}
+
+/* ============================================================
+   DAY 3 SECTION
+============================================================ */
+function buildDay3() {
+  const section = el("section", { id: "day3", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("h2", {}, [text("Day 3: Status, Returns and Cancellation")]),
+    el("p", {}, [text("The single most tested idea in the program: everything depends on whether settlement has already happened.")]),
+  ]));
+
+  const scenarios = [
+    { text: "A payment was sent five minutes ago and Meridian Bank confirms it has not yet settled. The customer wants it stopped.", settled: false },
+    { text: "A payment settled yesterday. The beneficiary account turned out to be closed, so the funds must come back.", settled: true },
+    { text: "A payment is still queued for processing and the originator realizes they sent the wrong amount.", settled: false },
+    { text: "Funds credited three days ago need to be reversed because the beneficiary requested a refund.", settled: true },
+  ];
+  let sIndex = 0;
+  const w1 = el("div", { class: "widget" });
+  w1.appendChild(el("h3", {}, [text("Simulation: Cancellation or Return?")]));
+  w1.appendChild(el("p", { class: "instructions" }, [text("Read the scenario, then choose the correct mechanism.")]));
+  const scenarioBox = el("div", { class: "scenario-box" });
+  const toggleRow = el("div", { class: "toggle-row" });
+  const btnCancel = el("button", { class: "toggle-btn" }, [text("Cancellation (camt.056)")]);
+  const btnReturn = el("button", { class: "toggle-btn" }, [text("Return (pacs.004)")]);
+  toggleRow.appendChild(btnCancel); toggleRow.appendChild(btnReturn);
+  const fb3 = el("div", { class: "feedback" });
+  const nextBtn = el("button", { class: "btn secondary" }, [text("Next scenario")]);
+  function renderScenario() {
+    scenarioBox.textContent = scenarios[sIndex].text;
+    fb3.className = "feedback";
+    btnCancel.classList.remove("active"); btnReturn.classList.remove("active");
+  }
+  function answer(choseReturn) {
+    const correct = scenarios[sIndex].settled === choseReturn;
+    fb3.className = "feedback show " + (correct ? "ok" : "bad");
+    fb3.textContent = correct
+      ? (scenarios[sIndex].settled ? "Correct, settlement already happened, so a return is needed." : "Correct, settlement has not happened yet, so cancellation is still possible.")
+      : (scenarios[sIndex].settled ? "Not quite, the funds already moved, so cancellation cannot apply here, a return is needed." : "Not quite, settlement has not happened yet, so cancellation is still the right tool.");
+  }
+  btnCancel.addEventListener("click", () => { btnCancel.classList.add("active"); btnReturn.classList.remove("active"); answer(false); });
+  btnReturn.addEventListener("click", () => { btnReturn.classList.add("active"); btnCancel.classList.remove("active"); answer(true); });
+  nextBtn.addEventListener("click", () => { sIndex = (sIndex + 1) % scenarios.length; renderScenario(); });
+  renderScenario();
+  w1.appendChild(scenarioBox); w1.appendChild(toggleRow); w1.appendChild(fb3); w1.appendChild(nextBtn);
+  section.appendChild(w1);
+
+  // Widget 2: status/reason code lookup
+  const w2 = el("div", { class: "widget" });
+  w2.appendChild(el("h3", {}, [text("Quiz: Status and Reason Codes")]));
+  const codeMcqs = [
+    { q: "A payment status report shows PDNG. What does this mean?", options: ["It failed permanently", "It is still being processed", "It settled successfully", "It was cancelled"], correct: 1 },
+    { q: "A pacs.004 return carries reason code AC04. What happened?", options: ["Insufficient funds", "Closed account", "Duplicate payment", "Wrong currency"], correct: 1 },
+    { q: "A status of RJCT always comes with what?", options: ["A new UETR", "A reason code", "A settlement date", "Nothing extra"], correct: 1 },
+  ];
+  codeMcqs.forEach((m, idx) => {
+    const qBox = el("div", { style: "margin-bottom:16px;" });
+    qBox.appendChild(el("p", { style: "font-weight:bold;" }, [text(`${idx + 1}. ${m.q}`)]));
+    m.options.forEach((opt, oi) => {
+      const b = el("button", { class: "mcq-option" }, [text(opt)]);
+      b.addEventListener("click", () => {
+        qBox.querySelectorAll(".mcq-option").forEach(x => x.disabled = true);
+        if (oi === m.correct) b.classList.add("correct");
+        else { b.classList.add("incorrect"); qBox.querySelectorAll(".mcq-option")[m.correct].classList.add("correct"); }
+      });
+      qBox.appendChild(b);
+    });
+    w2.appendChild(qBox);
+  });
+  section.appendChild(w2);
+
+  return section;
+}
+
+/* ============================================================
+   DAY 4 SECTION
+============================================================ */
+function buildDay4() {
+  const section = el("section", { id: "day4", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("h2", {}, [text("Day 4: Statements, Validation and Reconciliation")]),
+    el("p", {}, [text("Close the loop between a payment and the paper trail it leaves behind.")]),
+  ]));
+
+  // Widget 1: Reconciliation matcher
+  const w1 = el("div", { class: "widget" });
+  w1.appendChild(el("h3", {}, [text("Simulation: Reconcile the Statement")]));
+  w1.appendChild(el("p", { class: "instructions" }, [text("Match each statement entry to the ledger line it belongs to, using the reference shown.")]));
+  const entries = [
+    { k: "Entry Ref RTN-0009, credit 15000.00 USD", v: "Ledger: Return of invoice GTL-0091 payment" },
+    { k: "Entry Ref FEE-0021, debit 25.00 USD", v: "Ledger: Correspondent bank handling fee" },
+    { k: "Entry Ref PMT-0147, debit 15000.00 USD", v: "Ledger: Outgoing supplier payment" },
+  ];
+  const grid = el("div", { class: "match-grid" });
+  const colA = el("div", { class: "match-col" }, [el("h4", {}, [text("Statement entry")])]);
+  const colB = el("div", { class: "match-col" }, [el("h4", {}, [text("Ledger line")])]);
+  const shuffled = [...entries].sort(() => Math.random() - 0.5);
+  let picked = null, matched = 0;
+  const fb = el("div", { class: "feedback" });
+  entries.forEach(p => {
+    const pill = el("div", { class: "pill" }, [text(p.k)]);
+    pill.addEventListener("click", () => {
+      if (pill.classList.contains("matched")) return;
+      document.querySelectorAll("#day4 .match-col:first-child .pill").forEach(x => x.classList.remove("selected"));
+      pill.classList.add("selected");
+      picked = p.k;
+    });
+    pill.dataset.key = p.k;
+    colA.appendChild(pill);
+  });
+  shuffled.forEach(p => {
+    const pill = el("div", { class: "pill" }, [text(p.v)]);
+    pill.addEventListener("click", () => {
+      if (pill.classList.contains("matched") || !picked) return;
+      if (picked === p.k) {
+        pill.classList.add("matched");
+        document.querySelector(`#day4 .match-col:first-child .pill[data-key="${CSS.escape(picked)}"]`)?.classList.add("matched");
+        matched++;
+        if (matched === entries.length) { fb.textContent = "All entries reconciled."; fb.className = "feedback show ok"; }
+      } else {
+        pill.classList.add("wrong-flash");
+        setTimeout(() => pill.classList.remove("wrong-flash"), 500);
+      }
+      picked = null;
+    });
+    colB.appendChild(pill);
+  });
+  grid.appendChild(colA); grid.appendChild(colB);
+  w1.appendChild(grid); w1.appendChild(fb);
+  section.appendChild(w1);
+
+  // Widget 2: CBPR+ checklist checker
+  const w2 = el("div", { class: "widget" });
+  w2.appendChild(el("h3", {}, [text("Simulation: Run the CBPR Plus Validation Checklist")]));
+  w2.appendChild(el("p", { class: "instructions" }, [text("This sample message is missing some mandatory CBPR plus data. Check every box you believe the message actually satisfies, then reveal the result.")]));
+  w2.appendChild(el("div", { class: "xml-box" }, [text(
+    '<Cdtr><Nm>Fictional Supply Co</Nm></Cdtr>\n<CdtrAgt><FinInstnId><Nm>Some Overseas Bank</Nm></FinInstnId></CdtrAgt>\n<IntrBkSttlmAmt Ccy="USD">15000.00</IntrBkSttlmAmt>\n<!-- no UETR present -->'
+  ) }));
+  const checklist = [
+    { label: "UETR is present", pass: false },
+    { label: "Creditor agent has a BIC", pass: false },
+    { label: "Settlement amount and currency are present", pass: true },
+    { label: "Creditor name is present", pass: true },
+  ];
+  const checklistBox = el("div", { class: "checklist", style: "margin-top:14px;" });
+  const checkboxes = [];
+  checklist.forEach((c, i) => {
+    const id = "chk4_" + i;
+    const label = el("label", { for: id });
+    const cb = el("input", { type: "checkbox", id });
+    checkboxes.push(cb);
+    label.appendChild(cb);
+    label.appendChild(text(" " + c.label));
+    checklistBox.appendChild(label);
+  });
+  w2.appendChild(checklistBox);
+  const fb4 = el("div", { class: "feedback" });
+  const revealBtn = el("button", { class: "btn" }, [text("Reveal result")]);
+  revealBtn.addEventListener("click", () => {
+    const allCorrect = checklist.every((c, i) => c.pass === checkboxes[i].checked);
+    fb4.className = "feedback show " + (allCorrect ? "ok" : "bad");
+    fb4.textContent = allCorrect
+      ? "Correct. This message fails CBPR plus because it is missing a UETR and the creditor agent has no BIC, even though it is schema valid."
+      : "Check again, compare each box against the XML sample above, missing data fails the check even if the schema itself would still parse.";
+  });
+  w2.appendChild(revealBtn); w2.appendChild(fb4);
+  section.appendChild(w2);
+
+  return section;
+}
+
+/* ============================================================
+   DAY 5 SECTION
+============================================================ */
+function buildDay5() {
+  const section = el("section", { id: "day5", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("h2", {}, [text("Day 5: Integrated Scenario and Capstone")]),
+    el("p", {}, [text("Bring every skill from the week together in one final scenario.")]),
+  ]));
+
+  const w1 = el("div", { class: "widget" });
+  w1.appendChild(el("h3", {}, [text("Capstone: Pick the Right Message, Step by Step")]));
+  w1.appendChild(el("div", { class: "scenario-box" }, [text(
+    "A corporate customer at Meridian Bank asks their bank to pay a fictional overseas supplier. Two days later, the supplier's account turns out to be closed, and the funds, which had already settled, must be returned."
+  )]));
+  const steps = [
+    { q: "Step 1: which message does the bank use to pay the supplier?", options: ["pain.001", "pacs.008", "camt.053", "pacs.004"], correct: 1 },
+    { q: "Step 2: which identifier must appear on that payment for full traceability?", options: ["InstrId only", "A UETR", "A BIC only", "No identifier is required"], correct: 1 },
+    { q: "Step 3: the account was closed and funds already settled. What happens next?", options: ["Send a camt.056 cancellation", "Send a pacs.004 return", "Do nothing, it will resolve itself", "Resend the original payment"], correct: 1 },
+    { q: "Step 4: how will this reversal eventually appear on the customer's records?", options: ["It will not appear anywhere", "As a camt.053 statement entry referencing the return", "As a new pain.001", "As a pacs.009"], correct: 1 },
+  ];
+  let stepScore = 0;
+  steps.forEach((m, idx) => {
+    const qBox = el("div", { style: "margin-bottom:18px;" });
+    qBox.appendChild(el("p", { style: "font-weight:bold;" }, [text(m.q)]));
+    m.options.forEach((opt, oi) => {
+      const b = el("button", { class: "mcq-option" }, [text(opt)]);
+      b.addEventListener("click", () => {
+        qBox.querySelectorAll(".mcq-option").forEach(x => x.disabled = true);
+        if (oi === m.correct) { b.classList.add("correct"); stepScore++; updateSummary(); }
+        else { b.classList.add("incorrect"); qBox.querySelectorAll(".mcq-option")[m.correct].classList.add("correct"); updateSummary(); }
+      });
+      qBox.appendChild(b);
+    });
+    w1.appendChild(qBox);
+  });
+  const summary = el("div", { class: "summary-card" }, [
+    el("h3", {}, [text("Your capstone progress")]),
+    el("p", { id: "summaryText" }, [text("Answer the four steps above to see your score.")]),
+  ]);
+  function updateSummary() {
+    const answered = document.querySelectorAll("#day5 .mcq-option.correct, #day5 .mcq-option.incorrect").length;
+    document.getElementById("summaryText").textContent = `Score so far: ${stepScore} correct out of 4 steps.` + (stepScore === 4 ? " Full marks, you have traced the complete lifecycle from payment to statement." : "");
+  }
+  w1.appendChild(summary);
+  section.appendChild(w1);
+
+  return section;
+}
+
+/* ============================================================
+   BUILD PAGE
+============================================================ */
+main.appendChild(buildDay1());
+main.appendChild(buildDay2());
+main.appendChild(buildDay3());
+main.appendChild(buildDay4());
+main.appendChild(buildDay5());
+showDay("day1");
+</script>
+</body>
+</html>
