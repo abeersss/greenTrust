@@ -5,107 +5,136 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FinTech for Banks Training</title>
 <style>
-  :root {
-    --dk1: #1E2761; --dk2: #0F1838; --lt1: #FFFFFF; --lt2: #CADCFC;
-    --gold: #E8B64A; --accent3: #6D87C9; --accent4: #97BC62; --accent5: #F96167; --text: #021024;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: Calibri, Arial, sans-serif; background: #F4F6FB; color: var(--text); }
+:root {
+  --dk1: #1E2761; --dk2: #0F1838; --lt1: #FFFFFF; --lt2: #CADCFC;
+  --gold: #E8B64A; --accent3: #6D87C9; --accent4: #97BC62; --accent5: #F96167; --text: #021024;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Calibri, Arial, sans-serif; background: #F4F6FB; color: var(--text); }
 
-  /* ---------- Welcome gate ---------- */
-  #gate { position: fixed; inset: 0; background: linear-gradient(135deg, var(--dk1), var(--dk2)); z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .gate-card { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 460px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-  .gate-coin { width: 64px; height: 64px; margin: 0 auto 14px; }
-  .gate-card h1 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 6px; font-size: 24px; }
-  .gate-card p { color: #4a5578; font-size: 14px; margin-bottom: 18px; }
-  .gate-card input { width: 100%; padding: 12px 14px; border-radius: 8px; border: 2px solid #e2e7f5; font-size: 15px; margin-bottom: 14px; }
-  .gate-card input:focus { outline: none; border-color: var(--gold); }
-  .gate-btn { background: var(--dk1); color: #fff; border: none; border-radius: 10px; padding: 13px 20px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; }
-  .gate-btn:hover { background: var(--accent3); }
-  .gate-skip { margin-top: 10px; font-size: 12.5px; color: #8a8f9e; background: none; border: none; cursor: pointer; text-decoration: underline; }
+/* ---------- Welcome gate ---------- */
+#gate { position: fixed; inset: 0; background: linear-gradient(135deg, var(--dk1), var(--dk2)); z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.gate-card { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 460px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.gate-coin { width: 64px; height: 64px; margin: 0 auto 14px; }
+.gate-card h1 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 6px; font-size: 24px; }
+.gate-card p { color: #4a5578; font-size: 14px; margin-bottom: 18px; }
+.gate-card input { width: 100%; padding: 12px 14px; border-radius: 8px; border: 2px solid #e2e7f5; font-size: 15px; margin-bottom: 14px; }
+.gate-card input:focus { outline: none; border-color: var(--gold); }
+.gate-btn { background: var(--dk1); color: #fff; border: none; border-radius: 10px; padding: 13px 20px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; }
+.gate-btn:hover { background: var(--accent3); }
+.gate-skip { margin-top: 10px; font-size: 12.5px; color: #8a8f9e; background: none; border: none; cursor: pointer; text-decoration: underline; }
 
-  header { background: var(--dk1); color: #fff; padding: 24px 24px 16px; text-align: center; }
-  header h1 { margin: 0 0 6px; font-family: Cambria, Georgia, serif; font-size: 28px; }
-  header p { margin: 0; color: var(--lt2); font-size: 14.5px; }
-  #greetLine { margin-top: 8px; font-size: 13.5px; color: var(--gold); font-weight: bold; min-height: 18px; }
+header { background: var(--dk1); color: #fff; padding: 24px 24px 16px; text-align: center; }
+header h1 { margin: 0 0 6px; font-family: Cambria, Georgia, serif; font-size: 28px; }
+header p { margin: 0; color: var(--lt2); font-size: 14.5px; }
+#greetLine { margin-top: 8px; font-size: 13.5px; color: var(--gold); font-weight: bold; min-height: 18px; }
 
-  /* progress bar */
-  #progressWrap { background: var(--dk2); padding: 10px 16px; }
-  #progressTrack { max-width: 700px; margin: 0 auto; display: flex; gap: 6px; }
-  .seg { flex: 1; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.15); overflow: hidden; }
-  .seg-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.5s ease; }
-  #progressLabel { text-align: center; color: #cfd8f0; font-size: 11.5px; margin-top: 6px; }
+/* progress bar */
+#progressWrap { background: var(--dk2); padding: 10px 16px; }
+#progressTrack { max-width: 700px; margin: 0 auto; display: flex; gap: 6px; }
+.seg { flex: 1; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.15); overflow: hidden; }
+.seg-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.5s ease; }
+#progressLabel { text-align: center; color: #cfd8f0; font-size: 11.5px; margin-top: 6px; }
 
-  nav { display: flex; flex-wrap: wrap; justify-content: center; background: var(--dk2); padding: 10px; gap: 8px; position: sticky; top: 0; z-index: 10; }
-  nav button { background: transparent; border: 1px solid var(--accent3); color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
-  nav button.active, nav button:hover { background: var(--gold); color: var(--dk1); border-color: var(--gold); }
-  nav button .check { color: var(--accent4); font-size: 13px; }
-  nav button.active .check { color: var(--dk1); }
+nav { display: flex; flex-wrap: wrap; justify-content: center; background: var(--dk2); padding: 10px; gap: 8px; position: sticky; top: 0; z-index: 10; }
+nav button { background: transparent; border: 1px solid var(--accent3); color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+nav button.active, nav button:hover { background: var(--gold); color: var(--dk1); border-color: var(--gold); }
+nav button .check { color: var(--accent4); font-size: 13px; }
+nav button.active .check { color: var(--dk1); }
 
-  main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 60px; }
-  .day-section { display: none; }
-  .day-section.active { display: block; }
-  .day-intro { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); display: flex; gap: 16px; align-items: flex-start; }
-  .day-icon { flex-shrink: 0; width: 46px; height: 46px; }
-  .day-intro h2 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 6px; }
-  .day-intro p { margin: 0; color: #4a5578; }
-  .widget { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); position: relative; }
-  .widget h3 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin-top: 0; }
-  .widget.done { border: 2px solid var(--accent4); }
-  .widget .done-badge { position: absolute; top: 18px; right: 18px; background: var(--accent4); color: #fff; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: none; }
-  .widget.done .done-badge { display: inline-block; }
-  .widget .instructions { font-size: 13.5px; color: #4a5578; margin-bottom: 14px; }
-  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-  .pill { background: var(--lt2); color: var(--dk1); border: 2px solid var(--lt2); border-radius: 20px; padding: 8px 14px; font-size: 13.5px; cursor: pointer; user-select: none; font-weight: 600; }
-  .pill.selected { border-color: var(--gold); background: #fff; }
-  .pill.matched { background: var(--accent4); color: #fff; border-color: var(--accent4); cursor: default; }
-  .pill.wrong-flash { background: var(--accent5); color: #fff; border-color: var(--accent5); }
-  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .match-col h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent3); margin-bottom: 8px; }
-  .feedback { margin-top: 10px; font-size: 13.5px; padding: 10px 12px; border-radius: 8px; display: none; }
-  .feedback.show { display: block; }
-  .feedback.ok { background: #e8f5ec; color: #1f6b3a; }
-  .feedback.bad { background: #fde8e8; color: #8a1f1f; }
-  .btn { background: var(--dk1); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13.5px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-right: 8px; }
-  .btn:hover { background: var(--accent3); }
-  .btn.secondary { background: transparent; color: var(--dk1); border: 1.5px solid var(--dk1); }
-  .btn.gold { background: var(--gold); color: var(--dk1); }
-  .mcq-option { display: block; width: 100%; text-align: left; background: #F4F6FB; border: 2px solid #e2e7f5; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
-  .mcq-option.correct { background: #e8f5ec; border-color: var(--accent4); }
-  .mcq-option.incorrect { background: #fde8e8; border-color: var(--accent5); }
-  .mcq-option:disabled { cursor: default; }
-  .sort-list { list-style: none; padding: 0; margin: 0; }
-  .sort-item { background: var(--lt2); border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; font-size: 13.5px; font-weight: 600; color: var(--dk1); cursor: grab; display: flex; justify-content: space-between; align-items: center; }
-  .sort-item .mover { display: flex; gap: 4px; }
-  .sort-item button { background: var(--dk1); color: #fff; border: none; border-radius: 4px; width: 26px; height: 26px; cursor: pointer; font-size: 13px; }
-  .xml-box { background: #F2F5FC; border-radius: 10px; padding: 16px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
-  .xml-token { padding: 1px 3px; border-radius: 3px; cursor: pointer; }
-  .xml-token.picked { outline: 2px solid var(--gold); }
-  .scenario-box { background: #FFF7E6; border-left: 4px solid var(--gold); padding: 14px 18px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
-  .toggle-row { display: flex; gap: 10px; margin-bottom: 14px; }
-  .toggle-btn { flex: 1; padding: 12px; border-radius: 8px; border: 2px solid var(--accent3); background: #fff; color: var(--dk1); font-weight: bold; cursor: pointer; }
-  .toggle-btn.active { background: var(--accent3); color: #fff; }
-  .checklist label { display: block; margin-bottom: 8px; font-size: 14px; cursor: pointer; }
-  .summary-card { background: var(--dk1); color: #fff; border-radius: 12px; padding: 20px 24px; margin-top: 10px; }
-  .summary-card h3 { margin-top: 0; color: var(--gold); }
-  footer { text-align: center; padding: 24px; color: #6b7694; font-size: 12.5px; }
+main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 60px; }
+.day-section { display: none; }
+.day-section.active { display: block; }
+.day-intro { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); display: flex; gap: 16px; align-items: flex-start; }
+.day-icon { flex-shrink: 0; width: 46px; height: 46px; }
+.day-intro h2 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin: 0 0 6px; }
+.day-intro p { margin: 0; color: #4a5578; }
+.widget { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(30,39,97,0.08); position: relative; }
+.widget h3 { font-family: Cambria, Georgia, serif; color: var(--dk1); margin-top: 0; }
+.widget.done { border: 2px solid var(--accent4); }
+.widget .done-badge { position: absolute; top: 18px; right: 18px; background: var(--accent4); color: #fff; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: none; }
+.widget.done .done-badge { display: inline-block; }
+.widget .instructions { font-size: 13.5px; color: #4a5578; margin-bottom: 14px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.pill { background: var(--lt2); color: var(--dk1); border: 2px solid var(--lt2); border-radius: 20px; padding: 8px 14px; font-size: 13.5px; cursor: pointer; user-select: none; font-weight: 600; }
+.pill.selected { border-color: var(--gold); background: #fff; }
+.pill.matched { background: var(--accent4); color: #fff; border-color: var(--accent4); cursor: default; }
+.pill.wrong-flash { background: var(--accent5); color: #fff; border-color: var(--accent5); }
+.match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.match-col h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent3); margin-bottom: 8px; }
+.feedback { margin-top: 10px; font-size: 13.5px; padding: 10px 12px; border-radius: 8px; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: #e8f5ec; color: #1f6b3a; }
+.feedback.bad { background: #fde8e8; color: #8a1f1f; }
+.btn { background: var(--dk1); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13.5px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-right: 8px; }
+.btn:hover { background: var(--accent3); }
+.btn.secondary { background: transparent; color: var(--dk1); border: 1.5px solid var(--dk1); }
+.btn.gold { background: var(--gold); color: var(--dk1); }
+.mcq-option { display: block; width: 100%; text-align: left; background: #F4F6FB; border: 2px solid #e2e7f5; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+.mcq-option.correct { background: #e8f5ec; border-color: var(--accent4); }
+.mcq-option.incorrect { background: #fde8e8; border-color: var(--accent5); }
+.mcq-option:disabled { cursor: default; }
+.sort-list { list-style: none; padding: 0; margin: 0; }
+.sort-item { background: var(--lt2); border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; font-size: 13.5px; font-weight: 600; color: var(--dk1); cursor: grab; display: flex; justify-content: space-between; align-items: center; }
+.sort-item .mover { display: flex; gap: 4px; }
+.sort-item button { background: var(--dk1); color: #fff; border: none; border-radius: 4px; width: 26px; height: 26px; cursor: pointer; font-size: 13px; }
+.xml-box { background: #F2F5FC; border-radius: 10px; padding: 16px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+.xml-token { padding: 1px 3px; border-radius: 3px; cursor: pointer; }
+.xml-token.picked { outline: 2px solid var(--gold); }
+.scenario-box { background: #FFF7E6; border-left: 4px solid var(--gold); padding: 14px 18px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
+.toggle-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.toggle-btn { flex: 1; padding: 12px; border-radius: 8px; border: 2px solid var(--accent3); background: #fff; color: var(--dk1); font-weight: bold; cursor: pointer; }
+.toggle-btn.active { background: var(--accent3); color: #fff; }
+.checklist label { display: block; margin-bottom: 8px; font-size: 14px; cursor: pointer; }
+.summary-card { background: var(--dk1); color: #fff; border-radius: 12px; padding: 20px 24px; margin-top: 10px; }
+.summary-card h3 { margin-top: 0; color: var(--gold); }
+footer { text-align: center; padding: 24px; color: #6b7694; font-size: 12.5px; }
 
-  /* mascot */
-  #mascot { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-  #mascotBubble { background: #fff; border: 2px solid var(--gold); border-radius: 12px; padding: 12px 14px; max-width: 240px; font-size: 13px; color: var(--dk1); box-shadow: 0 6px 18px rgba(0,0,0,0.18); display: none; }
-  #mascotBubble.show { display: block; }
-  #mascotBtn { width: 58px; height: 58px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
-  #mascotBtn svg { width: 36px; height: 36px; }
-  #mascotBtn:hover { transform: scale(1.06); }
+/* live-queue simulation widget */
+.live-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--dk1); color: #fff; font-size: 11px; font-weight: bold; letter-spacing: 0.5px; padding: 5px 10px; border-radius: 20px; margin-bottom: 14px; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent5); animation: livePulse 1.3s infinite ease-in-out; }
+@keyframes livePulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
+.queue-counter { font-size: 12.5px; color: var(--accent3); font-weight: bold; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.queue-timer-wrap { background: #eef1fb; border-radius: 6px; height: 8px; overflow: hidden; margin-bottom: 4px; }
+.queue-timer-bar { height: 100%; width: 100%; background: var(--gold); transition: width 1s linear, background 0.3s; }
+.queue-timer-label { font-size: 11.5px; color: #6b7694; margin-bottom: 12px; }
+.queue-scenario { margin-bottom: 12px; }
+.queue-options { margin-bottom: 4px; }
+.queue-score { font-size: 13px; font-weight: bold; color: var(--dk1); margin-top: 8px; }
+.shift-clock { display: inline-flex; align-items: center; gap: 8px; background: var(--dk2); color: var(--gold); font-family: Consolas, monospace; font-size: 14px; font-weight: bold; padding: 8px 14px; border-radius: 8px; margin-bottom: 14px; }
+.shift-clock .live-dot { background: var(--gold); }
 
-  /* certificate */
-  #certCanvas { width: 100%; max-width: 760px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: block; margin: 0 auto; }
-  .cert-wrap { text-align: center; }
+/* live cohort */
+.cohort-badge-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.cohort-refresh { font-size: 12px; color: #8a8f9e; }
+.cohort-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.cohort-table th { text-align: left; color: var(--accent3); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 8px; border-bottom: 2px solid #eef1fb; }
+.cohort-table td { padding: 9px 8px; border-bottom: 1px solid #eef1fb; }
+.cohort-rank { font-weight: bold; color: var(--dk1); width: 28px; }
+.cohort-days { display: flex; gap: 4px; }
+.cohort-chip { width: 20px; height: 20px; border-radius: 5px; background: #eef1fb; color: #a7afc4; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+.cohort-chip.on { background: var(--accent4); color: #fff; }
+.feed-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #eef1fb; font-size: 13.5px; }
+.feed-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent4); margin-top: 5px; flex-shrink: 0; }
+.feed-empty, .cohort-empty { color: #8a8f9e; font-size: 13.5px; padding: 10px 0; }
+.cohort-note { font-size: 12px; color: #8a8f9e; margin-top: 12px; }
 
-  /* confetti */
-  .confetti-piece { position: fixed; top: -10px; width: 8px; height: 14px; z-index: 500; pointer-events: none; }
+/* mascot */
+#mascot { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+#mascotBubble { background: #fff; border: 2px solid var(--gold); border-radius: 12px; padding: 12px 14px; max-width: 240px; font-size: 13px; color: var(--dk1); box-shadow: 0 6px 18px rgba(0,0,0,0.18); display: none; }
+#mascotBubble.show { display: block; }
+#mascotBtn { width: 58px; height: 58px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
+#mascotBtn svg { width: 36px; height: 36px; }
+#mascotBtn:hover { transform: scale(1.06); }
 
-  @media (max-width: 700px) { .match-grid { grid-template-columns: 1fr; } .day-intro { flex-direction: column; } }
+/* certificate */
+#certCanvas { width: 100%; max-width: 760px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: block; margin: 0 auto; }
+.cert-wrap { text-align: center; }
+
+/* confetti */
+.confetti-piece { position: fixed; top: -10px; width: 8px; height: 14px; z-index: 500; pointer-events: none; }
+
+@media (max-width: 700px) { .match-grid { grid-template-columns: 1fr; } .day-intro { flex-direction: column; } }
 </style>
 </head>
 <body>
@@ -114,7 +143,7 @@
   <div class="gate-card">
     <svg class="gate-coin" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#E8B64A" stroke="#1E2761" stroke-width="3"/><text x="32" y="40" font-size="26" text-anchor="middle" fill="#1E2761" font-family="Cambria, serif" font-weight="bold">F</text></svg>
     <h1>FinTech for Banks Training</h1>
-    <p>Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training. Enter your name to personalize your progress and your completion certificate, or skip ahead.</p>
+    <p>Interactive exercises and live simulations for ISO 20022 and CBPR plus practitioner training. Enter your name to personalize your progress, appear on the live cohort board, and unlock your completion certificate, or skip ahead.</p>
     <input type="text" id="nameInput" placeholder="Your name" maxlength="40">
     <button class="gate-btn" id="startBtn">Start training</button>
     <button class="gate-skip" id="skipBtn">Skip, I will stay anonymous</button>
@@ -123,7 +152,7 @@
 
 <header>
   <h1>FinTech for Banks Training</h1>
-  <p>Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training</p>
+  <p>Interactive exercises and live simulations for ISO 20022 and CBPR plus practitioner training</p>
   <div id="greetLine"></div>
 </header>
 
@@ -150,12 +179,12 @@
 </div>
 
 <footer>
-  All scenarios, account names and message samples on this site are fictional and built for training purposes only. No real bank, institution or customer is represented.
+  FinTech for Banks Training
 </footer>
 
 <script>
 /* ============================================================
-   State and persistence
+State and persistence
 ============================================================ */
 const STORAGE_KEY = "fintechTrainingProgress_v2";
 function loadState() {
@@ -182,9 +211,9 @@ function getSessionId() {
   return sid;
 }
 
-/* reports a completed day to the founder admin dashboard so the
-   instructor can follow trainee progress by name. Fails silently if
-   the endpoint is unreachable, the simulation itself still works. */
+/* reports a completed day to the founder admin dashboard and the
+   live cohort board. Fails silently if the endpoint is unreachable,
+   the simulation itself still works. */
 function reportDayCompletion(dayId, dayLabel) {
   const name = (state.name && state.name.trim()) ? state.name.trim() : "Anonymous trainee";
   fetch("/api/fintech-training/submit", {
@@ -195,7 +224,7 @@ function reportDayCompletion(dayId, dayLabel) {
 }
 
 /* ============================================================
-   Shared helpers
+Shared helpers
 ============================================================ */
 function el(tag, attrs, children) {
   const e = document.createElement(tag);
@@ -289,7 +318,7 @@ function showMascotTip(msg) {
 document.getElementById("mascotBtn").addEventListener("click", () => showMascotTip(nextTip()));
 
 /* ============================================================
-   Welcome gate
+Welcome gate
 ============================================================ */
 const gate = document.getElementById("gate");
 const nameInput = document.getElementById("nameInput");
@@ -311,7 +340,7 @@ document.getElementById("skipBtn").addEventListener("click", () => {
 });
 
 /* ============================================================
-   DAY DEFINITIONS
+DAY DEFINITIONS
 ============================================================ */
 const DAYS = [
   { id: "day1", label: "Day 1", title: "Foundations: Actors, Validation Layers and XML", icon: "book" },
@@ -327,7 +356,8 @@ const ICONS = {
   undo: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#CADCFC"/><path d="M30 16l-6 6 6 6M16 22h12a8 8 0 0 1 0 16h-4" stroke="#1E2761" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   stmt: '<svg viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="34" rx="3" fill="#CADCFC"/><path d="M16 15h16M16 21h16M16 27h10" stroke="#1E2761" stroke-width="2.5" stroke-linecap="round"/></svg>',
   trophy: '<svg viewBox="0 0 48 48"><path d="M16 8h16v10a8 8 0 0 1-16 0V8z" fill="#E8B64A"/><path d="M16 10H9a6 6 0 0 0 6 7M32 10h7a6 6 0 0 1-6 7" stroke="#1E2761" stroke-width="2.2" fill="none"/><rect x="21" y="26" width="6" height="8" fill="#E8B64A"/><rect x="16" y="34" width="16" height="4" rx="1" fill="#1E2761"/></svg>',
-  cert: '<svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="24" rx="3" fill="#CADCFC"/><circle cx="24" cy="36" r="7" fill="#E8B64A"/><path d="M20 36l3 3 6-6" stroke="#1E2761" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  cert: '<svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="24" rx="3" fill="#CADCFC"/><circle cx="24" cy="36" r="7" fill="#E8B64A"/><path d="M20 36l3 3 6-6" stroke="#1E2761" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cohort: '<svg viewBox="0 0 48 48"><circle cx="16" cy="18" r="6" fill="#CADCFC"/><circle cx="32" cy="18" r="6" fill="#CADCFC"/><path d="M6 38c0-7 5-11 10-11s10 4 10 11M22 38c0-7 5-11 10-11s10 4 10 11" stroke="#1E2761" stroke-width="2.2" fill="none"/></svg>'
 };
 
 const nav = document.getElementById("dayNav");
@@ -341,6 +371,12 @@ DAYS.forEach(d => {
   btn.addEventListener("click", () => showDay(d.id));
   nav.appendChild(btn);
 });
+const cohortBtn = el("button", { "data-day": "cohort" }, [
+  el("div", { class: "live-dot", style: "margin-right:4px;" }, []),
+  text("Live Cohort")
+]);
+cohortBtn.addEventListener("click", () => showDay("cohort"));
+nav.appendChild(cohortBtn);
 const certBtn = el("button", { "data-day": "cert", id: "certNavBtn" }, [text("Certificate")]);
 certBtn.style.display = "none";
 certBtn.addEventListener("click", () => showDay("cert"));
@@ -349,6 +385,7 @@ nav.appendChild(certBtn);
 function showDay(id) {
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.getAttribute("data-day") === id));
   document.querySelectorAll(".day-section").forEach(s => s.classList.toggle("active", s.id === id));
+  if (id === "cohort") startCohortPolling(); else stopCohortPolling();
 }
 
 function widgetDoneWrap(widget, dayId, onComplete) {
@@ -370,7 +407,112 @@ function checkDayWidgetsComplete(dayId, totalWidgets) {
 }
 
 /* ============================================================
-   DAY 1 SECTION
+LIVE OPS QUEUE: reusable timed, rapid-fire decision simulation
+============================================================ */
+function buildLiveQueueWidget(dayId, heading, instructionText, cases, passThreshold, onWidgetDone) {
+  const widget = widgetDoneWrap(el("div", { class: "widget" }), dayId, onWidgetDone);
+  widget.appendChild(el("h3", {}, [text(heading)]));
+  widget.appendChild(el("div", { class: "live-badge" }, [el("div", { class: "live-dot" }, []), text("LIVE SIMULATION, TIMED")]));
+  widget.appendChild(el("p", { class: "instructions" }, [text(instructionText)]));
+
+  const caseCounter = el("div", { class: "queue-counter" }, [text("")]);
+  const timerWrap = el("div", { class: "queue-timer-wrap" }, [el("div", { class: "queue-timer-bar" }, [])]);
+  const timerLabel = el("div", { class: "queue-timer-label" }, [text("")]);
+  const scenarioBox = el("div", { class: "scenario-box queue-scenario" }, [text("")]);
+  const optionsBox = el("div", { class: "queue-options" }, []);
+  const fb = el("div", { class: "feedback" }, []);
+  const scoreLine = el("div", { class: "queue-score" }, [text("")]);
+
+  widget.appendChild(caseCounter);
+  widget.appendChild(timerWrap);
+  widget.appendChild(timerLabel);
+  widget.appendChild(scenarioBox);
+  widget.appendChild(optionsBox);
+  widget.appendChild(fb);
+  widget.appendChild(scoreLine);
+
+  const timerBar = timerWrap.firstChild;
+  const TIME_LIMIT = 15;
+  let idx = 0, score = 0, answered = false, timeLeft = TIME_LIMIT, timerInterval = null;
+
+  function updateTimerUI() {
+    const pct = Math.max(0, (timeLeft / TIME_LIMIT) * 100);
+    timerBar.style.width = pct + "%";
+    timerBar.style.background = pct < 30 ? "var(--accent5)" : "var(--gold)";
+    timerLabel.textContent = timeLeft > 0 ? (timeLeft + "s remaining") : "Time is up";
+  }
+  function renderCase() {
+    answered = false;
+    optionsBox.innerHTML = "";
+    fb.className = "feedback";
+    caseCounter.textContent = "Case " + (idx + 1) + " of " + cases.length;
+    scenarioBox.textContent = cases[idx].scenario;
+    cases[idx].options.forEach((opt, oi) => {
+      const b = el("button", { class: "mcq-option" }, [text(opt)]);
+      b.addEventListener("click", () => selectAnswer(oi));
+      optionsBox.appendChild(b);
+    });
+    timeLeft = TIME_LIMIT;
+    updateTimerUI();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft -= 1;
+      updateTimerUI();
+      if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) selectAnswer(-1); }
+    }, 1000);
+  }
+  function selectAnswer(oi) {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInterval);
+    const correct = oi === cases[idx].correct;
+    if (correct) score++;
+    optionsBox.querySelectorAll(".mcq-option").forEach((b, bi) => {
+      b.disabled = true;
+      if (bi === cases[idx].correct) b.classList.add("correct");
+      else if (bi === oi) b.classList.add("incorrect");
+    });
+    fb.className = "feedback show " + (correct ? "ok" : "bad");
+    fb.textContent = (correct ? "Correct. " : (oi === -1 ? "Time ran out. " : "Not quite. ")) + cases[idx].explain;
+    scoreLine.textContent = "Score: " + score + " of " + (idx + 1);
+    setTimeout(() => {
+      idx++;
+      if (idx < cases.length) renderCase();
+      else finishQueue();
+    }, 1500);
+  }
+  function finishQueue() {
+    timerWrap.style.display = "none";
+    timerLabel.style.display = "none";
+    caseCounter.textContent = "Queue complete";
+    scenarioBox.textContent = score + " of " + cases.length + " correct.";
+    optionsBox.innerHTML = "";
+    if (score >= passThreshold) {
+      fb.className = "feedback show ok";
+      fb.textContent = "Desk cleared. You handled this queue at the standard required for live operations.";
+      scoreLine.textContent = "Final score: " + score + " of " + cases.length;
+      widget._markComplete();
+    } else {
+      fb.className = "feedback show bad";
+      fb.textContent = "Not yet at the required standard of " + passThreshold + " out of " + cases.length + ". Review and run the queue again.";
+      scoreLine.textContent = "Final score: " + score + " of " + cases.length;
+      const retryBtn = el("button", { class: "btn secondary" }, [text("Run the queue again")]);
+      retryBtn.addEventListener("click", () => {
+        idx = 0; score = 0;
+        timerWrap.style.display = "block";
+        timerLabel.style.display = "block";
+        retryBtn.remove();
+        renderCase();
+      });
+      widget.appendChild(retryBtn);
+    }
+  }
+  renderCase();
+  return widget;
+}
+
+/* ============================================================
+DAY 1 SECTION
 ============================================================ */
 function buildDay1() {
   const section = el("section", { id: "day1", class: "day-section" });
@@ -378,13 +520,12 @@ function buildDay1() {
     el("div", { class: "day-icon", html: ICONS.book }, []),
     el("div", {}, [
       el("h2", {}, [text("Day 1: Foundations")]),
-      el("p", {}, [text("Before reading any message, you need to know who the actors are, how validation layers work, and how to read basic XML. Complete all three simulations below to finish Day 1.")]),
-      el("a", { href: "/training/presentations/01_ISO20022_Foundations_EN.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 1 course slides (PPTX)")]),
+      el("p", {}, [text("Before reading any message, you need to know who the actors are, how validation layers work, and how to read basic XML. Complete all four simulations below to finish Day 1.")]),
     ])
   ]));
 
   let widgetsDone = 0;
-  function onWidgetDone() { widgetsDone++; checkDayWidgetsComplete("day1", 3); }
+  function onWidgetDone() { checkDayWidgetsComplete("day1", 4); }
 
   // Widget 1: Payment Actor Match
   const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day1", onWidgetDone);
@@ -534,11 +675,22 @@ function buildDay1() {
   });
   section.appendChild(w3);
 
+  // Widget 4: Live Ops Queue, Real-Time Message Intake Desk
+  const day1Cases = [
+    { scenario: "An incoming message fails before it is even parsed as XML. Which validation layer caught it?", options: ["XML well formedness", "CBPR plus usage guideline", "Bank internal business rule", "Compliance screening"], correct: 0, explain: "Malformed XML fails at the very first, most basic layer." },
+    { scenario: "A field in the message carries a tag and an attribute together. Which part describes the value rather than being the value itself?", options: ["The element name", "The attribute", "The element value", "The closing tag"], correct: 1, explain: "An attribute such as Ccy describes the value, it is not the value." },
+    { scenario: "Meridian Bank's system accepts a message as schema valid, then compliance screening blocks it. What does this show?", options: ["Schema validation is the only check that matters", "A message can pass technical checks and still fail a business or compliance check", "The message was XML malformed", "The UETR was missing"], correct: 1, explain: "Passing one layer never guarantees passing a later layer." },
+    { scenario: "You see the tag Cdtr in a payment message. What does it represent?", options: ["The bank sending the payment", "The company or person being paid", "The bank receiving the payment", "The original ordering customer"], correct: 1, explain: "Cdtr is the Creditor, the party being paid." },
+    { scenario: "A message element appears with the content Fictional Supply Co between two tags. What is this content, in XML terms?", options: ["An attribute", "An element value", "A namespace", "A schema definition"], correct: 1, explain: "Text sitting between an opening and closing tag is the element value." },
+  ];
+  const w4 = buildLiveQueueWidget("day1", "Live Simulation: Real-Time Message Intake Desk", "Five cases, one at a time, each on a 15 second clock. Answer 4 of 5 correctly to clear the desk.", day1Cases, 4, onWidgetDone);
+  section.appendChild(w4);
+
   return section;
 }
 
 /* ============================================================
-   DAY 2 SECTION
+DAY 2 SECTION
 ============================================================ */
 function buildDay2() {
   const section = el("section", { id: "day2", class: "day-section" });
@@ -546,12 +698,11 @@ function buildDay2() {
     el("div", { class: "day-icon", html: ICONS.swap }, []),
     el("div", {}, [
       el("h2", {}, [text("Day 2: MT to MX Mapping")]),
-      el("p", {}, [text("Mapping is semantic translation, not simple substitution. Complete both simulations to finish Day 2.")]),
-      el("a", { href: "/training/presentations/02_MT_to_MX_Mapping_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 2 course slides (PPTX)")]),
+      el("p", {}, [text("Mapping is semantic translation, not simple substitution. Complete all three simulations to finish Day 2.")]),
     ])
   ]));
 
-  let onWidgetDone = () => checkDayWidgetsComplete("day2", 2);
+  let onWidgetDone = () => checkDayWidgetsComplete("day2", 3);
 
   // Widget 1: Field mapper match
   const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day2", onWidgetDone);
@@ -636,11 +787,22 @@ function buildDay2() {
   });
   section.appendChild(w2);
 
+  // Widget 3: Live Ops Queue, Live Mapping Desk
+  const day2Cases = [
+    { scenario: "An MT103 field :32A: value converts directly into which structured element with no change in meaning?", options: ["IntrBkSttlmAmt and IntrBkSttlmDt", "RmtInf", "Purp", "ChrgBr"], correct: 0, explain: ":32A: carries settlement amount and date, mapped directly." },
+    { scenario: "A free text MT field containing a full address must become what in the structured message?", options: ["One single text block", "Separate structured fields for street, town and country", "A UETR", "A single BIC field"], correct: 1, explain: "Structured messages split free text addresses into components." },
+    { scenario: "The structured message carries a UETR that the original MT message never had. What kind of mapping is this?", options: ["Direct mapping", "Structural split", "Enrichment", "Simple substitution"], correct: 2, explain: "Adding new data not present in the source is enrichment." },
+    { scenario: "An MT field reference is ambiguous between two possible agent roles. What resolves it?", options: ["An automatic script with no review", "Operational judgment from a trained processor", "Ignoring the field", "Rejecting the message automatically"], correct: 1, explain: "Ambiguous mappings need a trained person to decide, not a blind rule." },
+    { scenario: ":71A: Details of Charges in MT maps to which structured element?", options: ["ChrgBr", "RmtInf", "Purp", "InstrId"], correct: 0, explain: "ChrgBr carries the charge bearer code equivalent to :71A:." },
+  ];
+  const w3 = buildLiveQueueWidget("day2", "Live Simulation: Live Mapping Desk", "Five rapid mapping calls, 15 seconds each. Answer 4 of 5 correctly to clear the desk.", day2Cases, 4, onWidgetDone);
+  section.appendChild(w3);
+
   return section;
 }
 
 /* ============================================================
-   DAY 3 SECTION
+DAY 3 SECTION
 ============================================================ */
 function buildDay3() {
   const section = el("section", { id: "day3", class: "day-section" });
@@ -648,12 +810,11 @@ function buildDay3() {
     el("div", { class: "day-icon", html: ICONS.undo }, []),
     el("div", {}, [
       el("h2", {}, [text("Day 3: Status, Returns and Cancellation")]),
-      el("p", {}, [text("The single most tested idea in the program: everything depends on whether settlement has already happened. Complete both simulations to finish Day 3.")]),
-      el("a", { href: "/training/presentations/03_Returns_Cancellations_Status_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 3 course slides (PPTX)")]),
+      el("p", {}, [text("The single most tested idea in the program: everything depends on whether settlement has already happened. Complete all three simulations to finish Day 3.")]),
     ])
   ]));
 
-  let onWidgetDone = () => checkDayWidgetsComplete("day3", 2);
+  let onWidgetDone = () => checkDayWidgetsComplete("day3", 3);
 
   const scenarios = [
     { text: "A payment was sent five minutes ago and Meridian Bank confirms it has not yet settled. The customer wants it stopped.", settled: false },
@@ -718,11 +879,22 @@ function buildDay3() {
   });
   section.appendChild(w2);
 
+  // Widget 3: Live Ops Queue, Reason Code Triage
+  const day3Cases = [
+    { scenario: "A status report shows ACSC. What does this mean?", options: ["Rejected", "Settlement completed", "Still pending", "Returned"], correct: 1, explain: "ACSC marks a payment as settled, the credit has been applied." },
+    { scenario: "A pacs.004 return carries reason code AM04. What is the likely cause?", options: ["Closed account", "Insufficient funds", "Invalid creditor agent", "Regulatory reason"], correct: 1, explain: "AM04 signals insufficient funds at the account holding bank." },
+    { scenario: "A status of RJCT appears with no reason code attached. What is wrong with this message?", options: ["Nothing, reason codes are optional", "It is missing mandatory information a rejection must carry", "It means the payment succeeded", "It means the payment is still queued"], correct: 1, explain: "A rejection without a reason code is itself an incomplete, non-compliant message." },
+    { scenario: "A reason code of AC04 appears on a return. What happened?", options: ["Account closed", "Duplicate payment", "Wrong currency", "Missing UETR"], correct: 0, explain: "AC04 is the standard reason code for a closed account." },
+    { scenario: "A payment shows status PDNG for several hours. What should you conclude?", options: ["It failed", "It is still being processed, not yet final", "It was cancelled", "It was returned"], correct: 1, explain: "PDNG is a pending, non-final state, not a failure." },
+  ];
+  const w3 = buildLiveQueueWidget("day3", "Live Simulation: Reason Code Triage Desk", "Five incoming status or reason codes, 15 seconds each. Answer 4 of 5 correctly to clear the queue.", day3Cases, 4, onWidgetDone);
+  section.appendChild(w3);
+
   return section;
 }
 
 /* ============================================================
-   DAY 4 SECTION
+DAY 4 SECTION
 ============================================================ */
 function buildDay4() {
   const section = el("section", { id: "day4", class: "day-section" });
@@ -730,12 +902,11 @@ function buildDay4() {
     el("div", { class: "day-icon", html: ICONS.stmt }, []),
     el("div", {}, [
       el("h2", {}, [text("Day 4: Statements, Validation and Reconciliation")]),
-      el("p", {}, [text("Close the loop between a payment and the paper trail it leaves behind. Complete both simulations to finish Day 4.")]),
-      el("a", { href: "/training/presentations/04_Statements_Validation_Translation_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 4 course slides (PPTX)")]),
+      el("p", {}, [text("Close the loop between a payment and the paper trail it leaves behind. Complete all three simulations to finish Day 4.")]),
     ])
   ]));
 
-  let onWidgetDone = () => checkDayWidgetsComplete("day4", 2);
+  let onWidgetDone = () => checkDayWidgetsComplete("day4", 3);
 
   const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day4", onWidgetDone);
   w1.appendChild(el("h3", {}, [text("Simulation: Reconcile the Statement")]));
@@ -787,7 +958,7 @@ function buildDay4() {
   w2.appendChild(el("h3", {}, [text("Simulation: Run the CBPR Plus Validation Checklist")]));
   w2.appendChild(el("p", { class: "instructions" }, [text("This sample message is missing some mandatory CBPR plus data. Check every box you believe the message actually satisfies, then reveal the result.")]));
   w2.appendChild(el("div", { class: "xml-box" }, [text(
-    '<Cdtr><Nm>Fictional Supply Co</Nm></Cdtr>\n<CdtrAgt><FinInstnId><Nm>Some Overseas Bank</Nm></FinInstnId></CdtrAgt>\n<IntrBkSttlmAmt Ccy="USD">15000.00</IntrBkSttlmAmt>\n<!-- no UETR present -->'
+    'Cdtr Nm: Fictional Supply Co\nCdtrAgt FinInstnId Nm: Some Overseas Bank\nIntrBkSttlmAmt Ccy USD: 15000.00\nNote: no UETR present in this message'
   ) }));
   const checklist = [
     { label: "UETR is present", pass: false },
@@ -814,17 +985,28 @@ function buildDay4() {
     fb4.className = "feedback show " + (allCorrect ? "ok" : "bad");
     fb4.textContent = allCorrect
       ? "Correct. This message fails CBPR plus because it is missing a UETR and the creditor agent has no BIC, even though it is schema valid."
-      : "Check again, compare each box against the XML sample above, missing data fails the check even if the schema itself would still parse.";
+      : "Check again, compare each box against the sample above, missing data fails the check even if the schema itself would still parse.";
     if (allCorrect) w2._markComplete();
   });
   w2.appendChild(revealBtn); w2.appendChild(fb4);
   section.appendChild(w2);
 
+  // Widget 3: Live Ops Queue, Live Reconciliation Desk
+  const day4Cases = [
+    { scenario: "A statement entry debit of 15000 USD references PMT-0147. What ledger line should it match?", options: ["A correspondent fee", "An outgoing supplier payment", "An incoming return", "A foreign exchange trade"], correct: 1, explain: "The reference and amount point to the original outgoing supplier payment." },
+    { scenario: "An entry credits 15000 USD and references RTN-0009. What does this most likely represent?", options: ["A new outgoing payment", "A fee refund", "The return of a payment that could not be delivered", "A duplicate entry to ignore"], correct: 2, explain: "A credit matching a prior debit with a return reference is the funds coming back." },
+    { scenario: "A small debit entry of 25 USD appears with no obvious invoice reference. What is the most likely explanation?", options: ["A data entry error to delete", "A correspondent bank handling fee", "A second supplier payment", "A tax withholding"], correct: 1, explain: "Small debits without invoice references are typically correspondent fees." },
+    { scenario: "You are missing the UETR on an incoming notification message. What should you do first?", options: ["Ignore it, UETR is never needed", "Check whether the related pacs.008 or pacs.004 still has it, since the chain should carry it through", "Reject the statement entirely", "Assume it is a new payment"], correct: 1, explain: "The UETR should persist across the related messages in a payment's lifecycle." },
+    { scenario: "Two statement entries have the same amount, one is a payment and one is its full return. What is true about their relation?", options: ["They are unrelated coincidences", "The return entry should carry a reference back to the original payment entry", "Returns never appear on a statement", "Only the payment entry needs a reference"], correct: 1, explain: "A proper return carries a reference that ties it back to the original payment." },
+  ];
+  const w3 = buildLiveQueueWidget("day4", "Live Simulation: Live Reconciliation Desk", "Five incoming statement entries, 15 seconds each. Answer 4 of 5 correctly to clear the queue.", day4Cases, 4, onWidgetDone);
+  section.appendChild(w3);
+
   return section;
 }
 
 /* ============================================================
-   DAY 5 SECTION
+DAY 5 SECTION
 ============================================================ */
 function buildDay5() {
   const section = el("section", { id: "day5", class: "day-section" });
@@ -832,13 +1014,22 @@ function buildDay5() {
     el("div", { class: "day-icon", html: ICONS.trophy }, []),
     el("div", {}, [
       el("h2", {}, [text("Day 5: Integrated Scenario and Capstone")]),
-      el("p", {}, [text("Bring every skill from the week together in one final scenario. Answer all four steps correctly to complete the program.")]),
-      el("a", { href: "/training/presentations/05_EndToEnd_Assessment_EN_FINAL.pptx", class: "btn secondary", style: "display:inline-block;margin-top:10px;text-decoration:none;" }, [text("Download Day 5 course slides (PPTX)")]),
+      el("p", {}, [text("Bring every skill from the week together in one final live scenario. Answer all four steps correctly to complete the program.")]),
     ])
   ]));
 
   const w1 = widgetDoneWrap(el("div", { class: "widget" }), "day5", () => checkDayWidgetsComplete("day5", 1));
   w1.appendChild(el("h3", {}, [text("Capstone: Pick the Right Message, Step by Step")]));
+  const shiftClock = el("div", { class: "shift-clock" }, [el("div", { class: "live-dot" }, []), text("Shift clock: 00:00")]);
+  w1.appendChild(shiftClock);
+  let shiftSeconds = 0;
+  const shiftInterval = setInterval(() => {
+    shiftSeconds++;
+    const mm = String(Math.floor(shiftSeconds / 60)).padStart(2, "0");
+    const ss = String(shiftSeconds % 60).padStart(2, "0");
+    shiftClock.lastChild.textContent = "Shift clock: " + mm + ":" + ss;
+    if (w1.classList.contains("done")) clearInterval(shiftInterval);
+  }, 1000);
   w1.appendChild(el("div", { class: "scenario-box" }, [text(
     "A corporate customer at Meridian Bank asks their bank to pay a fictional overseas supplier. Two days later, the supplier's account turns out to be closed, and the funds, which had already settled, must be returned."
   )]));
@@ -878,7 +1069,113 @@ function buildDay5() {
 }
 
 /* ============================================================
-   CERTIFICATE SECTION
+LIVE COHORT SECTION
+============================================================ */
+let cohortPollTimer = null;
+function buildCohortSection() {
+  const section = el("section", { id: "cohort", class: "day-section" });
+  section.appendChild(el("div", { class: "day-intro" }, [
+    el("div", { class: "day-icon", html: ICONS.cohort }, []),
+    el("div", {}, [
+      el("h2", {}, [text("Live Cohort")]),
+      el("p", {}, [text("A live view of everyone taking this training right now. This updates automatically while you have this tab open.")]),
+    ])
+  ]));
+
+  const widget = el("div", { class: "widget" });
+  const badgeRow = el("div", { class: "cohort-badge-row" }, [
+    el("div", { class: "live-badge" }, [el("div", { class: "live-dot" }, []), text("LIVE")]),
+    el("div", { class: "cohort-refresh", id: "cohortRefreshLabel" }, [text("Updating now")]),
+  ]);
+  widget.appendChild(el("h3", {}, [text("Cohort leaderboard")]));
+  widget.appendChild(badgeRow);
+  const tableWrap = el("div", { id: "cohortTableWrap" }, [el("p", { class: "cohort-empty" }, [text("Loading live cohort data...")])]);
+  widget.appendChild(tableWrap);
+  widget.appendChild(el("p", { class: "cohort-note" }, [text("Names are shown as first name and last initial to keep this view light-touch for a shared training room.")]));
+  section.appendChild(widget);
+
+  const feedWidget = el("div", { class: "widget" });
+  feedWidget.appendChild(el("h3", {}, [text("Recent activity")]));
+  const feedWrap = el("div", { id: "cohortFeedWrap" }, [el("p", { class: "feed-empty" }, [text("Loading recent activity...")])]);
+  feedWidget.appendChild(feedWrap);
+  section.appendChild(feedWidget);
+
+  return section;
+}
+function renderCohortData(data) {
+  const tableWrap = document.getElementById("cohortTableWrap");
+  const feedWrap = document.getElementById("cohortFeedWrap");
+  if (!tableWrap || !feedWrap) return;
+  const board = (data && data.leaderboard) || [];
+  const feed = (data && data.feed) || [];
+
+  if (board.length === 0) {
+    tableWrap.innerHTML = "";
+    tableWrap.appendChild(el("p", { class: "cohort-empty" }, [text("No one has started a simulation yet. Be the first to appear on the board.")]));
+  } else {
+    const table = el("table", { class: "cohort-table" });
+    const thead = el("thead", {}, [el("tr", {}, [
+      el("th", {}, [text("Rank")]),
+      el("th", {}, [text("Trainee")]),
+      el("th", {}, [text("Days")]),
+      el("th", {}, [text("Last activity")]),
+    ])]);
+    const tbody = el("tbody");
+    board.forEach((row, i) => {
+      const chips = el("div", { class: "cohort-days" });
+      ["day1", "day2", "day3", "day4", "day5"].forEach((d, di) => {
+        const on = row.daysCompleted && row.daysCompleted.includes(d);
+        chips.appendChild(el("div", { class: "cohort-chip" + (on ? " on" : "") }, [text(String(di + 1))]));
+      });
+      const tr = el("tr", {}, [
+        el("td", { class: "cohort-rank" }, [text("#" + (i + 1))]),
+        el("td", {}, [text(row.name)]),
+        el("td", {}, [chips]),
+        el("td", {}, [text(row.lastActivity)]),
+      ]);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(thead); table.appendChild(tbody);
+    tableWrap.innerHTML = "";
+    tableWrap.appendChild(table);
+  }
+
+  if (feed.length === 0) {
+    feedWrap.innerHTML = "";
+    feedWrap.appendChild(el("p", { class: "feed-empty" }, [text("No activity yet today.")]));
+  } else {
+    feedWrap.innerHTML = "";
+    feed.forEach(item => {
+      feedWrap.appendChild(el("div", { class: "feed-item" }, [
+        el("div", { class: "feed-dot" }, []),
+        el("div", {}, [text(item.name + " completed " + item.dayLabel + ", " + item.when)]),
+      ]));
+    });
+  }
+}
+function fetchCohortData() {
+  const label = document.getElementById("cohortRefreshLabel");
+  fetch("/api/fintech-training/leaderboard")
+    .then(r => r.json())
+    .then(data => {
+      renderCohortData(data);
+      if (label) label.textContent = "Last updated " + new Date().toLocaleTimeString();
+    })
+    .catch(() => {
+      if (label) label.textContent = "Live data unavailable right now";
+    });
+}
+function startCohortPolling() {
+  fetchCohortData();
+  stopCohortPolling();
+  cohortPollTimer = setInterval(fetchCohortData, 20000);
+}
+function stopCohortPolling() {
+  if (cohortPollTimer) { clearInterval(cohortPollTimer); cohortPollTimer = null; }
+}
+
+/* ============================================================
+CERTIFICATE SECTION
 ============================================================ */
 function buildCertificate() {
   const section = el("section", { id: "cert", class: "day-section" });
@@ -925,7 +1222,7 @@ function drawCertificate() {
   ctx.fillText("FinTech for Banks Training", w / 2, 190);
   ctx.font = "16px Calibri";
   ctx.fillStyle = "#CADCFC";
-  ctx.fillText("Interactive exercises and simulations for ISO 20022 and CBPR plus practitioner training", w / 2, 225);
+  ctx.fillText("Interactive exercises and live simulations for ISO 20022 and CBPR plus practitioner training", w / 2, 225);
   ctx.font = "15px Calibri";
   ctx.fillText("This certifies that", w / 2, 300);
   ctx.fillStyle = "#E8B64A";
@@ -936,7 +1233,7 @@ function drawCertificate() {
   ctx.font = "15px Calibri";
   ctx.fillText("has successfully completed all five days of the program,", w / 2, 395);
   ctx.fillText("covering ISO 20022 foundations, MT to MX mapping, returns and cancellations,", w / 2, 420);
-  ctx.fillText("statements and reconciliation, and an integrated capstone scenario.", w / 2, 445);
+  ctx.fillText("statements and reconciliation, and an integrated live capstone scenario.", w / 2, 445);
   const today = new Date();
   const dateStr = today.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   ctx.font = "14px Calibri";
@@ -957,13 +1254,14 @@ function drawCertificate() {
 }
 
 /* ============================================================
-   BUILD PAGE
+BUILD PAGE
 ============================================================ */
 main.appendChild(buildDay1());
 main.appendChild(buildDay2());
 main.appendChild(buildDay3());
 main.appendChild(buildDay4());
 main.appendChild(buildDay5());
+main.appendChild(buildCohortSection());
 main.appendChild(buildCertificate());
 showDay("day1");
 updateProgressBar();
