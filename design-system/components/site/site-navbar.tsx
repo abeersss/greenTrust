@@ -116,10 +116,15 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
           href: "/oop-lab/index.html",
           children: [
             {
-              label: locale === "ar" ? "مختبر البرمجة الكائنية" : "OOP Learning Lab",
-              href: "/oop-lab/index.html",
-              external: true,
-            },
+  label: locale === "ar" ? "مختبر البرمجة الكائنية" : "OOP Learning Lab",
+  href: "/oop-lab/index.html",
+  external: true,
+},
+{
+  label: locale === "ar" ? "تدريب فينتك للبنوك" : "FinTech for Banks Training",
+  href: "/fintech-training/FinTech_for_Banks_Training.html",
+  external: true,
+},
           ],
         },
       ],
