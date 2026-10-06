@@ -82,7 +82,7 @@ export default async function FounderFintechTrainingPage({
         <CardContent className="p-0">
           {trainees.length === 0 ? (
             <p className="p-6 text-sm text-text-muted">
-              No trainees yet. Progress appears here once someone completes a day's simulations on the
+              No trainees yet. Progress appears here once someone completes the simulations for a day on the
               training site.
             </p>
           ) : (
