@@ -20,9 +20,11 @@ const DAY_ORDER = ["day1", "day2", "day3", "day4", "day5"];
 
 function shortName(fullName: string): string {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "Anonymous trainee";
-  if (parts.length === 1) return parts[0];
-  return `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.`;
+  const first = parts[0];
+  if (!first) return "Anonymous trainee";
+  const last = parts.length > 1 ? parts[parts.length - 1] : "";
+  if (!last) return first;
+  return `${first} ${last.charAt(0).toUpperCase()}.`;
 }
 
 function formatWhen(value: string): string {
