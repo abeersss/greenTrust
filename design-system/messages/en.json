@@ -1172,9 +1172,8 @@
 "media": {
 "kicker": "Media & Press",
 "title": "Media & Press",
-"intro": "Press coverage of Dr. Abeer Alshammari and the CyberAbeer Initiative. Each entry links to the original article.",
-"pressHeading": "Press coverage",
-"byline": "By {author}",
+"intro": "Press coverage of Dr. Abeer Alshammari and the CyberAbeer Initiative, and articles she has written for the press. Each entry links to the original.",
+"pressHeading": "Press and published articles",
 "readOriginal": "Read the original article on {publication}",
 "disclaimer": "Summaries are written by CyberAbeer. Headlines and articles belong to their publishers, and coverage does not imply endorsement.",
 "galleryCta": "View the gallery",
@@ -1184,6 +1183,8 @@
 "galleryTitle": "Gallery",
 "galleryIntro": "Moments from training sessions, public appearances, conferences, and CyberAbeer activities.",
 "galleryEmptyTitle": "Photos coming soon",
-"galleryEmptyBody": "Approved photos will be added here with verified captions and dates."
+"galleryEmptyBody": "Approved photos will be added here with verified captions and dates.",
+"kindCoverage": "Press coverage",
+"kindColumn": "Opinion column"
 }
 }

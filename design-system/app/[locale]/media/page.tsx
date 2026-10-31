@@ -71,6 +71,8 @@ export default async function MediaPage({ params }: { params: Promise<{ locale: 
           {items.map((item) => (
             <li key={item.id} className="rounded-card border border-border bg-surface-raised p-5 tablet:p-6">
               <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+                <span>{item.kind === "column" ? t("kindColumn") : t("kindCoverage")}</span>
+                <span aria-hidden="true"> · </span>
                 <span>{item.publication}</span>
                 <span aria-hidden="true"> · </span>
                 <time dateTime={item.date}>{formatDate(item.date, l)}</time>
@@ -83,8 +85,12 @@ export default async function MediaPage({ params }: { params: Promise<{ locale: 
                 {item.headline}
               </h3>
               {item.author && (
-                <p className="mt-1 text-sm text-text-muted">
-                  {t("byline", { author: item.author })}
+                <p
+                  className="mt-1 text-sm text-text-muted"
+                  dir={item.headlineLang === "ar" ? "rtl" : "ltr"}
+                  lang={item.headlineLang}
+                >
+                  {item.headlineLang === "ar" ? `بقلم ${item.author}` : `By ${item.author}`}
                 </p>
               )}
               <p className="mt-3 text-text-secondary">{item.summary[l]}</p>
