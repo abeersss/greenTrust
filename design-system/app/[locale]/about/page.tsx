@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { personSchema, breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
-import { ShieldCheck, GraduationCap, Briefcase, Users } from "lucide-react";
+import { ShieldCheck, GraduationCap, Briefcase, Users, Newspaper } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -120,12 +120,29 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       </section>
 
       {/* Memberships */}
-      <section className="mt-12 mb-4">
+      <section className="mt-12">
         <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-text-primary">
           <Users className="h-5 w-5 text-primary" aria-hidden="true" />
           {t("membershipsHeading")}
         </h2>
         <p className="mt-2 text-text-secondary">{t("membershipsBody")}</p>
+      </section>
+
+      {/* Media and gallery */}
+      <section className="mt-12 mb-4">
+        <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-text-primary">
+          <Newspaper className="h-5 w-5 text-primary" aria-hidden="true" />
+          {t("mediaHeading")}
+        </h2>
+        <p className="mt-2 text-text-secondary">{t("mediaBody")}</p>
+        <div className="mt-3 flex flex-wrap gap-4">
+          <Link href="/media" className="text-sm font-medium text-primary hover:underline">
+            {tNav("media")}
+          </Link>
+          <Link href="/gallery" className="text-sm font-medium text-primary hover:underline">
+            {tNav("gallery")}
+          </Link>
+        </div>
       </section>
     </div>
   );

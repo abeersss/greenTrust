@@ -44,6 +44,8 @@ export const dynamic = "force-dynamic";
 const staticPaths = [
   "",
   "about",
+  "media",
+  "gallery",
   "greentrust",
   "for-organizations",
   "labs",
