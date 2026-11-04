@@ -128,7 +128,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <p className="mt-2 text-text-secondary">{t("membershipsBody")}</p>
       </section>
 
-      {/* Media and gallery */}
+      {/* Media */}
       <section className="mt-12 mb-4">
         <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-text-primary">
           <Newspaper className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -138,9 +138,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <div className="mt-3 flex flex-wrap gap-4">
           <Link href="/media" className="text-sm font-medium text-primary hover:underline">
             {tNav("media")}
-          </Link>
-          <Link href="/gallery" className="text-sm font-medium text-primary hover:underline">
-            {tNav("gallery")}
           </Link>
         </div>
       </section>

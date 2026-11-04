@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/site/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
-import { Newspaper, ExternalLink, Images } from "lucide-react";
+import { Newspaper, ExternalLink } from "lucide-react";
 import { pressItems } from "@/lib/media/press";
 
 export async function generateMetadata({
@@ -111,10 +111,6 @@ export default async function MediaPage({ params }: { params: Promise<{ locale: 
       </section>
 
       <div className="mt-10 flex flex-wrap gap-4 rounded-card border border-border bg-surface-raised p-5">
-        <Link href="/gallery" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
-          <Images className="h-4 w-4" aria-hidden="true" />
-          {t("galleryCta")}
-        </Link>
         <Link href="/about" className="text-sm font-medium text-primary hover:underline">
           {t("aboutCta")}
         </Link>

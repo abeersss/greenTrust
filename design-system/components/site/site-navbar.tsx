@@ -138,7 +138,6 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
         { label: t("intelligence"), href: "/intelligence" },
         { label: t("books"), href: "/books" },
         { label: t("media"), href: "/media" },
-        { label: t("gallery"), href: "/gallery" },
       ],
     },
     { label: t("contact"), href: "/contact" },

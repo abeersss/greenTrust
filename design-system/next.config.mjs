@@ -58,6 +58,9 @@ const nextConfig = {
         destination: "/ar/intelligence/ثغرة-sharepoint-cve-2026-45659-استغلال-فعلي",
         permanent: true,
       },
+      // 2026-11-04: Gallery page removed; send old links to Media & Press.
+      { source: "/:locale(en|ar)/gallery", destination: "/:locale/media", permanent: true },
+      { source: "/gallery", destination: "/media", permanent: true },
     ];
   },
   // No explicit "/" redirect here: middleware.ts already redirects the

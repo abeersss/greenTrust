@@ -45,7 +45,6 @@ const staticPaths = [
   "",
   "about",
   "media",
-  "gallery",
   "greentrust",
   "for-organizations",
   "labs",

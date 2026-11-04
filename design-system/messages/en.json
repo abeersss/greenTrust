@@ -18,8 +18,7 @@
 "account": "My account",
 "myLabs": "My Labs",
 "logout": "Log out",
-"media": "Media & Press",
-"gallery": "Gallery"
+"media": "Media & Press"
 },
 "common": {
 "learnMore": "Learn more",
@@ -131,8 +130,8 @@
 "researchCta": "See research areas",
 "membershipsHeading": "Professional activity",
 "membershipsBody": "Member of ISACA, ISC2, IEEE, Women in Cybersecurity (WiCyS), the Australian Computer Society (ACS), Gartner, and Info-Tech Research Group, as well as the International Leadership Association (ILA), a global community of leaders, leadership scholars, educators, and development professionals who share a vision of leadership for a just and thriving future. Experience as a peer reviewer and recognized contributor in the field.",
-"mediaHeading": "Media and gallery",
-"mediaBody": "Read verified press coverage of Dr. Abeer and the CyberAbeer Initiative, or browse photos from training and public appearances."
+"mediaHeading": "Media",
+"mediaBody": "Read verified press coverage of Dr. Abeer and the CyberAbeer Initiative."
 },
 "greentrust": {
 "kicker": "GreenTrust AI",
@@ -931,9 +930,7 @@
 "challengeFirstDefenderTitle": "Free Cyber Challenge: First Defender, Spot the Phish",
 "challengeFirstDefenderDescription": "Play a free, interactive phishing-detection scenario in Arabic or English. Inspect five realistic messages, earn XP, and unlock the CyberAbeer First Defender badge.",
 "mediaTitle": "Media & Press | Dr. Abeer Alshammari",
-"mediaDescription": "Verified press coverage of Dr. Abeer Alshammari and the CyberAbeer Initiative, with links to the original articles.",
-"galleryTitle": "Gallery | Dr. Abeer Alshammari",
-"galleryDescription": "Photos from Dr. Abeer Alshammari's training, public appearances, conferences, and CyberAbeer activities."
+"mediaDescription": "Verified press coverage of Dr. Abeer Alshammari and the CyberAbeer Initiative, with links to the original articles."
 },
 "challenge": {
 "firstDefender": {
@@ -1176,14 +1173,7 @@
 "pressHeading": "Press and published articles",
 "readOriginal": "Read the original article on {publication}",
 "disclaimer": "Summaries are written by CyberAbeer. Headlines and articles belong to their publishers, and coverage does not imply endorsement.",
-"galleryCta": "View the gallery",
 "aboutCta": "About Dr. Abeer",
-"pressCta": "See press coverage",
-"galleryKicker": "Gallery",
-"galleryTitle": "Gallery",
-"galleryIntro": "Moments from training sessions, public appearances, conferences, and CyberAbeer activities.",
-"galleryEmptyTitle": "Photos coming soon",
-"galleryEmptyBody": "Approved photos will be added here with verified captions and dates.",
 "kindCoverage": "Press coverage",
 "kindColumn": "Opinion column"
 }

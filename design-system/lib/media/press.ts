@@ -53,20 +53,3 @@ export const pressItems: PressItem[] = [
     },
   },
 ];
-
-/**
- * Approved gallery photos. Add only photos you own or are licensed to
- * publish, with verified captions and dates. Do not include identifiable
- * participants without consent or any confidential workplace material.
- * Files live in /public/media/gallery/.
- */
-export type GalleryItem = {
-  id: string;
-  src: string;
-  alt: { en: string; ar: string };
-  caption: { en: string; ar: string };
-  /** ISO date, only when verified. */
-  date?: string;
-};
-
-export const galleryItems: GalleryItem[] = [];
