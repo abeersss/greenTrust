@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:"Plex Arabic";font-weight:400;src:url(node_modules/@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-400-normal.woff2)}
+@font-face{font-family:"Plex Arabic";font-weight:500;src:url(node_modules/@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-500-normal.woff2)}
+@font-face{font-family:"Plex Arabic";font-weight:700;src:url(node_modules/@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-700-normal.woff2)}
+@font-face{font-family:"Oswald";font-weight:500;src:url(node_modules/@fontsource/oswald/files/oswald-latin-500-normal.woff2)}
+@font-face{font-family:"Oswald";font-weight:700;src:url(node_modules/@fontsource/oswald/files/oswald-latin-700-normal.woff2)}
+:root{--b1:#2F6BE6;--b2:#1FA3EE;--wave:rgba(255,255,255,.10);--card:rgba(255,255,255,.14);--cardline:rgba(255,255,255,.28);--yellow:#FFD21F;--ink:#0D2A5C;--text:#FFFFFF;--soft:#E3EEFF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000}
+.slide{width:1080px;height:1350px;color:var(--text);position:relative;overflow:hidden;padding:104px 92px 110px;display:flex;flex-direction:column;font-family:"Plex Arabic",sans-serif;
+ background:linear-gradient(160deg,var(--b1) 0%,#3C82EC 45%,var(--b2) 100%)}
+.slide::before{content:"";position:absolute;width:1300px;height:620px;left:-260px;bottom:-330px;border-radius:50%;background:var(--wave);transform:rotate(-8deg)}
+.slide::after{content:"";position:absolute;width:900px;height:520px;right:-380px;top:-300px;border-radius:50%;background:rgba(255,255,255,.07);transform:rotate(14deg)}
+.top,.body,.foot{position:relative;z-index:1}
+.top{display:flex;justify-content:space-between;align-items:center}
+.brand{font-family:"Oswald";font-weight:700;font-size:34px;letter-spacing:1px;direction:ltr}
+.brand span{color:var(--yellow)}
+.count{font-family:"Oswald";font-weight:500;font-size:30px;color:var(--soft);direction:ltr}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center}
+.kicker{align-self:flex-start;font-weight:700;font-size:34px;color:var(--ink);background:var(--yellow);padding:8px 28px;border-radius:12px;margin-bottom:40px}
+h1{font-weight:700;font-size:100px;line-height:1.25}
+h2{font-weight:700;font-size:74px;line-height:1.3;margin-bottom:46px}
+.en{font-family:"Oswald";font-weight:700;direction:ltr;unicode-bidi:isolate;letter-spacing:.5px}
+.y{color:var(--yellow)}
+.sub{font-weight:500;font-size:44px;line-height:1.65;color:var(--soft);margin-top:40px;max-width:820px}
+p.lead{font-weight:500;font-size:44px;line-height:1.6}
+.eq{direction:ltr;text-align:center;font-family:"Oswald";font-weight:700;font-size:70px;margin:6px 0 52px;letter-spacing:1px}
+.eq .op{color:var(--soft);font-weight:500;margin:0 22px}
+.card{background:var(--card);border:2px solid var(--cardline);border-radius:30px;padding:38px 42px;margin-bottom:28px;display:flex;gap:32px;align-items:flex-start}
+.ic{flex:0 0 96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff}
+.ic svg{width:54px;height:54px}
+.card h3{font-weight:700;font-size:44px;line-height:1.35;margin-bottom:10px}
+.card p{font-weight:400;font-size:36px;line-height:1.6;color:var(--soft)}
+.quote{background:#fff;color:var(--ink);border-radius:26px;padding:34px 42px;margin-bottom:26px;font-weight:500;font-size:42px;line-height:1.5;position:relative}
+.quote::before{content:"";position:absolute;right:-14px;top:38px;width:28px;height:28px;background:#fff;transform:rotate(45deg);border-radius:4px}
+.note{margin-top:26px;font-weight:700;font-size:44px;line-height:1.55;color:var(--yellow)}
+.step{display:flex;gap:30px;align-items:flex-start;margin-bottom:38px}
+.num{flex:0 0 86px;height:86px;border-radius:50%;background:var(--yellow);color:var(--ink);font-family:"Oswald";font-weight:700;font-size:46px;display:flex;align-items:center;justify-content:center}
+.step h3{font-weight:700;font-size:44px;line-height:1.35;margin-bottom:6px}
+.step p{font-weight:400;font-size:35px;line-height:1.55;color:var(--soft)}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:30px;color:var(--soft)}
+.foot .h{font-family:"Oswald";font-weight:500;direction:ltr;letter-spacing:.5px}
+.arrow{font-size:40px;line-height:1}
+.cta{background:#fff;color:var(--ink);border-radius:34px;padding:54px 52px}
+.cta h3{font-weight:700;font-size:48px;line-height:1.4;margin-bottom:6px}
+.cta .ct{font-family:"Oswald";font-weight:700;font-size:46px;color:var(--b1);direction:ltr;text-align:center;white-space:nowrap;margin-bottom:20px;letter-spacing:.5px}
+.cta p{font-size:37px;line-height:1.6;color:#2B4A7E}
+.url{direction:ltr;font-family:"Oswald";font-weight:700;font-size:62px;color:var(--ink);margin-top:30px;text-align:center;background:var(--yellow);border-radius:18px;padding:10px 0;letter-spacing:1px}
+.keep{margin-top:44px;font-weight:700;font-size:42px;line-height:1.5}
+.src{margin-top:30px;font-size:28px;line-height:1.6;color:var(--soft);border-top:2px solid var(--cardline);padding-top:24px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.hero{position:absolute;left:84px;bottom:220px;width:330px;height:330px;z-index:1}
+</style>
+<style>
+.callcard{background:#fff;color:var(--ink);border-radius:36px;padding:34px 36px;width:420px;position:absolute;left:84px;bottom:200px;z-index:1;box-shadow:0 20px 50px rgba(13,42,92,.25)}
+.callcard .who{display:flex;align-items:center;gap:20px}
+.av{width:84px;height:84px;border-radius:50%;background:#DCE8FF;display:flex;align-items:center;justify-content:center}
+.callcard .nm{font-weight:700;font-size:36px}
+.callcard .st{font-size:28px;color:#4A6390;font-family:"Plex Arabic"}
+.warn{margin-top:24px;background:var(--yellow);border-radius:16px;padding:12px 18px;font-weight:700;font-size:28px;display:flex;gap:12px;align-items:center}
+.btns{display:flex;justify-content:space-between;margin-top:26px}
+.b{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.b svg{width:44px;height:44px}
+</style>
+<body>
+
+<section class="slide" id="s1">
+  <div class="top"><div class="brand">CYBER<span>ABEER</span></div><div class="count">1/5</div></div>
+  <div class="body" style="justify-content:flex-start;padding-top:70px">
+    <div class="kicker">تنبيه أمني</div>
+    <h1 style="font-size:92px">الصوت مألوف…<br>لكن هل هو<br><span class="y">حقيقي؟</span></h1>
+    <div class="sub" style="max-width:470px;margin-right:0">يمكن استنساخ الأصوات<br>بالذكاء الاصطناعي<br>من مقطع قصير.<br>تحقّق قبل أن تتصرف.</div>
+  </div>
+  <div class="callcard">
+    <div class="who"><div class="av"><svg viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="#2F6BE6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>
+      <div><div class="nm">مكالمة واردة</div><div class="st">رقم غير محفوظ</div></div></div>
+    <div class="warn"><svg viewBox="0 0 24 24" width="34" height="34"><path d="M12 3 2 21h20Z" fill="#0D2A5C"/><rect x="11" y="9" width="2" height="6" rx="1" fill="#FFD21F"/><circle cx="12" cy="17.6" r="1.2" fill="#FFD21F"/></svg>طلب تحويل عاجل</div>
+    <div class="btns">
+      <div class="b" style="background:#E5484D"><svg viewBox="0 0 24 24" fill="#fff"><path d="M3 14c5-5 13-5 18 0l-2.6 2.6-3.4-1.6v-2.4c-2-.7-4-.7-6 0V15l-3.4 1.6Z"/></svg></div>
+      <div class="b" style="background:#2BB673"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1Z"/></svg></div>
+    </div>
+  </div>
+  <div class="foot"><span class="h">@DRABEERSS</span><span class="arrow">←</span></div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="top"><div class="brand">CYBER<span>ABEER</span></div><div class="count">2/5</div></div>
+  <div class="body">
+    <h2>كيف يعمل الاحتيال؟</h2>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 7v10M4 10v4M16 7v10M20 10v4"/></svg></div>
+      <div><h3>مقطع صوتي قصير يكفي</h3><p>فيديو منشور أو رسالة صوتية قد تكفي لتقليد صوت شخص تعرفه.</p></div></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div><h3>مكالمة عاجلة وقصة مقنعة</h3><p>قريب في ورطة، أو مسؤول يطلب إجراءً فورياً قبل نهاية اليوم.</p></div></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg></div>
+      <div><h3>وسيلة دفع غير معتادة</h3><p>تحويل سريع، عملات رقمية، أو بطاقات هدايا مع طلب أرقامها.</p></div></div>
+  </div>
+  <div class="foot"><span class="h">@DRABEERSS</span><span class="arrow">←</span></div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="top"><div class="brand">CYBER<span>ABEER</span></div><div class="count">3/5</div></div>
+  <div class="body">
+    <h2>عبارات تستحق التوقف</h2>
+    <div class="quote">أنا في مشكلة، حوّل لي المبلغ الآن ولا تخبر أحداً.</div>
+    <div class="quote">معك المدير، أحتاج تحويلاً عاجلاً قبل نهاية الدوام.</div>
+    <div class="quote">أرسل لي الرمز الذي وصلك في رسالة نصية.</div>
+    <p class="note">الاستعجال والسرية معاً<br>علامتان على الاحتيال.</p>
+  </div>
+  <div class="foot"><span class="h">@DRABEERSS</span><span class="arrow">←</span></div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="top"><div class="brand">CYBER<span>ABEER</span></div><div class="count">4/5</div></div>
+  <div class="body">
+    <h2>تحقّق في ثلاث خطوات</h2>
+    <div class="step"><div class="num">1</div><div><h3>أنهِ المكالمة بهدوء</h3><p>لا تتخذ أي قرار والمتصل ما زال على الخط.</p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>اتصل على رقم تعرفه أنت</h3><p>استخدم الرقم المحفوظ لديك، لا الرقم الذي اتصل منه.</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>لا تحوّل ولا تشارك أي رمز</h3><p>قبل أن تتأكد من الشخص نفسه، أو من فرد آخر في العائلة أو الفريق.</p></div></div>
+  </div>
+  <div class="foot"><span class="h">@DRABEERSS</span><span class="arrow">←</span></div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="top"><div class="brand">CYBER<span>ABEER</span></div><div class="count">5/5</div></div>
+  <div class="body">
+    <h2>اتفاق بسيط يحميك</h2>
+    <div class="card" style="background:#fff;border-color:#fff"><div class="ic" style="background:#E8F0FF"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7v9H3Z"/><path d="M9 20v-6h6v6"/></svg></div>
+      <div><h3 style="color:var(--ink)">في العائلة</h3><p style="color:#2B4A7E">اتفقوا على كلمة سر لا يعرفها غيركم، واطلبوها في أي مكالمة طارئة.</p></div></div>
+    <div class="card" style="background:#fff;border-color:#fff"><div class="ic" style="background:#E8F0FF"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+      <div><h3 style="color:var(--ink)">في العمل</h3><p style="color:#2B4A7E">لا يُعتمد أي طلب مالي عبر مكالمة أو رسالة صوتية وحدها، بل عبر قناة ثانية معتمدة.</p></div></div>
+    <p class="keep" style="margin-top:36px">ثوانٍ من التحقق تمنع خسارة كبيرة.</p>
+  </div>
+  <div class="foot"><span class="h">@DRABEERSS</span><span></span></div>
+</section>
+</body></html>
