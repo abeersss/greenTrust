@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { SiteBreadcrumb } from "@/components/site/site-breadcrumb";
@@ -82,7 +82,19 @@ export default async function DataGovernanceResourcePage({
 
   const resources = await getDgResources(l);
   const card = resources.find((r) => r.slug.normalize("NFC") === slug.normalize("NFC") && r.category === category);
-  if (!card) notFound();
+  if (!card) {
+    // The language switcher keeps the current slug, so an EN slug opened
+    // under /ar (or the reverse) lands here. Find the same resource via the
+    // other locale and redirect to this locale's own slug.
+    const otherLocale: AppLocale = l === "ar" ? "en" : "ar";
+    const other = await getArticleBySlug(otherLocale, slug);
+    if (other) {
+      const slugs = await getArticleLocaleSlugs(other.id);
+      const own = slugs[l];
+      if (own) redirect(`/${l}/data-governance/${category}/${encodeURIComponent(own)}`);
+    }
+    notFound();
+  }
   const article = await getArticleBySlug(l, card.slug);
   if (!article) notFound();
 
