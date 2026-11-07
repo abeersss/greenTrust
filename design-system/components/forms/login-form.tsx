@@ -43,6 +43,13 @@ export function LoginForm({ locale }: { locale: AppLocale }) {
 
       if (result.status === "success") {
         trackEvent("login_submit", { locale });
+      // Allow a same-site return path (for example the FinTech training
+      // page) via ?next=/path. Only plain same-origin paths are accepted.
+      const next = new URLSearchParams(window.location.search).get("next");
+      if (next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\")) {
+        window.location.assign(next);
+        return;
+      }
         // Phase 8: a real account page now exists (XP, badges, challenge
         // history, saved GreenTrust results), so a signed-in visitor lands
         // there instead of the marketing home page.
