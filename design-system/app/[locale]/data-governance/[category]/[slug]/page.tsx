@@ -23,6 +23,9 @@ function decodeParam(value: string): string {
 }
 
 const PROSE_CSS = `
+.dg-crumbs,.dg-crumbs *{color:#94a3b8 !important}
+.dg-crumbs a:hover{color:#fff !important}
+.dg-crumbs li:last-child,.dg-crumbs [aria-current]{color:#e2e8f0 !important}
 .dg-prose{color:#cbd5e1;font-size:1.0625rem;line-height:1.85}
 .dg-prose h2{margin:2.75rem 0 .85rem;font-size:1.65rem;line-height:1.3;font-weight:700;color:#fff;letter-spacing:-0.01em}
 .dg-prose h3{margin:2rem 0 .6rem;font-size:1.25rem;line-height:1.35;font-weight:650;color:#fff}
@@ -138,14 +141,16 @@ export default async function DataGovernanceResourcePage({
 
       <header className="border-b border-white/10 bg-gradient-to-b from-[#0a2342] via-[#08182d] to-[#06121f]">
         <div className="mx-auto max-w-3xl px-4 pb-10 pt-8 tablet:px-6 tablet:pb-14">
-          <SiteBreadcrumb
-            items={[
-              { label: tNav("home"), href: "/" },
-              { label: copy.hub.breadcrumb, href: "/data-governance" },
-              { label: cc.short, href: `/data-governance/${category}` },
-              { label: article.title },
-            ]}
-          />
+          <div className="dg-crumbs">
+            <SiteBreadcrumb
+              items={[
+                { label: tNav("home"), href: "/" },
+                { label: copy.hub.breadcrumb, href: "/data-governance" },
+                { label: cc.short, href: `/data-governance/${category}` },
+                { label: article.title },
+              ]}
+            />
+          </div>
           <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
             {copy.types[card.resourceType]} &middot; {cc.short}
           </p>
