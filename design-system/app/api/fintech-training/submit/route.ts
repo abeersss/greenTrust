@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/request-ip";
 
@@ -22,6 +22,16 @@ export async function POST(request: Request) {
   const parsed = submitSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ ok: false, error: "Invalid input" }, { status: 400 });
+  }
+
+  // The training now requires a CyberAbeer login: only signed-in
+  // accounts can record progress.
+  const authClient = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: "Login required" }, { status: 401 });
   }
 
   const ip = await getClientIp();
