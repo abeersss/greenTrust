@@ -112,6 +112,17 @@ export interface DgCopy {
     back: string;
     resources: string;
   };
+  resource: {
+    guidanceTitle: string;
+    guidanceText: string;
+    guidanceButton: string;
+    sourcesTitle: string;
+    accessed: string;
+    relatedTitle: string;
+    published: string;
+    updated: string;
+    backToCategory: string;
+  };
 }
 
 const en: DgCopy = {
@@ -238,6 +249,18 @@ const en: DgCopy = {
     back: "Back to Data Governance",
     resources: "Resources",
   },
+  resource: {
+    guidanceTitle: "Need help applying this in your organization?",
+    guidanceText:
+      "Tell us about your context and we will respond with practical guidance on adapting this approach to your data, regulations, and team.",
+    guidanceButton: "Request Guidance",
+    sourcesTitle: "References and further reading",
+    accessed: "Accessed",
+    relatedTitle: "Continue exploring",
+    published: "Published",
+    updated: "Updated",
+    backToCategory: "Back to",
+  },
 };
 
 const ar: DgCopy = {
@@ -360,6 +383,18 @@ const ar: DgCopy = {
   categoryPage: {
     back: "العودة إلى حوكمة البيانات",
     resources: "الموارد",
+  },
+  resource: {
+    guidanceTitle: "هل تحتاج مساعدة في تطبيق هذا في مؤسستك؟",
+    guidanceText:
+      "أخبرنا بسياق مؤسستك وسنرد عليك بإرشادات عملية لتكييف هذا النهج مع بياناتك وأنظمتك التنظيمية وفريقك.",
+    guidanceButton: "اطلب إرشاداً",
+    sourcesTitle: "المراجع والقراءات الإضافية",
+    accessed: "تاريخ الاطلاع",
+    relatedTitle: "تابع الاستكشاف",
+    published: "نُشر",
+    updated: "حُدّث",
+    backToCategory: "العودة إلى",
   },
 };
 
