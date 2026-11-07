@@ -11,7 +11,7 @@ import { submitContactForm } from "@/lib/actions/contact";
 import { trackEvent } from "@/lib/analytics/track";
 import type { AppLocale } from "@/lib/i18n/config";
 
-export function ContactForm({ locale }: { locale: AppLocale }) {
+export function ContactForm({ locale, defaultMessage = "" }: { locale: AppLocale; defaultMessage?: string }) {
   const t = useTranslations("contact");
   const tCommon = useTranslations("common");
   const pathname = usePathname();
@@ -71,7 +71,7 @@ export function ContactForm({ locale }: { locale: AppLocale }) {
       </FormField>
 
       <FormField id="contact-message" label={t("fields.message")} required>
-        <Textarea name="message" required rows={5} />
+        <Textarea name="message" required rows={5} defaultValue={defaultMessage} />
       </FormField>
 
       <Button type="submit" loading={status === "loading"} className="w-full">
