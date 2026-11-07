@@ -135,6 +135,7 @@ export function SiteNavbar({ locale, isAuthenticated }: { locale: AppLocale; isA
       children: [
         { label: t("research"), href: "/research" },
         { label: t("learn"), href: "/learn" },
+        { label: locale === "ar" ? "حوكمة البيانات" : "Data Governance", href: "/data-governance" },
         { label: t("intelligence"), href: "/intelligence" },
         { label: t("books"), href: "/books" },
         { label: t("media"), href: "/media" },
