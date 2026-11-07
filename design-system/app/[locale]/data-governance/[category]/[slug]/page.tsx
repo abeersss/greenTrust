@@ -45,8 +45,10 @@ const PROSE_CSS = `
 .dg-prose .content-checklist li{position:relative;margin:.55rem 0;padding-inline-start:1.9rem}
 .dg-prose .content-checklist li::before{content:"";position:absolute;inset-inline-start:0;top:.5rem;width:.95rem;height:.95rem;border:2px solid #34d399;border-radius:.3rem}
 .dg-prose table{display:block;width:100%;margin:1.75rem 0;overflow-x:auto;border-collapse:collapse;font-size:.95rem}
-.dg-prose th,.dg-prose td{padding:.65rem .85rem;border:1px solid rgba(255,255,255,.14);text-align:start;vertical-align:top;color:#cbd5e1}
-.dg-prose th{background:rgba(34,211,238,.1);color:#fff;font-weight:650}
+.dg-prose th,.dg-prose td,.dg-prose td *,.dg-prose th *{padding:.65rem .85rem;border:1px solid rgba(255,255,255,.14);text-align:start;vertical-align:top;color:#fff !important}
+.dg-prose td *,.dg-prose th *{padding:0;border:0}
+.dg-prose tbody tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+.dg-prose th{background:rgba(34,211,238,.1);font-weight:650}
 .dg-prose .dg-figure{margin:2.25rem 0;padding:1rem;border:1px solid rgba(255,255,255,.1);border-radius:1rem;background:#0a1b33}
 .dg-prose .dg-figure svg{display:block;width:100%;height:auto}
 .dg-prose .dg-figure figcaption{margin-top:.75rem;font-size:.875rem;color:#94a3b8;text-align:center}
