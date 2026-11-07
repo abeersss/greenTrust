@@ -30,6 +30,19 @@ export async function generateMetadata({
   const article = await getArticleBySlug(locale, slug);
   if (!article) return {};
 
+  // Old /insights address of a Data Governance guide: point search engines
+  // at the canonical /data-governance page and keep this one out of the index.
+  const dgMeta = (await getDgResources(locale)).find((r) => r.slug === slug);
+  if (dgMeta) {
+    return buildMetadata({
+      locale,
+      path: `data-governance/${dgMeta.category}/${encodeURIComponent(dgMeta.slug)}`,
+      title: article.metaTitle ?? article.title,
+      description: article.metaDescription ?? article.excerpt ?? "",
+      noIndex: true,
+    });
+  }
+
   // Bilingual articles are independently translated, not
   // transliterated, so the English and Arabic slugs for the "same"
   // article can legitimately differ (see 013_content_seed_flagship_articles.sql).
