@@ -11,6 +11,7 @@ import { isAppLocale, type AppLocale } from "@/lib/i18n/config";
 import { getArticleBySlug, getArticleLocaleSlugs } from "@/lib/content/articles";
 import { getDgCopy, isDgCategoryRoute } from "@/lib/data-governance/config";
 import { getDgResources } from "@/lib/data-governance/resources";
+import { ResourceDiagram } from "@/components/data-governance/resource-diagram";
 
 export const dynamic = "force-dynamic";
 
@@ -180,6 +181,8 @@ export default async function DataGovernanceResourcePage({
         {/* Body is founder-authored HTML from the content engine (not user input),
             the same trust model as the Insights article template. */}
         <div className="dg-prose" dangerouslySetInnerHTML={{ __html: article.body }} />
+
+        <ResourceDiagram category={category} locale={l} />
 
         <aside className="mt-14 rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-emerald-400/10 to-cyan-400/5 p-6 tablet:p-8">
           <h2 className="font-display text-2xl font-bold text-white">{copy.resource.guidanceTitle}</h2>
