@@ -358,7 +358,7 @@ export async function getPublishedArticles(locale: AppLocale): Promise<ArticleSu
     // overlap"), even though the shape is correct once the real DB types
     // are generated.
     return sortByPublishedAtDesc(
-      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)),
+      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)).filter((a) => a.pillarKey !== "category_data_governance"),
     );
   } catch (err) {
     console.error("getPublishedArticles failed, returning empty list", err);
