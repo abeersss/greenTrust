@@ -122,7 +122,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const locale of locales) {
-    const articles = await getPublishedArticles(locale);
+    const dgSlugs = new Set((await getDgResources(locale)).map((r) => r.slug));
+    const articles = (await getPublishedArticles(locale)).filter((a) => !dgSlugs.has(a.slug));
     for (const r of await getDgResources(locale)) entries.push({ url: siteUrl + "/" + locale + "/data-governance/" + r.category + "/" + encodeURIComponent(r.slug), lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 });
     for (const article of articles) {
       entries.push({
