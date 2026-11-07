@@ -164,7 +164,7 @@ export function ResourceGrid({
             <li key={r.id}>
               <Link
                 href={`/data-governance/${r.category}/${r.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c1f3a] transition duration-base hover:-translate-y-0.5 hover:border-emerald-400/50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#0e2442] to-[#0a1b33] shadow-lg shadow-black/20 transition duration-base hover:-translate-y-0.5 hover:border-emerald-400/50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 <div className="relative aspect-[8/5] overflow-hidden">
                   <CategoryIllustration
@@ -182,9 +182,9 @@ export function ResourceGrid({
                     )}
                   </div>
                 </div>
-                <div className="flex flex-1 flex-col p-4">
-                  <p className="text-xs font-semibold text-emerald-300">{copy.categories[r.category].short}</p>
-                  <h3 className="mt-1 text-base font-semibold leading-snug text-white">{r.title}</h3>
+                <div className="flex flex-1 flex-col p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300">{copy.categories[r.category].short}</p>
+                  <h3 className="mt-2 text-lg font-semibold leading-snug text-white">{r.title}</h3>
                   {r.excerpt && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-300">{r.excerpt}</p>}
                   <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-4 text-xs text-slate-400">
                     {r.readingTime ? <span>{copy.grid.minRead(r.readingTime)}</span> : null}
