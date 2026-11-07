@@ -27,13 +27,32 @@ export async function generateMetadata({
   });
 }
 
-export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function ContactPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ topic?: string | string[] }>;
+}) {
   const { locale } = await params;
   if (!isAppLocale(locale)) notFound();
   const l = locale as AppLocale;
 
   const t = await getTranslations({ locale, namespace: "contact" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
+
+  // "Request Guidance" links from the Data Governance Center pass the
+  // resource title as ?topic=. It only pre-fills the message box (the
+  // visitor reviews and sends it themselves), is stripped of line breaks,
+  // and is length-capped.
+  const sp = await searchParams;
+  const rawTopic = Array.isArray(sp?.topic) ? sp.topic[0] : sp?.topic;
+  const topic = (rawTopic ?? "").replace(/[\r\n]+/g, " ").trim().slice(0, 160);
+  const defaultMessage = topic
+    ? l === "ar"
+      ? `أرغب في الحصول على إرشادات بخصوص: ${topic}`
+      : `I would like guidance on: ${topic}`
+    : "";
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 tablet:px-6">
@@ -52,7 +71,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <CardTitle>{t("generalHeading")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ContactForm locale={l} />
+            <ContactForm locale={l} defaultMessage={defaultMessage} />
           </CardContent>
         </Card>
 
