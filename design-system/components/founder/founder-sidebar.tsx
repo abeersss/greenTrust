@@ -25,6 +25,7 @@ const NAV_ITEMS: { key: string; label: string; href?: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/founder" },
   { key: "accounts", label: "Accounts", href: "/founder/accounts" },
   { key: "content", label: "Content", href: "/founder/content" },
+  { key: "dataGovernance", label: "Data Governance", href: "/founder/data-governance" },
   { key: "research", label: "Research", href: "/founder/research" },
   { key: "books", label: "Books", href: "/founder/books" },
   { key: "insights", label: "Insights", href: "/founder/content?group=insights" },
