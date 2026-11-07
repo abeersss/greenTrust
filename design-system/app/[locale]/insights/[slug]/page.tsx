@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getDgResources } from "@/lib/data-governance/resources";
 import { getTranslations } from "next-intl/server";
 import { SiteBreadcrumb } from "@/components/site/site-breadcrumb";
 import { Link } from "@/lib/i18n/navigation";
@@ -59,6 +60,13 @@ export default async function ArticlePage({
 
   const article = await getArticleBySlug(l, slug);
   if (!article) notFound();
+
+  // Data Governance guides live under /data-governance; send any old
+  // /insights URL there so each guide has a single canonical address.
+  const dgMatch = (await getDgResources(l)).find((r) => r.slug === slug);
+  if (dgMatch) {
+    redirect(`/${l}/data-governance/${dgMatch.category}/${encodeURIComponent(dgMatch.slug)}`);
+  }
 
   const t = await getTranslations({ locale, namespace: "insights" });
   const tNav = await getTranslations({ locale, namespace: "nav" });
