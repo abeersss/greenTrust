@@ -3,6 +3,7 @@ import { locales } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site";
 import { getPublishedArticles, getLatestIntelligenceArticles, getTopLevelPillars, getCategoryBySlug } from "@/lib/content/articles";
 import { getPublishedToolResources } from "@/lib/tools/tool-resources";
+import { getDgResources } from "@/lib/data-governance/resources";
 
 // getPublishedArticles goes through the cookie-aware Supabase server
 // client, which makes this route use a dynamic API (`cookies`) and
@@ -122,6 +123,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const locale of locales) {
     const articles = await getPublishedArticles(locale);
+    for (const r of await getDgResources(locale)) entries.push({ url: siteUrl + "/" + locale + "/data-governance/" + r.category + "/" + encodeURIComponent(r.slug), lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 });
     for (const article of articles) {
       entries.push({
         url: `${siteUrl}/${locale}/insights/${article.slug}`,
