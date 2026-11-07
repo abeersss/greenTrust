@@ -23,6 +23,9 @@ body { margin: 0; font-family: Calibri, Arial, sans-serif; background: #F4F6FB; 
 .gate-btn { background: var(--dk1); color: #fff; border: none; border-radius: 10px; padding: 13px 20px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; }
 .gate-btn:hover { background: var(--accent3); }
 .gate-skip { margin-top: 10px; font-size: 12.5px; color: #8a8f9e; background: none; border: none; cursor: pointer; text-decoration: underline; }
+.gate-link { display: block; text-decoration: none; text-align: center; box-sizing: border-box; }
+.gate-alt { display: inline-block; margin-top: 12px; font-size: 13px; color: var(--accent3); text-decoration: underline; }
+.gate-signed { font-size: 12.5px; color: #4a5578; background: #eef2fb; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
 
 header { background: var(--dk1); color: #fff; padding: 24px 24px 16px; text-align: center; }
 header h1 { margin: 0 0 6px; font-family: Cambria, Georgia, serif; font-size: 28px; }
@@ -154,10 +157,16 @@ footer { text-align: center; padding: 24px; color: #6b7694; font-size: 12.5px; }
   <div class="gate-card">
     <svg class="gate-coin" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#E8B64A" stroke="#1E2761" stroke-width="3"/><text x="32" y="40" font-size="26" text-anchor="middle" fill="#1E2761" font-family="Cambria, serif" font-weight="bold">F</text></svg>
     <h1>FinTech for Banks Training</h1>
-    <p>Interactive exercises and live simulations for ISO 20022 and CBPR plus practitioner training. Enter your name to personalize your progress, appear on the live cohort board, and unlock your completion certificate, or skip ahead.</p>
-    <input type="text" id="nameInput" placeholder="Your name" maxlength="40">
-    <button class="gate-btn" id="startBtn">Start training</button>
-    <button class="gate-skip" id="skipBtn">Skip, I will stay anonymous</button>
+    <p id="gateIntro">Checking your CyberAbeer account...</p>
+    <div id="gateLogin" style="display:none">
+      <a class="gate-btn gate-link" id="loginLink" href="#">Log in to CyberAbeer</a>
+      <a class="gate-alt" id="registerLink" href="#">New here? Create a free account</a>
+    </div>
+    <div id="gateName" style="display:none">
+      <div class="gate-signed" id="signedAs"></div>
+      <input type="text" id="nameInput" placeholder="Your name" maxlength="40">
+      <button class="gate-btn" id="startBtn">Start training</button>
+    </div>
   </div>
 </div>
 
@@ -337,16 +346,42 @@ function closeGate() {
   gate.style.display = "none";
   document.getElementById("greetLine").textContent = state.name ? ("Welcome back, " + state.name + ". Pick up where you left off.") : "";
 }
-if (state.name) {
-  nameInput.value = state.name;
+const TRAINING_PATH = "/fintech-training/FinTech_for_Banks_Training.html";
+const gateIntro = document.getElementById("gateIntro");
+const gateLogin = document.getElementById("gateLogin");
+const gateName = document.getElementById("gateName");
+
+function showGateLogin() {
+  const next = encodeURIComponent(TRAINING_PATH);
+  document.getElementById("loginLink").setAttribute("href", "/en/login?next=" + next);
+  document.getElementById("registerLink").setAttribute("href", "/en/register?next=" + next);
+  gateIntro.textContent = "This training is for CyberAbeer account holders. Log in to track your progress, appear on the live cohort board, and unlock your completion certificate.";
+  gateLogin.style.display = "block";
+  gateName.style.display = "none";
 }
+
+function showGateName(me) {
+  gateIntro.textContent = "You are logged in. Confirm the name to show on the live cohort board and your certificate, then start.";
+  document.getElementById("signedAs").textContent = me.email ? ("Signed in as " + me.email) : "Signed in";
+  nameInput.value = (state.name && state.name.trim()) ? state.name : (me.name || "");
+  gateLogin.style.display = "none";
+  gateName.style.display = "block";
+}
+
+fetch("/api/fintech-training/me", { credentials: "same-origin", cache: "no-store" })
+  .then(r => r.json())
+  .then(me => { if (me && me.loggedIn) showGateName(me); else showGateLogin(); })
+  .catch(() => showGateLogin());
+
 document.getElementById("startBtn").addEventListener("click", () => {
   const v = nameInput.value.trim();
+  if (!v) {
+    nameInput.style.borderColor = "#c0392b";
+    nameInput.focus();
+    return;
+  }
   state.name = v;
   saveState();
-  closeGate();
-});
-document.getElementById("skipBtn").addEventListener("click", () => {
   closeGate();
 });
 
