@@ -416,11 +416,13 @@ export async function getLatestIntelligenceArticles(locale: AppLocale, limit = 5
       .not("articles.intel_severity", "is", null)
       .lte("articles.published_at", new Date().toISOString())
       .order("published_at", { referencedTable: "articles", ascending: false })
-      .limit(limit);
+      .limit(Math.max(limit, 200));
 
     if (error) throw error;
     return sortByPublishedAtDesc(
-      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale)),
+      ((data ?? []) as unknown as ArticleTranslationRow[]).map((row) => mapArticleRow(row, locale))
+      .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
+      .slice(0, limit),
     );
   } catch (err) {
     console.error("getLatestIntelligenceArticles failed, returning empty list", err);
